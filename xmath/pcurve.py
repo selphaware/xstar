@@ -211,5 +211,7 @@ def test_log_spiral_circle():
 
 
 if __name__ == "__main__":
+    test_log_spiral()
+    # test_circle()
+    # test_asteroid_curve()
     # test_log_spiral_circle()
-    test_circle()
