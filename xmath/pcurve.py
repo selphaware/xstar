@@ -56,8 +56,8 @@ def generate_parametric_bool_grid(values: R2) -> Tuple[BOOL2, Z2_POS]:
     range_x: range = range(max_x + offset_x + 1)
     range_y: range = range(max_y + offset_y + 1)
 
-    grid: BOOL2 = [[False for _ in range_y] for _ in range_x]
     origin: Z2_POS = (0, 0)
+    grid: BOOL2 = [[False for _ in range_y] for _ in range_x]
     for idx, new_val in enumerate(new_vals):
         x_index: int = new_val[0]
         y_index: int = new_val[1]
