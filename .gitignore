@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 
 xstar_env
+.idea
