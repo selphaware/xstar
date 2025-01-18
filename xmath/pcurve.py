@@ -2,94 +2,80 @@ from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
-INT_R1 = List[int]
-INT_R2 = List[INT_R1]
-
-FLOAT_R1 = List[float]
-FLOAT_R2 = List[FLOAT_R1]
-
-BOOL_R1 = List[bool]
-BOOL_R2 = List[BOOL_R1]
-
-PARAMETRIC_EQNS = {
-
-    "log_spiral": [
-        lambda t, C, L: C * np.exp(L * t) * np.cos(t),
-        lambda t, C, L: C * np.exp(L * t) * np.sin(t)
-    ],
-
-    "circle": [
-        lambda t, r: r * np.cos(t),
-        lambda t, r: r * np.sin(t)
-    ],
-
-    "asteroid_curve": [
-        lambda t, C: C * (np.cos(t) ** 3),
-        lambda t, C: C * (np.sin(t) ** 3)
-    ]
-
-}
+from structures import (
+    Lambda,
+    R1, R2, R2_POS, Z2_POS,
+    Z1, Z2,
+    BOOL2
+)
+from xmath.equations import PARAMETRIC_EQNS
 
 
 def generate_parametric_values(
         equation_type: str,
-        t_values: FLOAT_R1,
+        t_values: R1,
         *parameter_values
-) -> FLOAT_R2:
-    equation = PARAMETRIC_EQNS[equation_type]
-    eqn_x = equation[0]
-    eqn_y = equation[1]
+) -> R2:
+    equation: List[Lambda] = PARAMETRIC_EQNS[equation_type]
+    eqn_x: Lambda = equation[0]
+    eqn_y: Lambda = equation[1]
 
-    results = []
+    results: R2 = []
     for i, t in enumerate(t_values):
-        x = eqn_x(t, *parameter_values)
-        y = eqn_y(t, *parameter_values)
-        results.append([x, y])
+        x: float = eqn_x(t, *parameter_values)
+        y: float = eqn_y(t, *parameter_values)
+        val: R2_POS = (x, y)
+        results.append(val)
 
     return results
 
 
-def generate_bool_grid(
-        values_2d: FLOAT_R2
-) -> Tuple[BOOL_R2, Tuple[int, int]]:
-    rounded: INT_R2 = [
-        [int(x), int(y)]
-        for [x, y] in values_2d
+def generate_parametric_bool_grid(values: R2) -> Tuple[BOOL2, Z2_POS]:
+    # rounded ints from floats
+    rounded: Z2 = [
+        (int(x), int(y))
+        for (x, y) in values
     ]
 
-    max_x = max([x[0] for x in rounded])
-    max_y = max([y[1] for y in rounded])
-    min_x = min([x[0] for x in rounded])
-    min_y = min([y[1] for y in rounded])
+    # calc. offset (grid has to be in +ve region)
+    max_x: int = max([x[0] for x in rounded])
+    max_y: int = max([y[1] for y in rounded])
+    min_x: int = min([x[0] for x in rounded])
+    min_y: int = min([y[1] for y in rounded])
 
-    offset_x = -1 * min_x if min_x < 0 else min_x
-    offset_y = -1 * min_y if min_y < 0 else min_y
+    offset_x: int = -1 * min_x if min_x < 0 else min_x
+    offset_y: int = -1 * min_y if min_y < 0 else min_y
 
-    new_vals: INT_R2 = [
-        [x + offset_x, y + offset_y]
-        for [x, y] in rounded
+    # adjust for offset
+    new_vals: Z2 = [
+        (x + offset_x, y + offset_y)
+        for (x, y) in rounded
     ]
 
-    range_x = range(max_x + offset_x + 1)
-    range_y = range(max_y + offset_y + 1)
+    # populate grid: True where there is a value, ow: False
+    range_x: range = range(max_x + offset_x + 1)
+    range_y: range = range(max_y + offset_y + 1)
 
-    grid: BOOL_R2 = [[False for _ in range_y] for _ in range_x]
-    origin = (0, 0)
+    grid: BOOL2 = [[False for _ in range_y] for _ in range_x]
+    origin: Z2_POS = (0, 0)
     for idx, new_val in enumerate(new_vals):
-        x_index = new_val[0]
-        y_index = new_val[1]
+        x_index: int = new_val[0]
+        y_index: int = new_val[1]
         grid[x_index][y_index] = True
 
         if idx == 0:
+            # used for:
+            # galaxy: blackhole at the centre
+            # system: star at the centre
             origin = (x_index, y_index)
 
     return grid, origin
 
 
-def plot_parametric(values: List[FLOAT_R2]):
+def plot_parametric(values: List[R2]):
     # Extract x and y values for plotting
-    x_values = []
-    y_values = []
+    x_values: List[R1] = []
+    y_values: List[R1] = []
     for _values in values:
         x_values.append([coord[0] for coord in _values])
         y_values.append([coord[1] for coord in _values])
@@ -107,9 +93,9 @@ def plot_parametric(values: List[FLOAT_R2]):
     plt.show()
 
 
-def plot_boolean_grid(grid: BOOL_R2):
+def plot_boolean_grid(grid: BOOL2):
     # Convert the boolean grid to integers for better visualization
-    int_grid = [[1 if cell else 0 for cell in row] for row in grid]
+    int_grid: List[Z1] = [[1 if cell else 0 for cell in row] for row in grid]
 
     # Plot the grid
     plt.figure(figsize=(8, 8))
@@ -118,10 +104,13 @@ def plot_boolean_grid(grid: BOOL_R2):
     plt.title("Boolean Grid Visualization")
     plt.xlabel("Column Index")
     plt.ylabel("Row Index")
-    plt.xticks(
-        range(len(grid[0])))  # Set x-axis ticks to match the number of columns
-    plt.yticks(
-        range(len(grid)))  # Set y-axis ticks to match the number of rows
+
+    # Set x-axis ticks to match the number of columns
+    plt.xticks(range(len(grid[0])))
+
+    # Set y-axis ticks to match the number of rows
+    plt.yticks(range(len(grid)))
+
     plt.grid(visible=False)
     plt.show()
 
@@ -141,7 +130,7 @@ def test_log_spiral():
         _C, _L
     )
 
-    bool_grid, origin = generate_bool_grid(coordinates)
+    bool_grid, origin = generate_parametric_bool_grid(coordinates)
     print(bool_grid)
     print("Shape: ", len(bool_grid), len(bool_grid[0]))
     print("Origin: ", origin)
@@ -164,7 +153,7 @@ def test_circle():
         _R
     )
 
-    bool_grid, origin = generate_bool_grid(coordinates)
+    bool_grid, origin = generate_parametric_bool_grid(coordinates)
     print(bool_grid)
     print("Shape: ", len(bool_grid), len(bool_grid[0]))
     print("Origin: ", origin)
@@ -187,7 +176,7 @@ def test_asteroid_curve():
         _C
     )
 
-    bool_grid, origin = generate_bool_grid(coordinates)
+    bool_grid, origin = generate_parametric_bool_grid(coordinates)
     print(bool_grid)
     print("Shape: ", len(bool_grid), len(bool_grid[0]))
     print("Origin: ", origin)
