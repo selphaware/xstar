@@ -5,10 +5,10 @@ from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stellars import StellarObject
 from space.space_structures.stellar_types import StellarType
-from space.space_structures.systemobj import SystemObject
+from space.space_structures.system_sector import SystemSector
 from space.space_structures.planet import Planet
 
-SPACE_MATRIX = List[List[SystemObject]]
+SPACE_MATRIX = List[List[SystemSector]]
 
 
 class PlanetarySystem(object):
@@ -42,12 +42,12 @@ class PlanetarySystem(object):
 
         # TODO: PLACE IN SPIRAL
 
-        # TODO: Use PCURVE
+        # TODO: Use PCURVE to store SystemSector
 
         grid_range = range(0, random.randint(1000, 100_000))
         self.grid: SPACE_MATRIX = [
             [
-                SystemObject(f"System Sector {x}, {y}")
+                SystemSector(f"System Sector {x}, {y}")
                 for x in grid_range
             ]
             for y in grid_range

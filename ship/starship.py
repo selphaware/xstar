@@ -1,11 +1,11 @@
-from typing import List, Dict, Tuple, Optional
+from typing import List, Optional
 
 from generic.factions import Faction
 from ship.ship_types.engines import WarpEngine, ImpulseEngine
 from ship.ship_types.missions import Mission
 from ship.ship_types.shields import Shields
 from ship.ship_types.weapons import PrimaryWeapon, SecondaryWeapon
-from auxillary.structures import R2
+from xmath.structures import Z2_POS
 
 
 class StarShip(object):
@@ -49,8 +49,8 @@ class StarShip(object):
 
         self.primary_weapons: List[PrimaryWeapon] = primary_weapons
         self.secondary_weapons: List[SecondaryWeapon] = secondary_weapons
-        self.primary_target: Optional[R2] = None
-        self.secondary_target: Optional[R2] = None
+        self.primary_target: Optional[Z2_POS] = None
+        self.secondary_target: Optional[Z2_POS] = None
 
         self.warp_engine = warp_engine
         self.impulse_engine = impulse_engine
@@ -73,7 +73,7 @@ class StarShip(object):
     def is_cloaked(self):
         return self.cloaked
 
-    def move(self, velocity: R2):
+    def move(self, velocity: Z2_POS):
         pass
 
     # TODO: SENSORS
