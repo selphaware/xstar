@@ -45,7 +45,7 @@ class PlanetarySystem(object):
         grid_range = range(0, random.randint(1000, 100_000))
         self.grid: SPACE_MATRIX = [
             [
-                SystemObject(f"Sector {x}, {y}")
+                SystemObject(f"System Sector {x}, {y}")
                 for x in grid_range
             ]
             for y in grid_range
