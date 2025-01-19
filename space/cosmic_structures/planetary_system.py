@@ -42,6 +42,8 @@ class PlanetarySystem(object):
 
         # TODO: PLACE IN SPIRAL
 
+        # TODO: Use PCURVE
+
         grid_range = range(0, random.randint(1000, 100_000))
         self.grid: SPACE_MATRIX = [
             [
