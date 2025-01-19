@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from space.space_structures.systemobj import SystemObject
+from space.space_structures.system_sector import SystemSector
 
 
 class Country(object):
@@ -22,7 +22,7 @@ class Country(object):
         self.energy = energy
 
 
-class Planet(SystemObject):
+class Planet(SystemSector):
     def __init__(
             self,
             name: str,
