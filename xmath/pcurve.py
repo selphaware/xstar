@@ -46,12 +46,11 @@ def generate_parametric_values(
 def generate_multi_param_object_grid(mvalues: List[R2]) -> Z2_MATRIX:
     cvalues: R2 = []
 
-    markers: List[Tuple[int, int]] = []
+    markers: List[Tuple[int, int]] = [(0, 1)]
 
     for idx, values in enumerate(mvalues):
         cvalues.extend(values)
-        # TODO: CHECK THE MARKERS
-        markers.append((len(values), idx))
+        markers.append((len(cvalues), idx + 2))
 
     bool_grid: Z2_MATRIX = generate_parametric_object_grid(cvalues, markers)
 
@@ -93,8 +92,7 @@ def generate_parametric_object_grid(
         x_index: int = new_val[0]
         y_index: int = new_val[1]
 
-        marker_index = [x for (x, y) in markers if x > idx][0]
-        marker = markers[marker_index][1]
+        marker = [y for (x, y) in markers if idx >= x][-1]
 
         grid[y_index][x_index] = marker
 

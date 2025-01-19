@@ -25,14 +25,12 @@ def plot_parametric(values: List[R2]):
     plt.show()
 
 
-def plot_boolean_grid(grid: Z2_MATRIX):
-    # Convert the boolean grid to integers for better visualization
-
+def plot_object_grid(grid: Z2_MATRIX):
     # Plot the grid
     plt.figure(figsize=(8, 8))
-    plt.imshow(grid, cmap='Greys', origin='upper')
-    plt.colorbar(label="Shaded (1) / Unshaded (0)")
-    plt.title("Boolean Grid Visualization")
+    plt.imshow(grid, cmap='tab20c_r', origin='upper')
+    # plt.colorbar(label="Shaded (1) / Unshaded (0)")
+    plt.title("Int Grid Visualization")
     plt.xlabel("Column Index")
     plt.ylabel("Row Index")
 

@@ -4,7 +4,7 @@ from xmath.pcurve import (
     generate_parametric_object_grid,
     generate_multi_param_object_grid
 )
-from xmath.plotfuncs import plot_boolean_grid, plot_parametric
+from xmath.plotfuncs import plot_object_grid, plot_parametric
 from xmath.structures import R2
 
 
@@ -17,7 +17,7 @@ def _gen_bool_and_plot(coordinates: R2):
     origin = (shape[0] // 2 - 1, shape[1] // 2)
     print("Origin: ", origin)
 
-    plot_boolean_grid(bool_grid)
+    plot_object_grid(bool_grid)
 
     plot_parametric([coordinates])
 
@@ -31,7 +31,7 @@ def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
     origin = (shape[0] // 2 - 1, shape[1] // 2)
     print("Origin: ", origin)
 
-    plot_boolean_grid(bool_grid)
+    plot_object_grid(bool_grid)
 
     plot_parametric(mcoordinates)
 
