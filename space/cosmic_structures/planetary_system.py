@@ -9,7 +9,7 @@ from space.cosmic_structures.system_sector import SystemSector
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_multi_param_bool_grid
+    generate_multi_param_object_grid
 )
 from xmath.structures import Z2_POS
 
@@ -126,7 +126,7 @@ class PlanetarySystem(object):
             for x in range(self.num_planets)
         ]
 
-        position_grid = generate_multi_param_bool_grid(planet_positions)
+        position_grid = generate_multi_param_object_grid(planet_positions)
 
         self.shape: Tuple[int, int] = (len(position_grid[0]),
                                        len(position_grid))

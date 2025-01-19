@@ -1,15 +1,15 @@
 from typing import Tuple, List
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_parametric_bool_grid,
-    generate_multi_param_bool_grid
+    generate_parametric_object_grid,
+    generate_multi_param_object_grid
 )
 from xmath.plotfuncs import plot_boolean_grid, plot_parametric
 from xmath.structures import R2
 
 
 def _gen_bool_and_plot(coordinates: R2):
-    bool_grid = generate_parametric_bool_grid(coordinates)
+    bool_grid = generate_parametric_object_grid(coordinates)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)
@@ -23,7 +23,7 @@ def _gen_bool_and_plot(coordinates: R2):
 
 
 def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
-    bool_grid = generate_multi_param_bool_grid(mcoordinates)
+    bool_grid = generate_multi_param_object_grid(mcoordinates)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)

@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 import numpy as np
 
@@ -6,7 +6,7 @@ from structures import (
     Lambda,
     R1, R2, R2_POS, Z2_POS,
     Z2,
-    BOOL2
+    Z2_MATRIX
 )
 from xmath.equations import PARAMETRIC_EQNS
 
@@ -42,18 +42,27 @@ def generate_parametric_values(
 
     return results
 
-
-def generate_multi_param_bool_grid(mvalues: List[R2]) -> BOOL2:
+# TODO: bool --> int
+def generate_multi_param_object_grid(mvalues: List[R2]) -> Z2_MATRIX:
     cvalues: R2 = []
-    for values in mvalues:
-        cvalues.extend(values)
 
-    bool_grid: BOOL2 = generate_parametric_bool_grid(cvalues)
+    markers: List[Tuple[int, int]] = []
+
+    for idx, values in enumerate(mvalues):
+        cvalues.extend(values)
+        # TODO: CHECK THE MARKERS
+        markers.append((len(values), idx))
+
+    bool_grid: Z2_MATRIX = generate_parametric_object_grid(cvalues, markers)
 
     return bool_grid
 
 
-def generate_parametric_bool_grid(values: R2) -> BOOL2:
+# TODO: bool -> int
+def generate_parametric_object_grid(
+        values: R2,
+        markers: List[Tuple[int, int]]
+) -> Z2_MATRIX:
     # rounded ints from floats
     rounded: Z2 = [
         (int(x), int(y))
@@ -79,11 +88,15 @@ def generate_parametric_bool_grid(values: R2) -> BOOL2:
     range_x: range = range(max_x + offset_x + 1)
     range_y: range = range(max_y + offset_y + 1)
 
-    grid: BOOL2 = [[False for _ in range_x] for _ in range_y]
+    grid: Z2_MATRIX = [[0 for _ in range_x] for _ in range_y]
     for idx, new_val in enumerate(new_vals):
         x_index: int = new_val[0]
         y_index: int = new_val[1]
-        grid[y_index][x_index] = True
+
+        marker_index = [x for (x, y) in markers if x > idx][0]
+        marker = markers[marker_index][1]
+
+        grid[y_index][x_index] = marker
 
     return grid
 
@@ -93,7 +106,7 @@ def generate_bool_grid(
         num_points: int,
         factor: float,
         **eqn_params: Dict[str, List[Any]]
-) -> BOOL2:
+) -> Z2_MATRIX:
     mcoords = [
         generate_parametric_values(
             equation, t_range, num_points, factor, parameters
@@ -101,6 +114,6 @@ def generate_bool_grid(
         for equation, parameters in eqn_params.items()
     ]
 
-    bool_grid = generate_multi_param_bool_grid(mcoords)
+    bool_grid = generate_multi_param_object_grid(mcoords)
 
     return bool_grid

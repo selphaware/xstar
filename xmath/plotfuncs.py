@@ -1,7 +1,7 @@
 from typing import List
 from matplotlib import pyplot as plt
 
-from xmath.structures import R2, R1, BOOL2, Z1
+from xmath.structures import R2, R1, Z2_MATRIX, Z1
 
 
 def plot_parametric(values: List[R2]):
@@ -25,19 +25,12 @@ def plot_parametric(values: List[R2]):
     plt.show()
 
 
-def plot_boolean_grid(grid: BOOL2):
+def plot_boolean_grid(grid: Z2_MATRIX):
     # Convert the boolean grid to integers for better visualization
-    int_grid: List[Z1] = [
-        [
-            1 if cell else 0
-            for cell in row
-        ]
-        for row in grid
-    ]
 
     # Plot the grid
     plt.figure(figsize=(8, 8))
-    plt.imshow(int_grid, cmap='Greys', origin='upper')
+    plt.imshow(grid, cmap='Greys', origin='upper')
     plt.colorbar(label="Shaded (1) / Unshaded (0)")
     plt.title("Boolean Grid Visualization")
     plt.xlabel("Column Index")

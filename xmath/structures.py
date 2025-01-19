@@ -8,9 +8,7 @@ R2_POS = Tuple[float, float]
 
 Z1 = List[int]
 Z2 = List[Z2_POS]
+Z2_MATRIX = List[Z1]
 
 R1 = List[float]
 R2 = List[R2_POS]
-
-BOOL1 = List[bool]
-BOOL2 = List[BOOL1]
