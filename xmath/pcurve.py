@@ -1,4 +1,6 @@
-from typing import List, Tuple
+from typing import List
+
+import numpy as np
 
 from structures import (
     Lambda,
@@ -11,9 +13,13 @@ from xmath.equations import PARAMETRIC_EQNS
 
 def generate_parametric_values(
         equation_type: str,
-        t_values: R1,
+        t_range: Z2_POS,
+        num_points: int,
+        factor: float,
         *parameter_values
 ) -> R2:
+    t_values: R1 = list(np.linspace(t_range[0], t_range[1], num_points))
+
     equation: List[Lambda] = PARAMETRIC_EQNS[equation_type]
     eqn_x: Lambda = equation[0]
     eqn_y: Lambda = equation[1]
@@ -25,10 +31,15 @@ def generate_parametric_values(
         val: R2_POS = (x, y)
         results.append(val)
 
+    results: R2 = [
+        (x * factor, y * factor)
+        for (x, y) in results
+    ]
+
     return results
 
 
-def generate_parametric_bool_grid(values: R2) -> Tuple[BOOL2, Z2_POS]:
+def generate_parametric_bool_grid(values: R2) -> BOOL2:
     # rounded ints from floats
     rounded: Z2 = [
         (int(x), int(y))
@@ -54,17 +65,10 @@ def generate_parametric_bool_grid(values: R2) -> Tuple[BOOL2, Z2_POS]:
     range_x: range = range(max_x + offset_x + 1)
     range_y: range = range(max_y + offset_y + 1)
 
-    origin: Z2_POS = (0, 0)
-    grid: BOOL2 = [[False for _ in range_y] for _ in range_x]
+    grid: BOOL2 = [[False for _ in range_x] for _ in range_y]
     for idx, new_val in enumerate(new_vals):
         x_index: int = new_val[0]
         y_index: int = new_val[1]
-        grid[x_index][y_index] = True
+        grid[y_index][x_index] = True
 
-        if idx == 0:
-            # used for:
-            # galaxy: blackhole at the centre
-            # system: star at the centre
-            origin = (x_index, y_index)
-
-    return grid, origin
+    return grid

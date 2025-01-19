@@ -27,7 +27,13 @@ def plot_parametric(values: List[R2]):
 
 def plot_boolean_grid(grid: BOOL2):
     # Convert the boolean grid to integers for better visualization
-    int_grid: List[Z1] = [[1 if cell else 0 for cell in row] for row in grid]
+    int_grid: List[Z1] = [
+        [
+            1 if cell else 0
+            for cell in row
+        ]
+        for row in grid
+    ]
 
     # Plot the grid
     plt.figure(figsize=(8, 8))
