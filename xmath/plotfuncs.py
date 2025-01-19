@@ -15,7 +15,7 @@ def plot_parametric(values: List[R2]):
     # Plotting
     plt.figure(figsize=(8, 6))
     for i in range(len(values)):
-        plt.plot(x_values[i], y_values[i], label=f"Curve {i}")
+        plt.plot(x_values[i], y_values[i], label=f"Curve {i + 1}")
 
     plt.xlabel("X")
     plt.ylabel("Y")

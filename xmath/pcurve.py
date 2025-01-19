@@ -43,6 +43,16 @@ def generate_parametric_values(
     return results
 
 
+def generate_multi_param_bool_grid(mvalues: List[R2]) -> BOOL2:
+    cvalues: R2 = []
+    for values in mvalues:
+        cvalues.extend(values)
+
+    bool_grid: BOOL2 = generate_parametric_bool_grid(cvalues)
+
+    return bool_grid
+
+
 def generate_parametric_bool_grid(values: R2) -> BOOL2:
     # rounded ints from floats
     rounded: Z2 = [
