@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 
 import numpy as np
 
@@ -86,3 +86,21 @@ def generate_parametric_bool_grid(values: R2) -> BOOL2:
         grid[y_index][x_index] = True
 
     return grid
+
+
+def generate_bool_grid(
+        t_range: Z2_POS,
+        num_points: int,
+        factor: float,
+        **eqn_params: Dict[str, List[Any]]
+) -> BOOL2:
+    mcoords = [
+        generate_parametric_values(
+            equation, t_range, num_points, factor, parameters
+        )
+        for equation, parameters in eqn_params.items()
+    ]
+
+    bool_grid = generate_multi_param_bool_grid(mcoords)
+
+    return bool_grid

@@ -36,6 +36,29 @@ def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
     plot_parametric(mcoordinates)
 
 
+def test_multi_circle():
+    _R = 8
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 25
+
+    mcoords = [
+
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            _R / x, 0, 0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+    ]
+
+    _gen_multi_bool_and_plot(mcoords)
+
+
 def test_log_spiral():
     # Example usage
     _C = 1
@@ -204,29 +227,6 @@ def test_log_spiral_circle():
             _factor,
             _R, 1, 1
         )
-    ]
-
-    _gen_multi_bool_and_plot(mcoords)
-
-
-def test_multi_circle():
-    _R = 8
-    _t_range = (0, 100)
-    _num_points = 1000
-    _factor = 25
-
-    mcoords = [
-
-        generate_parametric_values(
-            "circle",
-            _t_range,
-            _num_points,
-            _factor,
-            _R / x, 0, 0
-        )
-        for x
-        # in [2 ** y for y in range(15)]
-        in range(1, 16)
     ]
 
     _gen_multi_bool_and_plot(mcoords)

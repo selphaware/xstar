@@ -1,9 +1,7 @@
-import random
-from typing import List, Optional
+from typing import List
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from space.space_structures.system_sector import SystemSector
 
 
 class Country(object):
@@ -22,7 +20,7 @@ class Country(object):
         self.energy = energy
 
 
-class Planet(SystemSector):
+class Planet(object):
     def __init__(
             self,
             name: str,
@@ -30,7 +28,7 @@ class Planet(SystemSector):
             planet_type: PlanetType,
             size: float = 1.0
     ):
-        super().__init__(name)
+        self.name = name
         self.faction: Faction = faction
         self.planet_type: PlanetType = planet_type
 

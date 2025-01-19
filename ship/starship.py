@@ -32,6 +32,10 @@ class StarShip(object):
             # engines
             warp_engine: WarpEngine,
             impulse_engine: ImpulseEngine
+
+            # sensors
+            # TODO: SENDORS
+
     ):
         self.name: str = name
         self.faction: Faction = faction

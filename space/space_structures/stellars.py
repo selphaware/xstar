@@ -1,14 +1,13 @@
-from space.space_structures.systemobj import SystemObject
 from stellar_types import StellarType
 
 
-class StellarObject(SystemObject):
+class StellarStructure(object):
     def __init__(
             self,
             name: str,
             stellar_type: StellarType,
     ):
-        super().__init__(name)
+        self.name = name
         self.stellar_type: StellarType = stellar_type
 
     @property
