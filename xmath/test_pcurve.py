@@ -209,14 +209,38 @@ def test_log_spiral_circle():
     _gen_multi_bool_and_plot(mcoords)
 
 
+def test_multi_circle():
+    _R = 8
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 25
+
+    mcoords = [
+
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            _R / x, 0, 0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+    ]
+
+    _gen_multi_bool_and_plot(mcoords)
+
+
 if __name__ == "__main__":
     # test_log_spiral()
     # test_circle()
-    test_circle_shift()
-    test_log_spiral_shift()
+    # test_circle_shift()
+    # test_log_spiral_shift()
     # test_asteroid_curve()
     # test_epitrochoid_curve()
     # test_lemniscate_bernoulli_curve()
 
     # combination
     test_log_spiral_circle()
+    test_multi_circle()
