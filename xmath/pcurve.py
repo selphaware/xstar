@@ -11,6 +11,10 @@ from structures import (
 from xmath.equations import PARAMETRIC_EQNS
 
 
+# TODO: Refactor to compute x and y values directly
+#  passing through the series/array rather than
+#  calculate each value
+
 def generate_parametric_values(
         equation_type: str,
         t_range: Z2_POS,
