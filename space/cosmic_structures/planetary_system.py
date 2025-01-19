@@ -51,4 +51,4 @@ class PlanetarySystem(object):
             for y in grid_range
         ]
 
-        # TODO: PLACE PLANETS AND STAR
+        # TODO: PLACE PLANETS AND STAR in Grid
