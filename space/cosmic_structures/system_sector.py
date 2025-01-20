@@ -10,10 +10,21 @@ class SystemSector(object):
     def __init__(
             self,
             name: str,
+            pos: Z2_POS,
             objects: Optional[
                 List[Union[StellarStructure, Planet, StarShip]]
             ] = None
     ):
-        self.name = name
-        self.pos: Z2_POS
-        self.objects = objects
+        self.name: str = name
+        self.pos: Z2_POS = pos
+        self.objects: Optional[
+            List[Union[StellarStructure, Planet, StarShip]]
+        ] = objects
+
+    @property
+    def is_empty(self):
+        return self.objects is None
+
+    @property
+    def position(self):
+        return self.pos

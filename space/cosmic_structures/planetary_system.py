@@ -9,7 +9,7 @@ from space.cosmic_structures.system_sector import SystemSector
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_multi_param_object_grid
+    generate_multi_param_num_grid
 )
 from xmath.structures import Z2_POS
 
@@ -126,7 +126,7 @@ class PlanetarySystem(object):
             for x in range(self.num_planets)
         ]
 
-        position_grid = generate_multi_param_object_grid(planet_positions)
+        position_grid = generate_multi_param_num_grid(planet_positions)
 
         self.shape: Tuple[int, int] = (len(position_grid[0]),
                                        len(position_grid))
@@ -134,14 +134,36 @@ class PlanetarySystem(object):
         self.origin: Z2_POS = (self.shape[0] // 2 - 1,
                                self.shape[1] // 2)
 
+        # TODO: place star in origin first
+
         grid: SYSTEM_SECTOR_MATRIX = [
             [
                 # TODO: place planet on one of the positions
-                for val in col
-            ]
-            for col in position_grid
-        ]
 
+                SystemSector(
+                    # Place planet
+                    f"SYSTEM Sector {i, j}",
+                    (i, j),
+                    [
+                        # TODO: parse the multi grid to only have unique
+                        #  ints only for ints > 0 based on random positions
+                        planets[position_grid[i][j] - 1]
+                    ]
+                ) if position_grid[i][j] > 0 \
+                    else SystemSector(
+                    # Empty Sector
+                    f"SYSTEM Sector {i, j}",
+                    (i, j),
+                    None
+                )
+
+                for j, val in enumerate(col)
+            ]
+
+            for i, col in enumerate(position_grid)
+
+            # TODO: place one planet per circle
+        ]
 
     @property
     def num_planets(self):
