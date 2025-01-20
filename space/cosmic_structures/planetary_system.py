@@ -126,6 +126,7 @@ class PlanetarySystem(object):
             for x in range(self.num_planets)
         ]
 
+        # Motion Paths
         position_grid = generate_multi_param_num_grid(planet_positions)
 
         self.shape: Tuple[int, int] = (len(position_grid[0]),
