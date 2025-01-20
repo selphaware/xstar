@@ -107,7 +107,7 @@ def generate_parametric_num_grid(
         x_index: int = new_val[0]
         y_index: int = new_val[1]
 
-        marker = [y for (x, y) in markers if idx >= x][-1]
+        marker = [m2 for (m1, m2) in markers if idx >= m1][-1]
 
         grid[y_index][x_index] = marker
 

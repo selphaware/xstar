@@ -275,8 +275,8 @@ def test_log_spiral_circle():
 
 
 if __name__ == "__main__":
-    #test_elipse()
-    #test_log_spiral()
+    test_elipse()
+    test_log_spiral()
     #test_circle()
     #test_circle_shift()
     #test_circle_shift2()

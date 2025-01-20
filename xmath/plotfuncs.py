@@ -35,7 +35,7 @@ def plot_parametric(values: List[R2]):
 def plot_object_grid(grid: Z2_MATRIX):
     # Plot the grid
     plt.figure(figsize=(8, 8))
-    plt.imshow(grid, cmap='tab20c_r', origin='upper')
+    plt.imshow(grid, cmap='tab20c_r', origin='lower')
     # plt.colorbar(label="Shaded (1) / Unshaded (0)")
     plt.title("Int Grid Visualization")
     plt.xlabel("Column Index")
