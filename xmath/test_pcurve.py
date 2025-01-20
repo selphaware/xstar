@@ -16,8 +16,8 @@ def _gen_bool_and_plot(coordinates: R2):
     print("Shape: ", shape)
 
     origin = (
-        int(round(shape[0] / 2, 0)),
-        int(round(shape[1] / 2, 0))
+        int(round(shape[0] / 2, 0)) - 1,
+        int(round(shape[1] / 2, 0)) - 1
     )
     print("Origin: ", origin)
 
@@ -33,8 +33,8 @@ def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
     print("Shape: ", shape)
 
     origin = (
-        int(round(shape[0] / 2, 0)),
-        int(round(shape[1] / 2, 0))
+        int(round(shape[0] / 2, 0)) - 1,
+        int(round(shape[1] / 2, 0)) - 1
     )
     print("Origin: ", origin)
 
@@ -277,7 +277,7 @@ def test_log_spiral_circle():
 if __name__ == "__main__":
     test_elipse()
     test_log_spiral()
-    #test_circle()
+    test_circle()
     #test_circle_shift()
     #test_circle_shift2()
     #test_log_spiral_shift()
