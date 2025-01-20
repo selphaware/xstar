@@ -131,8 +131,10 @@ class PlanetarySystem(object):
         self.shape: Tuple[int, int] = (len(position_grid[0]),
                                        len(position_grid))
 
-        self.origin: Z2_POS = (self.shape[0] // 2 - 1,
-                               self.shape[1] // 2)
+        self.origin: Z2_POS = (
+            int(round(self.shape[0] / 2, 0)) - 1,
+            int(round(self.shape[1] / 2, 0)) - 1
+        )
 
         # TODO: place star in origin first
 
