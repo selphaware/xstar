@@ -112,3 +112,23 @@ def generate_parametric_num_grid(
         grid[y_index][x_index] = marker
 
     return grid
+
+
+def generate_unique_param_int_grid(grid: Z2_MATRIX) -> Z2_MATRIX:
+    unique_grid: Z2_MATRIX = [
+        [0 for _ in range(len(grid[0]))]
+        for _ in range(len(grid))
+    ]
+
+    visited: List[int] = []
+
+    for i, g1 in enumerate(grid):
+        for j, g2 in enumerate(g1):
+            if g2 > 0:
+                if g2 in visited:
+                    unique_grid[i][j] = 0
+                else:
+                    unique_grid[i][j] = g2
+                    visited.append(g2)
+
+    return unique_grid

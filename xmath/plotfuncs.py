@@ -32,7 +32,7 @@ def plot_parametric(values: List[R2]):
     plt.show()
 
 
-def plot_object_grid(grid: Z2_MATRIX):
+def plot_num_grid(grid: Z2_MATRIX):
     # Plot the grid
     plt.figure(figsize=(8, 8))
     plt.imshow(grid, cmap='tab20c_r', origin='lower')
