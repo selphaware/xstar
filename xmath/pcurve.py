@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 
 import numpy as np
 
@@ -11,9 +11,10 @@ from structures import (
 from xmath.equations import PARAMETRIC_EQNS
 
 
-# TODO: Refactor to compute x and y values directly
-#  passing through the series/array rather than
-#  calculate each value
+# TODO: Refactor to OPTIMIZE:
+#  compute x and y values directly
+#  passing through the series/array
+#  rather than calculate each value
 
 def generate_parametric_values(
         equation_type: str,
@@ -42,8 +43,8 @@ def generate_parametric_values(
 
     return results
 
-# TODO: bool --> int
-def generate_multi_param_object_grid(mvalues: List[R2]) -> Z2_MATRIX:
+
+def generate_multi_param_num_grid(mvalues: List[R2]) -> Z2_MATRIX:
     cvalues: R2 = []
 
     markers: List[Tuple[int, int]] = [(0, 1)]
@@ -52,16 +53,18 @@ def generate_multi_param_object_grid(mvalues: List[R2]) -> Z2_MATRIX:
         cvalues.extend(values)
         markers.append((len(cvalues), idx + 2))
 
-    bool_grid: Z2_MATRIX = generate_parametric_object_grid(cvalues, markers)
+    bool_grid: Z2_MATRIX = generate_parametric_num_grid(cvalues, markers)
 
     return bool_grid
 
 
-# TODO: bool -> int
-def generate_parametric_object_grid(
+def generate_parametric_num_grid(
         values: R2,
-        markers: List[Tuple[int, int]]
+        markers: Optional[List[Tuple[int, int]]] = None
 ) -> Z2_MATRIX:
+    if markers is None:
+        markers: List[Tuple[int, int]] = [(0, 1)]
+
     # rounded ints from floats
     rounded: Z2 = [
         (int(x), int(y))
@@ -97,21 +100,3 @@ def generate_parametric_object_grid(
         grid[y_index][x_index] = marker
 
     return grid
-
-
-def generate_bool_grid(
-        t_range: Z2_POS,
-        num_points: int,
-        factor: float,
-        **eqn_params: Dict[str, List[Any]]
-) -> Z2_MATRIX:
-    mcoords = [
-        generate_parametric_values(
-            equation, t_range, num_points, factor, parameters
-        )
-        for equation, parameters in eqn_params.items()
-    ]
-
-    bool_grid = generate_multi_param_object_grid(mcoords)
-
-    return bool_grid
