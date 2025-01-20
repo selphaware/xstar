@@ -22,6 +22,13 @@ def plot_parametric(values: List[R2]):
     plt.title("Parametric Curve")
     plt.legend()
     plt.grid(True)
+
+    # Ensure x and y axis grid units are equal
+    plt.gca().set_aspect('equal', adjustable='datalim')
+
+    # Optional: Adjust the limits to ensure the aspect ratio is enforced
+    plt.tight_layout()
+
     plt.show()
 
 

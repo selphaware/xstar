@@ -1,5 +1,5 @@
-from typing import List, Dict, Any, Tuple, Optional
-
+from typing import List, Tuple, Optional
+from inspect import signature
 import numpy as np
 
 from structures import (
@@ -21,18 +21,28 @@ def generate_parametric_values(
         t_range: Z2_POS,
         num_points: int,
         factor: float,
-        *parameter_values
+        **parameter_values
 ) -> R2:
     t_values: R1 = list(np.linspace(t_range[0], t_range[1], num_points))
 
     equation: List[Lambda] = PARAMETRIC_EQNS[equation_type]
     eqn_x: Lambda = equation[0]
     eqn_y: Lambda = equation[1]
+    sig_x: List[str] = list(signature(eqn_x).parameters.keys())
+    sig_y: List[str] = list(signature(eqn_y).parameters.keys())
 
     results: R2 = []
     for i, t in enumerate(t_values):
-        x: float = eqn_x(t, *parameter_values)
-        y: float = eqn_y(t, *parameter_values)
+        x: float = eqn_x(
+            t,
+            **{k: v for k, v in parameter_values.items() if k in sig_x}
+        )
+
+        y: float = eqn_y(
+            t,
+            **{k: v for k, v in parameter_values.items() if k in sig_y}
+        )
+
         val: R2_POS = (x, y)
         results.append(val)
 
@@ -65,25 +75,27 @@ def generate_parametric_num_grid(
     if markers is None:
         markers: List[Tuple[int, int]] = [(0, 1)]
 
-    # rounded ints from floats
-    rounded: Z2 = [
-        (int(x), int(y))
+    # int_vals ints from floats
+    int_vals: Z2 = [
+        (
+            int(round(x, 0)), int(round(y, 0))
+        )
         for (x, y) in values
     ]
 
     # calc. offset (grid has to be in +ve region)
-    max_x: int = max([x[0] for x in rounded])
-    max_y: int = max([y[1] for y in rounded])
-    min_x: int = min([x[0] for x in rounded])
-    min_y: int = min([y[1] for y in rounded])
+    max_x: int = max([x[0] for x in int_vals])
+    max_y: int = max([y[1] for y in int_vals])
+    min_x: int = min([x[0] for x in int_vals])
+    min_y: int = min([y[1] for y in int_vals])
 
-    offset_x: int = -1 * min_x if min_x < 0 else min_x
-    offset_y: int = -1 * min_y if min_y < 0 else min_y
+    offset_x: int = -1 * min_x if min_x < 0 else 0
+    offset_y: int = -1 * min_y if min_y < 0 else 0
 
     # adjust for offset
     new_vals: Z2 = [
         (x + offset_x, y + offset_y)
-        for (x, y) in rounded
+        for (x, y) in int_vals
     ]
 
     # populate grid: True where there is a value, ow: False
