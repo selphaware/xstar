@@ -3,15 +3,15 @@ from typing import List, Optional, Tuple
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from space.space_structures.stellars import StellarStructure
-from space.space_structures.stellar_types import StellarType
+from space.space_structures.stars import Star
+from space.space_structures.star_types import StarType
 from space.cosmic_structures.system_sector import SystemSector
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
     generate_multi_param_num_grid
 )
-from xmath.structures import Z2_POS
+from xmath.structures import Z2_POS, R2, Z2_MATRIX
 
 SYSTEM_SECTOR_MATRIX = List[List[SystemSector]]
 
@@ -21,78 +21,125 @@ class PlanetarySystem(object):
             self,
             name: str,
             star_name: str,
-            star: Optional[StellarStructure] = None,
-            star_type: Optional[StellarType] = None,
+            star: Optional[Star] = None,
+            star_type: Optional[StarType] = None,
+            star_motion_decay: Optional[int] = None,
             planets: Optional[List[Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
-            num_planets: Optional[int] = None
+            num_planets: Optional[int] = None,
+            evenly_spaced: bool = False
     ):
         # main init
         self.name: str = name
-        self.planets = None
-        self.star = None
-        self.shape = None
-        self.origin = None
+        self.planets: Optional[List[Planet]] = None
+        self.star: Optional[Star] = None
+        self.planet_real_positions: Optional[List[R2]] = None
+        self.planet_int_positions: Optional[Z2_MATRIX] = None
+        self.shape: Optional[Tuple[int, int]] = None
+        self.origin: Optional[Tuple[int, int]] = None
 
-        # CODE TO BE PUT IN GENERATE BELOW
+        self.generate_planetary_system(
+            star_name,
+            star,
+            star_type,star_motion_decay,
+            planets,
+            planet_types,
+            num_planets,
+            evenly_spaced
+        )
 
-        star_type: StellarType = random.choice(
-            [x for x in StellarType.__members__]
-        ) if star_type is None else star_type
-
-        planet_types: List[PlanetType] = [
-            random.choice([x for x in PlanetType.__members__])
-            for _ in range(random.randint(5, 25))
-        ] if planet_types is None else planet_types
-
-        self.star: StellarStructure = StellarStructure(star_name, star_type)
-
-        self.planets: List[Planet] = [
-            Planet(
-                name=f"{x.name}-{i}",
-                faction=random.choice([y for y in Faction.__members__]),
-                planet_type=x,
-                size=random.randint(10, 500) * .01
-            )
-            for i, x in enumerate(planet_types)
-        ]
-
-        # TODO: PLACE IN CIRCLES
-
-        # TODO: Use PCURVE to store SystemSector
-
-        grid_range = range(0, random.randint(1000, 100_000))
-        self.grid: SYSTEM_SECTOR_MATRIX = [
-            [
-                SystemSector(f"System Sector {x}, {y}")
-                for x in grid_range
-            ]
-            for y in grid_range
-        ]
-
-        # TODO: PLACE PLANETS AND STAR in Grid
-
-    def generate(
+    def generate_planetary_system(
             self,
             star_name: str,
-            star: Optional[StellarStructure] = None,
-            star_type: Optional[StellarType] = None,
+            star: Optional[Star] = None,
+            star_type: Optional[StarType] = None,
+            star_motion_decay: Optional[int] = None,
             planets: Optional[List[Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
-            num_planets: Optional[int] = None
+            num_planets: Optional[int] = None,
+            evenly_spaced: bool = False
     ):
-        # STAR
-        if star is None:
-            star_type: StellarType = random.choice(
-                [x for x in StellarType.__members__]
-            ) if star_type is None else star_type
+        # Initialise STAR
+        self.initialise_star(star_name, star, star_type, star_motion_decay)
 
-            self.star: StellarStructure = StellarStructure(star_name,
-                                                           star_type)
+        # Initialise PLANETS
+        self.initialise_planets(planets, planet_types, num_planets)
 
-        self.star = star
+        # Calculate planet positions
+        self.calculate_planet_real_positions()
 
-        # PLANETS
+        # Motion Paths (int positions of planets)
+        self.calculate_planet_int_positions()
+
+        # initialise grid with empty sectors
+        grid: SYSTEM_SECTOR_MATRIX = [
+            [
+                SystemSector(
+                    # Empty Sector
+                    f"SYSTEM Sector {i, j}",
+                    (i, j),
+                    None
+                )
+                for j, val in enumerate(col)
+            ]
+            for i, col in enumerate(self.planet_int_positions)
+        ]
+
+        # place star at origin
+        origin_sector = grid[self.origin[0]][self.origin[1]]
+        origin_sector.objects = [self.star]
+
+        # place planets
+
+        # TODO: Place planets now
+
+    def calculate_planet_int_positions(self):
+        position_grid = generate_multi_param_num_grid(
+            self.planet_real_positions
+        )
+        self.planet_int_positions = position_grid
+
+        self.shape: Tuple[int, int] = (len(self.planet_int_positions[0]),
+                                       len(self.planet_int_positions))
+
+        self.origin: Z2_POS = (
+            int(round(self.shape[0] / 2, 0)) - 1,
+            int(round(self.shape[1] / 2, 0)) - 1
+        )
+
+    def calculate_planet_real_positions(self):
+        time_range = (0, 100)
+        num_points = 1000
+        factor = 25
+        planets_range = range(1, self.num_planets + 1)
+
+        planet_real_positions = [
+            generate_parametric_values(
+                "circle",
+                time_range,
+                num_points,
+                factor,
+                r=18 / x, hs=0, vs=0
+            )
+            for x in range(self.num_planets)
+            if x % 2 == 1
+        ]
+
+        planet_real_positions.extend([
+            generate_parametric_values(
+                "elipse",
+                time_range,
+                num_points,
+                factor,
+                a=20 / x, b=16 / x, hs=0, vs=0
+            )
+            for x in range(self.num_planets)
+            if x % 2 == 0
+        ])
+
+        self.planet_real_positions = planet_real_positions
+
+    def initialise_planets(self, planets, planet_types, num_planets):
         if planets is None:
             if planet_types is None:
                 num_planets: int = random.randint(5, 25) \
@@ -115,58 +162,25 @@ class PlanetarySystem(object):
 
         self.planets = planets
 
-        planet_positions = [
-            generate_parametric_values(
-                "circle",
-                (0, 100),
-                1000,
-                25,
-                8 / (x + 1), 0, 0
+    def initialise_star(
+            self,
+            star_name: str,
+            star: Optional[Star] = None,
+            star_type: Optional[StarType] = None,
+            star_motion_decay: Optional[int] = None
+    ):
+        if star is None:
+            star_type: StarType = random.choice(
+                [x for x in StarType.__members__]
+            ) if star_type is None else star_type
+
+            star: Star = Star(
+                star_name,
+                star_type,
+                100 if star_motion_decay is None else star_motion_decay
             )
-            for x in range(self.num_planets)
-        ]
 
-        # Motion Paths
-        position_grid = generate_multi_param_num_grid(planet_positions)
-
-        self.shape: Tuple[int, int] = (len(position_grid[0]),
-                                       len(position_grid))
-
-        self.origin: Z2_POS = (
-            int(round(self.shape[0] / 2, 0)) - 1,
-            int(round(self.shape[1] / 2, 0)) - 1
-        )
-
-        # TODO: place star in origin first
-
-        grid: SYSTEM_SECTOR_MATRIX = [
-            [
-                # TODO: place planet on one of the positions
-
-                SystemSector(
-                    # Place planet
-                    f"SYSTEM Sector {i, j}",
-                    (i, j),
-                    [
-                        # TODO: parse the multi grid to only have unique
-                        #  ints only for ints > 0 based on random positions
-                        planets[position_grid[i][j] - 1]
-                    ]
-                ) if position_grid[i][j] > 0 \
-                    else SystemSector(
-                    # Empty Sector
-                    f"SYSTEM Sector {i, j}",
-                    (i, j),
-                    None
-                )
-
-                for j, val in enumerate(col)
-            ]
-
-            for i, col in enumerate(position_grid)
-
-            # TODO: place one planet per circle
-        ]
+        self.star = star
 
     @property
     def num_planets(self):

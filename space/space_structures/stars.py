@@ -1,15 +1,15 @@
-from stellar_types import StellarType
+from star_types import StarType
 
 
-class StellarStructure(object):
+class Star(object):
     def __init__(
             self,
             name: str,
-            stellar_type: StellarType,
+            stellar_type: StarType,
             motion_decay: int  # number of turns it moves on its path
     ):
         self.name = name
-        self.stellar_type: StellarType = stellar_type
+        self.stellar_type: StarType = stellar_type
         self.motion_decay: int = motion_decay
 
     @property

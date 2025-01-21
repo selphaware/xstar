@@ -21,6 +21,8 @@ def _gen_bool_and_plot(coordinates: R2):
     )
     print("Origin: ", origin)
 
+    bool_grid[origin[0]][origin[1]] = len(coordinates)
+
     plot_num_grid(bool_grid)
 
     plot_parametric([coordinates])
@@ -37,6 +39,8 @@ def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
         int(round(shape[1] / 2, 0)) - 1
     )
     print("Origin: ", origin)
+
+    bool_grid[origin[0]][origin[1]] = len(mcoordinates)
 
     plot_num_grid(bool_grid)
 
@@ -67,9 +71,9 @@ def test_multi_circle():
 
 
 def test_multi_circle_elipse():
-    _R = 8
-    _a = 10
-    _b = 6
+    _R = 18
+    _a = 20
+    _b = 16
     _t_range = (0, 100)
     _num_points = 1000
     _factor = 25
@@ -81,11 +85,13 @@ def test_multi_circle_elipse():
             _t_range,
             _num_points,
             _factor,
+            # r=_R - x, hs=0, vs=0
             r=_R / x, hs=0, vs=0
         )
         for x
         # in [2 ** y for y in range(15)]
         in range(1, 16)
+        if x % 2 == 1
     ]
 
     mcoords.extend([
@@ -95,11 +101,13 @@ def test_multi_circle_elipse():
             _t_range,
             _num_points,
             _factor,
+            # a=_a - x, b=_b - x, hs=0, vs=0
             a=_a / x, b=_b / x, hs=0, vs=0
         )
         for x
         # in [2 ** y for y in range(15)]
         in range(1, 16)
+        if x % 2 == 0
     ])
 
     _gen_multi_bool_and_plot(mcoords)

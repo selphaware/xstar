@@ -1,7 +1,7 @@
 from typing import List, Union, Optional
 
 from xmath.structures import Z2_POS
-from space.space_structures.stellars import StellarStructure
+from space.space_structures.stars import Star
 from space.space_structures.planet import Planet
 from ship.starship import StarShip
 
@@ -12,13 +12,13 @@ class SystemSector(object):
             name: str,
             pos: Z2_POS,
             objects: Optional[
-                List[Union[StellarStructure, Planet, StarShip]]
+                List[Union[Star, Planet, StarShip]]
             ] = None
     ):
         self.name: str = name
         self.pos: Z2_POS = pos
         self.objects: Optional[
-            List[Union[StellarStructure, Planet, StarShip]]
+            List[Union[Star, Planet, StarShip]]
         ] = objects
 
     @property
