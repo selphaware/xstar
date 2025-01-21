@@ -3,7 +3,7 @@ from typing import Tuple, List
 from xmath.pcurve import (
     generate_parametric_values,
     generate_parametric_num_grid,
-    generate_multi_param_num_grid, generate_unique_param_int_grid
+    generate_multi_param_num_grid
 )
 from xmath.plotfuncs import plot_num_grid, plot_parametric
 from xmath.structures import R2
@@ -11,7 +11,6 @@ from xmath.structures import R2
 
 def _gen_bool_and_plot(coordinates: R2):
     bool_grid = generate_parametric_num_grid(coordinates)
-    unique_grid = generate_unique_param_int_grid(bool_grid)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)
@@ -23,14 +22,12 @@ def _gen_bool_and_plot(coordinates: R2):
     print("Origin: ", origin)
 
     plot_num_grid(bool_grid)
-    plot_num_grid(unique_grid)
 
     plot_parametric([coordinates])
 
 
 def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
     bool_grid = generate_multi_param_num_grid(mcoordinates)
-    unique_grid = generate_unique_param_int_grid(bool_grid)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)
@@ -42,7 +39,6 @@ def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
     print("Origin: ", origin)
 
     plot_num_grid(bool_grid)
-    plot_num_grid(unique_grid)
 
     plot_parametric(mcoordinates)
 
@@ -66,6 +62,45 @@ def test_multi_circle():
         # in [2 ** y for y in range(15)]
         in range(1, 16)
     ]
+
+    _gen_multi_bool_and_plot(mcoords)
+
+
+def test_multi_circle_elipse():
+    _R = 8
+    _a = 10
+    _b = 6
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 25
+
+    mcoords = [
+
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x, hs=0, vs=0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+    ]
+
+    mcoords.extend([
+
+        generate_parametric_values(
+            "elipse",
+            _t_range,
+            _num_points,
+            _factor,
+            a=_a / x, b=_b / x, hs=0, vs=0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+    ])
 
     _gen_multi_bool_and_plot(mcoords)
 
@@ -279,9 +314,9 @@ def test_log_spiral_circle():
 
 
 if __name__ == "__main__":
-    test_elipse()
-    test_log_spiral()
-    test_circle()
+    #test_elipse()
+    #test_log_spiral()
+    #test_circle()
     #test_circle_shift()
     #test_circle_shift2()
     #test_log_spiral_shift()
@@ -290,5 +325,6 @@ if __name__ == "__main__":
     #test_lemniscate_bernoulli_curve()
 
     # combination
-    test_log_spiral_circle()
+    #test_log_spiral_circle()
     #test_multi_circle()
+    test_multi_circle_elipse()
