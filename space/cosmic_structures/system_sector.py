@@ -22,7 +22,7 @@ class SystemSector(object):
 
     @property
     def is_empty(self):
-        return self.objects is None
+        return len(self.objects) == 0
 
     @property
     def position(self):
