@@ -43,7 +43,7 @@ class Planet(object):
             if planet_type.habitability == "Habitable":
                 num_countries = 250 * size
 
-            elif planet_type.habitability == "Habitable with adaption":
+            elif planet_type.habitability == "Habitable with adaptation":
                 num_countries = 30 * size
 
             elif planet_type.habitability == "Super Habitable":
