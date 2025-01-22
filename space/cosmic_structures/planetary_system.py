@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 
 from generic.factions import Faction
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
@@ -36,6 +36,7 @@ class PlanetarySystem(object):
         self.position_coords: Optional[List[Z2]] = None
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
+        self.planet_motion_paths: Optional[Dict[str, Z2]] = None
         self.matrix: Optional[SystemSectorMatrix] = None
 
         self.generate_planetary_system(
@@ -87,6 +88,7 @@ class PlanetarySystem(object):
             self.planets[idx].name: planet_path
             for idx, planet_path in enumerate(self.position_coords)
         }
+        self.planet_motion_paths: Dict[str, Z2] = planet_motion_paths
 
         _planets = {
             _planet.name: _planet
