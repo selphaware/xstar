@@ -2,7 +2,7 @@ import random
 from typing import List, Optional, Tuple
 
 from generic.factions import Faction
-from space.cosmic_structures.grid_structure import SystemSectorMatrix
+from space.cosmic_structures.matrix_structure import SystemSectorMatrix
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
@@ -128,8 +128,8 @@ class PlanetarySystem(object):
         num_points = 1000
         factor = 25
         planet_range = range(1, self.num_planets + 1)
-        dist_metric = lambda rator, denom: rator / denom \
-            if evenly_spaced else rator - denom
+        dist_metric = lambda rator, denom: rator - denom \
+            if evenly_spaced else rator / denom
 
         planet_real_positions = [
             generate_parametric_values(
