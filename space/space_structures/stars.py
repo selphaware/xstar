@@ -1,15 +1,16 @@
-from space.space_structures.systemobj import SystemObject
-from stellar_types import StellarType
+from space.space_structures.star_types import StarType
 
 
-class StellarObject(SystemObject):
+class Star(object):
     def __init__(
             self,
             name: str,
-            stellar_type: StellarType,
+            stellar_type: StarType,
+            motion_decay: int  # number of turns it moves on its path
     ):
-        super().__init__(name)
-        self.stellar_type: StellarType = stellar_type
+        self.name = name
+        self.stellar_type: StarType = stellar_type
+        self.motion_decay: int = motion_decay
 
     @property
     def energy(self):

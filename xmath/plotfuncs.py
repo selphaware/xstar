@@ -1,7 +1,7 @@
 from typing import List
 from matplotlib import pyplot as plt
 
-from xmath.structures import R2, R1, BOOL2, Z1
+from xmath.structures import R2, R1, Z2_MATRIX
 
 
 def plot_parametric(values: List[R2]):
@@ -22,24 +22,22 @@ def plot_parametric(values: List[R2]):
     plt.title("Parametric Curve")
     plt.legend()
     plt.grid(True)
+
+    # Ensure x and y axis grid units are equal
+    plt.gca().set_aspect('equal', adjustable='datalim')
+
+    # Optional: Adjust the limits to ensure the aspect ratio is enforced
+    plt.tight_layout()
+
     plt.show()
 
 
-def plot_boolean_grid(grid: BOOL2):
-    # Convert the boolean grid to integers for better visualization
-    int_grid: List[Z1] = [
-        [
-            1 if cell else 0
-            for cell in row
-        ]
-        for row in grid
-    ]
-
+def plot_num_grid(grid: Z2_MATRIX):
     # Plot the grid
     plt.figure(figsize=(8, 8))
-    plt.imshow(int_grid, cmap='Greys', origin='upper')
-    plt.colorbar(label="Shaded (1) / Unshaded (0)")
-    plt.title("Boolean Grid Visualization")
+    plt.imshow(grid, cmap='tab20c_r', origin='lower')
+    # plt.colorbar(label="Shaded (1) / Unshaded (0)")
+    plt.title("Int Grid Visualization")
     plt.xlabel("Column Index")
     plt.ylabel("Row Index")
 

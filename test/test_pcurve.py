@@ -1,39 +1,116 @@
 from typing import Tuple, List
+
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_parametric_bool_grid,
-    generate_multi_param_bool_grid
+    generate_parametric_num_grid,
+    generate_multi_param_num_grid
 )
-from xmath.plotfuncs import plot_boolean_grid, plot_parametric
+from xmath.plotfuncs import plot_num_grid, plot_parametric
 from xmath.structures import R2
 
 
 def _gen_bool_and_plot(coordinates: R2):
-    bool_grid = generate_parametric_bool_grid(coordinates)
+    bool_grid = generate_parametric_num_grid(coordinates)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)
 
-    origin = (shape[0] // 2 - 1, shape[1] // 2)
+    origin = (
+        int(round(shape[0] / 2, 0)) - 1,
+        int(round(shape[1] / 2, 0)) - 1
+    )
     print("Origin: ", origin)
 
-    plot_boolean_grid(bool_grid)
+    bool_grid[origin[0]][origin[1]] = len(coordinates)
+
+    plot_num_grid(bool_grid)
 
     plot_parametric([coordinates])
 
 
 def _gen_multi_bool_and_plot(mcoordinates: List[R2]):
-    bool_grid = generate_multi_param_bool_grid(mcoordinates)
+    bool_grid = generate_multi_param_num_grid(mcoordinates)
 
     shape: Tuple[int, int] = (len(bool_grid[0]), len(bool_grid))
     print("Shape: ", shape)
 
-    origin = (shape[0] // 2 - 1, shape[1] // 2)
+    origin = (
+        int(round(shape[0] / 2, 0)) - 1,
+        int(round(shape[1] / 2, 0)) - 1
+    )
     print("Origin: ", origin)
 
-    plot_boolean_grid(bool_grid)
+    bool_grid[origin[0]][origin[1]] = len(mcoordinates)
+
+    plot_num_grid(bool_grid)
 
     plot_parametric(mcoordinates)
+
+
+def test_multi_circle():
+    _R = 8
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 25
+
+    mcoords = [
+
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x, hs=0, vs=0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+    ]
+
+    _gen_multi_bool_and_plot(mcoords)
+
+
+def test_multi_circle_elipse():
+    _R = 18
+    _a = 20
+    _b = 16
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 25
+
+    mcoords = [
+
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R - x, hs=0, vs=0
+            # r=_R / x, hs=0, vs=0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+        if x % 2 == 1
+    ]
+
+    mcoords.extend([
+
+        generate_parametric_values(
+            "elipse",
+            _t_range,
+            _num_points,
+            _factor,
+            a=_a - x, b=_b - x, hs=0, vs=0
+            # a=_a / x, b=_b / x, hs=0, vs=0
+        )
+        for x
+        # in [2 ** y for y in range(15)]
+        in range(1, 16)
+        if x % 2 == 0
+    ])
+
+    _gen_multi_bool_and_plot(mcoords)
 
 
 def test_log_spiral():
@@ -49,7 +126,7 @@ def test_log_spiral():
         _t_range,
         _num_points,
         _factor,
-        _C, _L, 0, 0
+        C=_C, L=_L, hs=0, vs=0
     )
 
     _gen_bool_and_plot(coordinates)
@@ -68,7 +145,24 @@ def test_log_spiral_shift():
         _t_range,
         _num_points,
         _factor,
-        _C, _L, 10, 10
+        C=_C, L=_L, hs=15, vs=15
+    )
+
+    _gen_bool_and_plot(coordinates)
+
+
+def test_elipse():
+    # Example usage
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+
+    coordinates = generate_parametric_values(
+        "elipse",
+        _t_range,
+        _num_points,
+        _factor,
+        a=5, b=30, hs=0, vs=0
     )
 
     _gen_bool_and_plot(coordinates)
@@ -86,7 +180,7 @@ def test_circle():
         _t_range,
         _num_points,
         _factor,
-        _R, 0, 0
+        r=_R, hs=0, vs=0
     )
 
     _gen_bool_and_plot(coordinates)
@@ -104,7 +198,25 @@ def test_circle_shift():
         _t_range,
         _num_points,
         _factor,
-        _R, -10, -10
+        r=_R, hs=10, vs=10
+    )
+
+    _gen_bool_and_plot(coordinates)
+
+
+def test_circle_shift2():
+    # Example usage
+    _R = 10
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+
+    coordinates = generate_parametric_values(
+        "circle",
+        _t_range,
+        _num_points,
+        _factor,
+        r=_R, hs=5, vs=10
     )
 
     _gen_bool_and_plot(coordinates)
@@ -122,7 +234,7 @@ def test_asteroid_curve():
         _t_range,
         _num_points,
         _factor,
-        _C
+        C=_C
     )
 
     _gen_bool_and_plot(coordinates)
@@ -139,7 +251,7 @@ def test_epitrochoid_curve():
     coordinates: R2 = generate_parametric_values(
         "epitrochoid",
         _t_range, _num_points, _factor,
-        _c, _n
+        c=_c, n=_n
     )
 
     _gen_bool_and_plot(coordinates)
@@ -178,7 +290,7 @@ def test_log_spiral_circle():
             _t_range,
             _num_points,
             _factor,
-            _C, _L, 0, 0
+            C=_C, L=_L, hs=0, vs=0
         ),
 
         generate_parametric_values(
@@ -186,7 +298,7 @@ def test_log_spiral_circle():
             _t_range,
             _num_points,
             _factor,
-            _C, _L, -1, -1
+            C=_C, L=_L, hs=-1, vs=-1
         ),
 
         generate_parametric_values(
@@ -194,7 +306,7 @@ def test_log_spiral_circle():
             _t_range,
             _num_points,
             _factor,
-            _R, 0, 0
+            r=_R, hs=0, vs=0
         ),
 
         generate_parametric_values(
@@ -202,45 +314,25 @@ def test_log_spiral_circle():
             _t_range,
             _num_points,
             _factor,
-            _R, 1, 1
+            r=_R, hs=1, vs=1
         )
-    ]
-
-    _gen_multi_bool_and_plot(mcoords)
-
-
-def test_multi_circle():
-    _R = 8
-    _t_range = (0, 100)
-    _num_points = 1000
-    _factor = 25
-
-    mcoords = [
-
-        generate_parametric_values(
-            "circle",
-            _t_range,
-            _num_points,
-            _factor,
-            _R / x, 0, 0
-        )
-        for x
-        # in [2 ** y for y in range(15)]
-        in range(1, 16)
     ]
 
     _gen_multi_bool_and_plot(mcoords)
 
 
 if __name__ == "__main__":
+    # test_elipse()
     # test_log_spiral()
     # test_circle()
     # test_circle_shift()
+    # test_circle_shift2()
     # test_log_spiral_shift()
     # test_asteroid_curve()
     # test_epitrochoid_curve()
     # test_lemniscate_bernoulli_curve()
 
     # combination
-    test_log_spiral_circle()
-    test_multi_circle()
+    # test_log_spiral_circle()
+    # test_multi_circle()
+    test_multi_circle_elipse()

@@ -3,41 +3,45 @@ from enum import Enum
 
 class PlanetType(Enum):
     Terrestrial = (
-    "Rocky planet with a solid surface, often Earth-like", "Habitable", True)
+        "Rocky planet with a solid surface, often Earth-like", "Habitable",
+        True)
     GasGiant = (
-    "Large planet composed mostly of gases like hydrogen and helium",
-    "Uninhabitable", False)
+        "Large planet composed mostly of gases like hydrogen and helium",
+        "Uninhabitable", False)
     IcePlanet = ("Planet covered in ice, often with sub-zero temperatures",
                  "Habitable with adaptation", False)
     DesertPlanet = ("Arid planet with minimal water and extreme temperatures",
                     "Partially habitable", True)
     OceanPlanet = (
-    "Planet covered entirely by water with little or no land", "Habitable",
-    True)
+        "Planet covered entirely by water with little or no land", "Habitable",
+        True)
     VolcanicPlanet = (
-    "Planet with high volcanic activity and lava flows", "Uninhabitable",
-    False)
+        "Planet with high volcanic activity and lava flows", "Uninhabitable",
+        False)
     ArcticPlanet = (
-    "Frozen planet with polar conditions and minimal vegetation",
-    "Habitable with adaptation", False)
+        "Frozen planet with polar conditions and minimal vegetation",
+        "Habitable with adaptation", False)
     JunglePlanet = (
-    "Planet covered by dense forests and abundant vegetation", "Habitable",
-    True)
+        "Planet covered by dense forests and abundant vegetation", "Habitable",
+        True)
     ToxicPlanet = (
-    "Planet with a toxic atmosphere or surface, hostile to life",
-    "Uninhabitable", False)
+        "Planet with a toxic atmosphere or surface, hostile to life",
+        "Uninhabitable", False)
     RoguePlanet = (
-    "Planet not bound to any star, drifting through space", "Uninhabitable",
-    False)
+        "Planet not bound to any star, drifting through space",
+        "Uninhabitable",
+        False)
     ArtificialPlanet = (
-    "Planet created by advanced civilizations, e.g., Dyson Sphere",
-    "Super Habitable", True)
+        "Planet created by advanced civilizations, e.g., Dyson Sphere",
+        "Super Habitable", True)
     BarrenPlanet = (
-    "Lifeless planet with no atmosphere or surface activity", "Uninhabitable",
-    False)
+        "Lifeless planet with no atmosphere or surface activity",
+        "Uninhabitable",
+        False)
     TidallyLockedPlanet = (
-    "Planet with one side perpetually facing its star", "Partially habitable",
-    True)
+        "Planet with one side perpetually facing its star",
+        "Partially habitable",
+        True)
 
     def __init__(self, description, habitability, supports_life):
         self.description = description

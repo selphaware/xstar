@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class StellarType(Enum):
+class StarType(Enum):
     Star = (
         "A luminous ball of gas, mostly hydrogen and helium, undergoing "
         "nuclear fusion",
@@ -35,11 +35,11 @@ class StellarType(Enum):
         50,
         0.4,
     )
-    Supernova = (
-        "A powerful explosion marking the death of a massive star",
-        100,
-        0.6,
-    )
+    # Supernova = (
+    #    "A powerful explosion marking the death of a massive star",
+    #    100,
+    #    0.6,
+    # )
     Quasar = (
         "An extremely energetic active galactic nucleus powered by a "
         "supermassive black hole",
@@ -66,22 +66,6 @@ class StellarType(Enum):
         90,
         0.55,
     )
-    RoguePlanet = (
-        "A planet-like object not bound to a star, floating in space",
-        10,
-        0.1,
-    )
-    OortCloud = (
-        "A distant spherical shell of icy objects surrounding a star",
-        10,
-        0.05,
-    )
-    Comet = (
-        "A small icy body that heats up and forms a tail when approaching a "
-        "star",
-        10,
-        0.02,
-    )
 
     def __init__(self, description, energy, gravitational_strength):
         self.description = description
@@ -96,7 +80,7 @@ class StellarType(Enum):
 
 if __name__ == "__main__":
     # Example usage
-    stellar_object = StellarType.Pulsar
+    stellar_object = StarType.Pulsar
     print(
         stellar_object)  # Output: A rapidly spinning neutron star emitting
     # beams of electromagnetic radiation

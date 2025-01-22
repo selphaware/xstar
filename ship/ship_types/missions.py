@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Mission(Enum):
     Exploration = "Deep space exploration and discovery"
     Combat = "Offensive and defensive military operations"

@@ -5,13 +5,18 @@ from xmath.structures import EQN_STRUCT
 PARAMETRIC_EQNS: EQN_STRUCT = {
 
     "log_spiral": [  # used for galaxy deployment of systems
-        lambda t, C, L, h_shift, _: C * np.exp(L * t) * np.cos(t) + h_shift,
-        lambda t, C, L, _, v_shift: C * np.exp(L * t) * np.sin(t) + v_shift
+        lambda t, C, L, hs, vs: C * np.exp(L * t) * np.cos(t) + hs,
+        lambda t, C, L, hs, vs: C * np.exp(L * t) * np.sin(t) + vs
     ],
 
     "circle": [  # used for planetary system planet/objects/ships deployment
-        lambda t, r, h_shift, _: r * np.cos(t) + h_shift,
-        lambda t, r, _, v_shift: r * np.sin(t) + v_shift
+        lambda t, r, hs, vs: r * np.cos(t) + hs,
+        lambda t, r, hs, vs: r * np.sin(t) + vs
+    ],
+
+    "elipse": [
+        lambda t, a, hs, vs: a * np.cos(t) + hs,
+        lambda t, b, hs, vs: b * np.sin(t) + vs
     ],
 
     "asteroid_curve": [

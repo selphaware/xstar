@@ -1,9 +1,8 @@
-import random
 from typing import List, Optional
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from space.space_structures.system_sector import SystemSector
+from xmath.structures import Z2
 
 
 class Country(object):
@@ -22,17 +21,21 @@ class Country(object):
         self.energy = energy
 
 
-class Planet(SystemSector):
+class Planet(object):
     def __init__(
             self,
             name: str,
             faction: Faction,
             planet_type: PlanetType,
-            size: float = 1.0
+            size: float = 1.0,
+            motion_path: Optional[Z2] = None,
+            motion_decay: Optional[int] = None
     ):
-        super().__init__(name)
+        self.name = name
         self.faction: Faction = faction
         self.planet_type: PlanetType = planet_type
+        self.motion_path = motion_path,
+        self.motion_decay = motion_decay
 
         countries: List[Country] = []
         if planet_type.supports_life:
@@ -48,6 +51,8 @@ class Planet(SystemSector):
 
             elif planet_type.habitability == "Partially Habitable":
                 num_countries = 100 * size
+
+            num_countries = int(round(num_countries, 0))
 
             countries: List[Country] = [
                 Country(str(i)) for i in range(num_countries)
