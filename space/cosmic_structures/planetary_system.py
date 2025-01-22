@@ -27,6 +27,7 @@ class PlanetarySystem(object):
             num_planets: Optional[int] = None,
             evenly_spaced: bool = False
     ):
+        print("Starting to create star system: ", name)
         # main init
         self.name: str = name
         self.planets: Optional[List[Planet]] = None
@@ -80,6 +81,7 @@ class PlanetarySystem(object):
         grid: SystemSectorMatrix = SystemSectorMatrix(system_size)
 
         # place star at origin
+        print("Place star at the origin")
         grid.set_sector_name(self.origin, "Origin")
         grid.add_sector_object(self.origin, self.star)
 
@@ -179,6 +181,7 @@ class PlanetarySystem(object):
                 for i, x in enumerate(planet_types)
             ]
 
+        print(f"Created {num_planets} planets")
         self.planets = planets
 
     def initialise_star(
@@ -199,8 +202,22 @@ class PlanetarySystem(object):
                 100 if star_motion_decay is None else star_motion_decay
             )
 
+        print("Created star: ", star.name)
         self.star = star
 
     @property
     def num_planets(self):
         return len(self.planets)
+
+    def print_system_items_positions(self):
+        item_objs = (
+            [
+                [
+                    (i.name, y.position) for i in y.objects
+                ]
+                for x in self.matrix.sectors
+                for y in x if len(y.objects) > 0
+            ]
+        )
+        for item_obj in item_objs:
+            print(item_obj)
