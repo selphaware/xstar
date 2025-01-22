@@ -85,8 +85,8 @@ def test_multi_circle_elipse():
             _t_range,
             _num_points,
             _factor,
-            # r=_R - x, hs=0, vs=0
-            r=_R / x, hs=0, vs=0
+            r=_R - x, hs=0, vs=0
+            # r=_R / x, hs=0, vs=0
         )
         for x
         # in [2 ** y for y in range(15)]
@@ -101,8 +101,8 @@ def test_multi_circle_elipse():
             _t_range,
             _num_points,
             _factor,
-            # a=_a - x, b=_b - x, hs=0, vs=0
-            a=_a / x, b=_b / x, hs=0, vs=0
+            a=_a - x, b=_b - x, hs=0, vs=0
+            # a=_a / x, b=_b / x, hs=0, vs=0
         )
         for x
         # in [2 ** y for y in range(15)]

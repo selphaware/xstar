@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional
 from inspect import signature
 import numpy as np
 
-from structures import (
+from xmath.structures import (
     Lambda,
     R1, R2, R2_POS, Z2_POS,
     Z2,
