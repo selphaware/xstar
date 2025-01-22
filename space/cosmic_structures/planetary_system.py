@@ -105,6 +105,8 @@ class PlanetarySystem(object):
             grid.add_sector_object(sel_pos, _planets[planet_name])
 
         self.matrix: SystemSectorMatrix = grid
+        print("Shape: ", self.shape)
+        print("Origin: ", self.origin)
 
     def calculate_int_positions(self):
         position_grid = generate_multi_param_num_grid(
@@ -192,9 +194,8 @@ class PlanetarySystem(object):
             star_motion_decay: Optional[int] = None
     ):
         if star is None:
-            star_type: StarType = random.choice(
-                [x for x in StarType.__members__]
-            ) if star_type is None else star_type
+            star_type: StarType = random.choice(list(StarType)) \
+                if (star_type is None) else star_type
 
             star: Star = Star(
                 star_name,
@@ -202,7 +203,7 @@ class PlanetarySystem(object):
                 100 if star_motion_decay is None else star_motion_decay
             )
 
-        print("Created star: ", star.name)
+        print(f"Created star: {star.name}, Type: {star_type}")
         self.star = star
 
     @property
