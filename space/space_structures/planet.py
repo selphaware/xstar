@@ -52,6 +52,8 @@ class Planet(object):
             elif planet_type.habitability == "Partially Habitable":
                 num_countries = 100 * size
 
+            num_countries = int(round(num_countries, 0))
+
             countries: List[Country] = [
                 Country(str(i)) for i in range(num_countries)
             ]

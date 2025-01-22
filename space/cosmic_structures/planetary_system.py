@@ -127,6 +127,7 @@ class PlanetarySystem(object):
         time_range = (0, 100)
         num_points = 1000
         factor = 25
+        planet_range = range(1, self.num_planets + 1)
         dist_metric = lambda rator, denom: rator / denom \
             if evenly_spaced else rator - denom
 
@@ -138,7 +139,7 @@ class PlanetarySystem(object):
                 factor,
                 r=dist_metric(18, x), hs=0, vs=0
             )
-            for x in range(self.num_planets)
+            for x in planet_range
             if x % 2 == 1
         ]
 
@@ -151,7 +152,7 @@ class PlanetarySystem(object):
                 a=dist_metric(20, x), b=dist_metric(16, x),
                 hs=0, vs=0
             )
-            for x in range(self.num_planets)
+            for x in planet_range
             if x % 2 == 0
         ])
 
@@ -164,13 +165,13 @@ class PlanetarySystem(object):
                     if num_planets is None else num_planets
 
                 planet_types: List[PlanetType] = [
-                    random.choice([x for x in PlanetType.__members__])
+                    random.choice(list(PlanetType))
                     for _ in range(num_planets)
                 ]
 
             planets: List[Planet] = [
                 Planet(
-                    name=f"{x.name}-{i}",
+                    name=f"{str(x)}-{i}",
                     faction=random.choice([y for y in Faction.__members__]),
                     planet_type=x,
                     size=random.randint(10, 500) * .01

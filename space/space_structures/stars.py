@@ -1,4 +1,4 @@
-from star_types import StarType
+from space.space_structures.star_types import StarType
 
 
 class Star(object):
