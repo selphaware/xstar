@@ -28,7 +28,14 @@ def test_planetary_system_generation():
 
     print(f"\nShape: {ps.shape}, Origin: {ps.origin}")
 
-    print("\nAlice-1 star system has been generated.\n")
+    print("\nAlice-1 star system has been generated [ps].\n")
+
+    print("Creating a black hole system...")
+    bhole_sys = PlanetarySystem(
+        "A1", "PX3", None, StarType.BlackHole,
+        num_planets=50, evenly_spaced=True
+    )
+    print("Completed [bhole_sys].")
 
     pdb.set_trace()
 
