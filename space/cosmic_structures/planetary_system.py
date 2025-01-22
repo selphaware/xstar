@@ -9,7 +9,7 @@ from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_multi_param_num_grid
+    generate_multi_param_num_grid, calculate_positions
 )
 from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2
 
@@ -27,6 +27,7 @@ class PlanetarySystem(object):
             num_planets: Optional[int] = None,
             evenly_spaced: bool = False
     ):
+        print("Starting to create star system: ", name)
         # main init
         self.name: str = name
         self.planets: Optional[List[Planet]] = None
@@ -80,6 +81,7 @@ class PlanetarySystem(object):
         grid: SystemSectorMatrix = SystemSectorMatrix(system_size)
 
         # place star at origin
+        print("Place star at the origin")
         grid.set_sector_name(self.origin, "Origin")
         grid.add_sector_object(self.origin, self.star)
 
@@ -97,6 +99,7 @@ class PlanetarySystem(object):
 
         for planet_name, planet_path in planet_motion_paths.items():
             sel_pos: Z2_POS = random.choice(planet_path)
+            print(f"Placing planet {planet_name} to position {sel_pos}")
             grid.set_sector_name(sel_pos,
                                  f"System Sector of {planet_name}")
             grid.add_sector_object(sel_pos, _planets[planet_name])
@@ -110,11 +113,8 @@ class PlanetarySystem(object):
         self.int_positions = position_grid
 
         self.position_coords: List[Z2] = [
-            [
-                (int(round(x, 0)), int(round(y, 0)))
-                for (x, y) in prp
-            ]
-            for prp in self.real_positions
+            calculate_positions(planet_position_array)[0]
+            for planet_position_array in self.real_positions
         ]
 
         self.shape: Tuple[int, int] = (len(self.int_positions[0]),
@@ -181,6 +181,7 @@ class PlanetarySystem(object):
                 for i, x in enumerate(planet_types)
             ]
 
+        print(f"Created {num_planets} planets")
         self.planets = planets
 
     def initialise_star(
@@ -201,8 +202,22 @@ class PlanetarySystem(object):
                 100 if star_motion_decay is None else star_motion_decay
             )
 
+        print("Created star: ", star.name)
         self.star = star
 
     @property
     def num_planets(self):
         return len(self.planets)
+
+    def print_system_items_positions(self):
+        item_objs = (
+            [
+                [
+                    (i.name, y.position) for i in y.objects
+                ]
+                for x in self.matrix.sectors
+                for y in x if len(y.objects) > 0
+            ]
+        )
+        for item_obj in item_objs:
+            print(item_obj)

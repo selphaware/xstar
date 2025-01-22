@@ -32,20 +32,20 @@ class SystemSectorMatrix(object):
 
     def set_sector(self, position: Z2_POS, system_sector: SystemSector):
         x, y = position
-        self._sectors[x][y] = system_sector
+        self._sectors[y][x] = system_sector
 
     def set_sector_name(self, position: Z2_POS, name: str):
         x, y = position
-        self._sectors[x][y].name = name
+        self._sectors[y][x].name = name
 
     def set_sector_objects(self, position: Z2_POS, objects: SECTOR_OBJECTS):
         x, y = position
-        self._sectors[x][y].objects = objects
+        self._sectors[y][x].objects = objects
 
     def add_sector_object(self, position: Z2_POS, obj: SECTOR_OBJECT):
         x, y = position
-        self._sectors[x][y].objects.append(obj)
+        self._sectors[y][x].objects.append(obj)
 
     def get_sector(self, position: Z2_POS) -> SystemSector:
         x, y = position
-        return self._sectors[x][y]
+        return self._sectors[y][x]

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
@@ -9,13 +9,13 @@ class Country(object):
     def __init__(
             self,
             name: str,
-            morale: float = .65,
+            morale: Union[float, str] = .65,
             population: int = 1E6,
             food: int = 1E6,
             energy: int = 1E6
     ):
         self.name: str = name
-        self.morale: float = morale
+        self.morale: Union[float, str] = morale
         self.population = population
         self.food = food
         self.energy = energy
@@ -73,5 +73,25 @@ class Planet(object):
         return sum([x.food for x in self.countries])
 
     @property
-    def morale(self) -> float:
-        return sum([x.morale for x in self.countries]) / len(self.countries)
+    def morale(self) -> Union[float, str]:
+        if self.num_countries > 0:
+            return sum(
+                [x.morale for x in self.countries]
+            ) / len(self.countries)
+        else:
+            return "N/A"
+
+    @property
+    def num_countries(self) -> int:
+        return len(self.countries)
+
+    def print_info(self):
+        print(f"Planet Name: {self.name}")
+        print(f"Population: {self.population}")
+        print(f"Num. Countries: {self.num_countries}")
+        print(f"Food: {self.food}")
+        if isinstance(self.morale, float):
+            print(f"Morale: {self.morale * 100} %")
+        elif isinstance(self.morale, str):
+            print(f"Morale: {self.morale}")
+        print(f"Energy: {self.energy}")

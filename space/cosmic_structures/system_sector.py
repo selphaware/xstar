@@ -27,3 +27,12 @@ class SystemSector(object):
     @property
     def position(self):
         return self.pos
+
+    def print_info(self):
+        if not self.is_empty:
+            for obj in self.objects:
+                print(f"--- {obj.name} ---")
+                obj.print_info()
+                print("\n")
+        else:
+            print("Empty Space")

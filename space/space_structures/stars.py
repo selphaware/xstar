@@ -23,3 +23,9 @@ class Star(object):
     @property
     def gravitational_strength(self):
         return self.stellar_type.gravitational_strength
+
+    def print_info(self):
+        print(f"Star Name: {self.name}")
+        print(f"Star Type: {self.stype}")
+        print(f"Energy: {self.energy}")
+        print(f"Gravitational Strength: {self.gravitational_strength}")
