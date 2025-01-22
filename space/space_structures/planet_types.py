@@ -11,7 +11,7 @@ class PlanetType(Enum):
     IcePlanet = ("Planet covered in ice, often with sub-zero temperatures",
                  "Habitable with adaptation", False)
     DesertPlanet = ("Arid planet with minimal water and extreme temperatures",
-                    "Partially habitable", True)
+                    "Partially Habitable", True)
     OceanPlanet = (
         "Planet covered entirely by water with little or no land", "Habitable",
         True)
