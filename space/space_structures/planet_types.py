@@ -40,7 +40,7 @@ class PlanetType(Enum):
         False)
     TidallyLockedPlanet = (
         "Planet with one side perpetually facing its star",
-        "Partially habitable",
+        "Partially Habitable",
         True)
 
     def __init__(self, description, habitability, supports_life):
