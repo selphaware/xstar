@@ -322,17 +322,17 @@ def test_log_spiral_circle():
 
 
 if __name__ == "__main__":
-    #test_elipse()
-    #test_log_spiral()
-    #test_circle()
-    #test_circle_shift()
-    #test_circle_shift2()
-    #test_log_spiral_shift()
-    #test_asteroid_curve()
-    #test_epitrochoid_curve()
-    #test_lemniscate_bernoulli_curve()
+    # test_elipse()
+    # test_log_spiral()
+    # test_circle()
+    # test_circle_shift()
+    # test_circle_shift2()
+    # test_log_spiral_shift()
+    # test_asteroid_curve()
+    # test_epitrochoid_curve()
+    # test_lemniscate_bernoulli_curve()
 
     # combination
-    #test_log_spiral_circle()
-    #test_multi_circle()
+    # test_log_spiral_circle()
+    # test_multi_circle()
     test_multi_circle_elipse()

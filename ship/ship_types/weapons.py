@@ -4,7 +4,7 @@ from enum import Enum
 class PrimaryWeapon(Enum):
     PhaserArray = ("Phaser array capable of precision targeting", 90, 1e6)
     DisruptorCannons = (
-    "High-energy disruptor cannons for heavy damage", 85, 8e5)
+        "High-energy disruptor cannons for heavy damage", 85, 8e5)
     PlasmaBeams = ("Powerful plasma-based beam weaponry", 80, 7e5)
     QuantumTorpedoes = ("Advanced torpedoes with high energy yield", 95, 1e7)
     AntiprotonCannons = ("Devastating antiproton energy cannons", 100, 5e6)
@@ -22,7 +22,7 @@ class PrimaryWeapon(Enum):
 
 class SecondaryWeapon(Enum):
     PhotonTorpedoes = (
-    "Standard photon torpedoes for long-range combat", 75, 1e7)
+        "Standard photon torpedoes for long-range combat", 75, 1e7)
     QuantumMines = ("Stationary mines with quantum-level detonation", 70, 5e5)
     PlasmaTorpedoes = ("Torpedoes with plasma-based warheads", 65, 8e6)
     PulseCannons = ("Rapid-fire cannons with medium power output", 60, 1e4)

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Faction(Enum):
     Federation = "United Federation of Planets"
     Klingon = "Klingon Empire"

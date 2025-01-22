@@ -8,6 +8,7 @@ from ship.starship import StarShip
 SECTOR_OBJECT = Union[Star, Planet, StarShip]
 SECTOR_OBJECTS = List[SECTOR_OBJECT]
 
+
 class SystemSector(object):
     def __init__(
             self,

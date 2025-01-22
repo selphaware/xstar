@@ -2,12 +2,10 @@ import random
 from typing import List, Optional, Tuple
 
 from generic.factions import Faction
-from space.cosmic_structures.grid_structure import MATRIX_SYSTEM_SECTOR, \
-    SystemSectorMatrix
+from space.cosmic_structures.grid_structure import SystemSectorMatrix
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
-from space.cosmic_structures.system_sector import SystemSector
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
@@ -38,6 +36,7 @@ class PlanetarySystem(object):
         self.position_coords: Optional[List[Z2]] = None
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
+        self.matrix: Optional[SystemSectorMatrix] = None
 
         self.generate_planetary_system(
             star_name,
@@ -83,9 +82,24 @@ class PlanetarySystem(object):
         grid.set_sector_name(self.origin, "Origin")
         grid.add_sector_object(self.origin, self.star)
 
-        # place planets
+        # PLACE PLANETS
+        planet_motion_paths = {
+            self.planets[idx].name: planet_path
+            for idx, planet_path in enumerate(self.position_coords)
+        }
 
+        _planets = {
+            _planet.name: _planet
+            for _planet in self.planets
+        }
 
+        for planet_name, planet_path in planet_motion_paths.items():
+            sel_pos: Z2_POS = random.choice(planet_path)
+            grid.set_sector_name(sel_pos,
+                                 f"System Sector of {planet_name}")
+            grid.add_sector_object(sel_pos, _planets[planet_name])
+
+        self.matrix: SystemSectorMatrix = grid
 
     def calculate_int_positions(self):
         position_grid = generate_multi_param_num_grid(
@@ -113,7 +127,6 @@ class PlanetarySystem(object):
         time_range = (0, 100)
         num_points = 1000
         factor = 25
-        planets_range = range(1, self.num_planets + 1)
         dist_metric = lambda rator, denom: rator / denom \
             if evenly_spaced else rator - denom
 

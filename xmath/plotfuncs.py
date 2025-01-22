@@ -1,7 +1,7 @@
 from typing import List
 from matplotlib import pyplot as plt
 
-from xmath.structures import R2, R1, Z2_MATRIX, Z1
+from xmath.structures import R2, R1, Z2_MATRIX
 
 
 def plot_parametric(values: List[R2]):

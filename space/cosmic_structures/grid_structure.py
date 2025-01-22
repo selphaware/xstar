@@ -1,7 +1,8 @@
 from typing import List
 
-from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECTS, \
-    SECTOR_OBJECT
+from space.cosmic_structures.system_sector import (SystemSector,
+                                                   SECTOR_OBJECTS, \
+                                                   SECTOR_OBJECT)
 from xmath.structures import Z2_POS
 
 VECTOR_SYSTEM_SECTOR = List[SystemSector]
@@ -41,9 +42,9 @@ class SystemSectorMatrix(object):
         x, y = position
         self._sectors[x][y].objects = objects
 
-    def add_sector_object(self, position: Z2_POS, object: SECTOR_OBJECT):
+    def add_sector_object(self, position: Z2_POS, obj: SECTOR_OBJECT):
         x, y = position
-        self._sectors[x][y].objects.append(object)
+        self._sectors[x][y].objects.append(obj)
 
     def get_sector(self, position: Z2_POS) -> SystemSector:
         x, y = position
