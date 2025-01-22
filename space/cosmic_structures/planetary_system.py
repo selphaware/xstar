@@ -9,7 +9,7 @@ from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
 from xmath.pcurve import (
     generate_parametric_values,
-    generate_multi_param_num_grid
+    generate_multi_param_num_grid, calculate_positions
 )
 from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2
 
@@ -97,6 +97,7 @@ class PlanetarySystem(object):
 
         for planet_name, planet_path in planet_motion_paths.items():
             sel_pos: Z2_POS = random.choice(planet_path)
+            print(f"Placing planet {planet_name} to position {sel_pos}")
             grid.set_sector_name(sel_pos,
                                  f"System Sector of {planet_name}")
             grid.add_sector_object(sel_pos, _planets[planet_name])
@@ -110,11 +111,8 @@ class PlanetarySystem(object):
         self.int_positions = position_grid
 
         self.position_coords: List[Z2] = [
-            [
-                (int(round(x, 0)), int(round(y, 0)))
-                for (x, y) in prp
-            ]
-            for prp in self.real_positions
+            calculate_positions(planet_position_array)[0]
+            for planet_position_array in self.real_positions
         ]
 
         self.shape: Tuple[int, int] = (len(self.int_positions[0]),

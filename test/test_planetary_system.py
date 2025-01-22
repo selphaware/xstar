@@ -22,7 +22,7 @@ def test_planetary_system_generation():
         16,
         True
     )
-    print([y.objects for x in ps.matrix.sectors for y in x])
+    # print([y.objects for x in ps.matrix.sectors for y in x])
 
     print("\nItems: ")
     items = [
@@ -35,7 +35,7 @@ def test_planetary_system_generation():
         print(item)
 
     print("\nItem Names and Positions:")
-    item_names = (
+    item_objs = (
         [
             [
                 (i.name, y.position) for i in y.objects
@@ -44,8 +44,8 @@ def test_planetary_system_generation():
             for y in x if len(y.objects) > 0
         ]
     )
-    for item_name in item_names:
-        print(item_name)
+    for item_obj in item_objs:
+        print(item_obj)
 
     print(f"\nShape: {ps.shape}, Origin: {ps.origin}")
 

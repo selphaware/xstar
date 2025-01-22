@@ -76,31 +76,7 @@ def generate_parametric_num_grid(
         markers: List[Tuple[int, int]] = [(0, 1)]
 
     # int_vals ints from floats
-    int_vals: Z2 = [
-        (
-            int(round(x, 0)), int(round(y, 0))
-        )
-        for (x, y) in values
-    ]
-
-    # calc. offset (grid has to be in +ve region)
-    max_x: int = max([x[0] for x in int_vals])
-    max_y: int = max([y[1] for y in int_vals])
-    min_x: int = min([x[0] for x in int_vals])
-    min_y: int = min([y[1] for y in int_vals])
-
-    offset_x: int = -1 * min_x if min_x < 0 else 0
-    offset_y: int = -1 * min_y if min_y < 0 else 0
-
-    # adjust for offset
-    new_vals: Z2 = [
-        (x + offset_x, y + offset_y)
-        for (x, y) in int_vals
-    ]
-
-    # populate grid: True where there is a value, ow: False
-    range_x: range = range(max_x + offset_x + 1)
-    range_y: range = range(max_y + offset_y + 1)
+    new_vals, range_x, range_y = calculate_positions(values)
 
     grid: Z2_MATRIX = [[0 for _ in range_x] for _ in range_y]
     for idx, new_val in enumerate(new_vals):
@@ -112,3 +88,28 @@ def generate_parametric_num_grid(
         grid[y_index][x_index] = marker
 
     return grid
+
+
+def calculate_positions(values: R2) -> Tuple[Z2, range, range]:
+    int_vals: Z2 = [
+        (
+            int(round(x, 0)), int(round(y, 0))
+        )
+        for (x, y) in values
+    ]
+    # calc. offset (grid has to be in +ve region)
+    max_x: int = max([x[0] for x in int_vals])
+    max_y: int = max([y[1] for y in int_vals])
+    min_x: int = min([x[0] for x in int_vals])
+    min_y: int = min([y[1] for y in int_vals])
+    offset_x: int = -1 * min_x if min_x < 0 else 0
+    offset_y: int = -1 * min_y if min_y < 0 else 0
+    # adjust for offset
+    new_vals: Z2 = [
+        (x + offset_x, y + offset_y)
+        for (x, y) in int_vals
+    ]
+    # populate grid: True where there is a value, ow: False
+    range_x: range = range(max_x + offset_x + 1)
+    range_y: range = range(max_y + offset_y + 1)
+    return new_vals, range_x, range_y
