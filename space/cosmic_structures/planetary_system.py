@@ -2,6 +2,8 @@ import random
 from typing import List, Optional, Tuple
 
 from generic.factions import Faction
+from space.cosmic_structures.grid_structure import MATRIX_SYSTEM_SECTOR, \
+    SystemSectorMatrix
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
@@ -11,9 +13,7 @@ from xmath.pcurve import (
     generate_parametric_values,
     generate_multi_param_num_grid
 )
-from xmath.structures import Z2_POS, R2, Z2_MATRIX
-
-SYSTEM_SECTOR_MATRIX = List[List[SystemSector]]
+from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2
 
 
 class PlanetarySystem(object):
@@ -33,15 +33,16 @@ class PlanetarySystem(object):
         self.name: str = name
         self.planets: Optional[List[Planet]] = None
         self.star: Optional[Star] = None
-        self.planet_real_positions: Optional[List[R2]] = None
-        self.planet_int_positions: Optional[Z2_MATRIX] = None
+        self.real_positions: Optional[List[R2]] = None
+        self.int_positions: Optional[Z2_MATRIX] = None
+        self.position_coords: Optional[List[Z2]] = None
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
 
         self.generate_planetary_system(
             star_name,
             star,
-            star_type,star_motion_decay,
+            star_type, star_motion_decay,
             planets,
             planet_types,
             num_planets,
@@ -66,52 +67,55 @@ class PlanetarySystem(object):
         self.initialise_planets(planets, planet_types, num_planets)
 
         # Calculate planet positions
-        self.calculate_planet_real_positions()
+        self.calculate_real_positions(evenly_spaced)
 
         # Motion Paths (int positions of planets)
-        self.calculate_planet_int_positions()
+        self.calculate_int_positions()
 
         # initialise grid with empty sectors
-        grid: SYSTEM_SECTOR_MATRIX = [
-            [
-                SystemSector(
-                    # Empty Sector
-                    f"SYSTEM Sector {i, j}",
-                    (i, j),
-                    None
-                )
-                for j, val in enumerate(col)
-            ]
-            for i, col in enumerate(self.planet_int_positions)
-        ]
+        system_size: Z2_POS = (
+            len(self.int_positions[0]),
+            len(self.int_positions)
+        )
+        grid: SystemSectorMatrix = SystemSectorMatrix(system_size)
 
         # place star at origin
-        origin_sector = grid[self.origin[0]][self.origin[1]]
-        origin_sector.objects = [self.star]
+        grid.set_sector_name(self.origin, "Origin")
+        grid.add_sector_object(self.origin, self.star)
 
         # place planets
 
-        # TODO: Place planets now
 
-    def calculate_planet_int_positions(self):
+
+    def calculate_int_positions(self):
         position_grid = generate_multi_param_num_grid(
-            self.planet_real_positions
+            self.real_positions
         )
-        self.planet_int_positions = position_grid
+        self.int_positions = position_grid
 
-        self.shape: Tuple[int, int] = (len(self.planet_int_positions[0]),
-                                       len(self.planet_int_positions))
+        self.position_coords: List[Z2] = [
+            [
+                (int(round(x, 0)), int(round(y, 0)))
+                for (x, y) in prp
+            ]
+            for prp in self.real_positions
+        ]
+
+        self.shape: Tuple[int, int] = (len(self.int_positions[0]),
+                                       len(self.int_positions))
 
         self.origin: Z2_POS = (
             int(round(self.shape[0] / 2, 0)) - 1,
             int(round(self.shape[1] / 2, 0)) - 1
         )
 
-    def calculate_planet_real_positions(self):
+    def calculate_real_positions(self, evenly_spaced: bool = False):
         time_range = (0, 100)
         num_points = 1000
         factor = 25
         planets_range = range(1, self.num_planets + 1)
+        dist_metric = lambda rator, denom: rator / denom \
+            if evenly_spaced else rator - denom
 
         planet_real_positions = [
             generate_parametric_values(
@@ -119,7 +123,7 @@ class PlanetarySystem(object):
                 time_range,
                 num_points,
                 factor,
-                r=18 / x, hs=0, vs=0
+                r=dist_metric(18, x), hs=0, vs=0
             )
             for x in range(self.num_planets)
             if x % 2 == 1
@@ -131,13 +135,14 @@ class PlanetarySystem(object):
                 time_range,
                 num_points,
                 factor,
-                a=20 / x, b=16 / x, hs=0, vs=0
+                a=dist_metric(20, x), b=dist_metric(16, x),
+                hs=0, vs=0
             )
             for x in range(self.num_planets)
             if x % 2 == 0
         ])
 
-        self.planet_real_positions = planet_real_positions
+        self.real_positions = planet_real_positions
 
     def initialise_planets(self, planets, planet_types, num_planets):
         if planets is None:
