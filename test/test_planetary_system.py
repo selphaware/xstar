@@ -11,7 +11,7 @@ def test_planetary_system_generation():
         "Alice-1",
 
         # star
-        "Nixiru Star",
+        "Nixiru",
         None,
         StarType.Star,
         100,
@@ -24,18 +24,18 @@ def test_planetary_system_generation():
     )
     # print([y.objects for x in ps.matrix.sectors for y in x])
 
-    ps.print_system_items_positions()
+    # ps.print_info()
 
     print(f"\nShape: {ps.shape}, Origin: {ps.origin}")
 
     print("\nAlice-1 star system has been generated [ps].\n")
 
     print("Creating a black hole system...")
-    bhole_sys = PlanetarySystem(
-        "A1", "PX3", None, StarType.BlackHole,
+    bs = PlanetarySystem(
+        "PX3", "PX3", None, StarType.BlackHole,
         num_planets=50, evenly_spaced=True
     )
-    print("Completed [bhole_sys].")
+    print("Completed [ps, bs].")
 
     pdb.set_trace()
 

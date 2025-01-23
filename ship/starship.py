@@ -39,6 +39,7 @@ class StarShip(object):
     ):
         self.name: str = name
         self.faction: Faction = faction
+        self.instance_of: str = f"STARSHIP: {faction}"
         self.designation: str = designation
         self.captain: str = captain
         self.mission_type: Mission = mission_type
@@ -60,6 +61,8 @@ class StarShip(object):
         self.impulse_engine = impulse_engine
         self.warp_speed: float = 0.0
         self.impulse_speed: float = 0.0
+
+        self.position: Z2_POS = (0, 0)
 
     def cloak(self, toggle: str) -> None:
         if self.cloak_available:

@@ -16,9 +16,30 @@ class SystemSector(object):
             pos: Z2_POS,
             objects: Optional[SECTOR_OBJECTS] = None
     ):
-        self.name: str = name
+        self.name: str = name + " System Sector"
         self.pos: Z2_POS = pos
         self.objects: SECTOR_OBJECTS = [] if objects is None else objects
+
+    def get_object(self, name: str) -> SECTOR_OBJECT:
+        idx_get: int = [
+            idx for idx, x in enumerate(self.objects) if x.name == name
+        ][0]
+        return self.objects[idx_get]
+
+    def add_object(self, obj: SECTOR_OBJECT) -> None:
+        print(
+            f"Adding {obj.instance_of}: {obj.name} in {self.pos} "
+            f": {self.name}"
+        )
+        obj.position = self.pos
+        self.objects.append(obj)
+
+    def remove_object(self, name: str):
+        print(f"Removing {name} from {self.name}")
+        idx_remove: int = [
+            idx for idx, x in enumerate(self.objects) if x.name == name
+        ][0]
+        self.objects.pop(idx_remove)
 
     @property
     def is_empty(self):

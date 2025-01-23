@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from xmath.structures import Z2
+from xmath.structures import Z2, Z2_POS
 
 
 class Country(object):
@@ -29,13 +29,16 @@ class Planet(object):
             planet_type: PlanetType,
             size: float = 1.0,
             motion_path: Optional[Z2] = None,
+            motion_index: Optional[int] = None,
             motion_decay: Optional[int] = None
     ):
         self.name = name
         self.faction: Faction = faction
-        self.planet_type: PlanetType = planet_type
+        self.instance_of: PlanetType = planet_type
         self.motion_path = motion_path,
         self.motion_decay = motion_decay
+        self.motion_index = motion_index
+        self.position: Z2_POS = (0, 0)
 
         countries: List[Country] = []
         if planet_type.supports_life:

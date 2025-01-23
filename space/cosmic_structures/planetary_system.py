@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Dict
 
 from generic.factions import Faction
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
+from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
@@ -81,7 +82,6 @@ class PlanetarySystem(object):
         grid: SystemSectorMatrix = SystemSectorMatrix(system_size)
 
         # place star at origin
-        print("Place star at the origin")
         grid.set_sector_name(self.origin, "Origin")
         grid.add_sector_object(self.origin, self.star)
 
@@ -92,16 +92,29 @@ class PlanetarySystem(object):
         }
         self.planet_motion_paths: Dict[str, Z2] = planet_motion_paths
 
-        _planets = {
+        _planets: Dict[str, Planet] = {
             _planet.name: _planet
             for _planet in self.planets
         }
 
         for planet_name, planet_path in planet_motion_paths.items():
-            sel_pos: Z2_POS = random.choice(planet_path)
-            print(f"Placing planet {planet_name} to position {sel_pos}")
-            grid.set_sector_name(sel_pos,
-                                 f"System Sector of {planet_name}")
+            # set motion path to planet
+            _planets[planet_name].motion_path = planet_path
+
+            # get random int for index
+            rnd_idx: int = random.randint(0, len(planet_path) - 1)
+
+            # set the motion index to planet
+            _planets[planet_name].motion_index = rnd_idx
+
+            # get the random position from motion path
+            sel_pos: Z2_POS = planet_path[rnd_idx]
+
+            # add planet to sector
+            grid.set_sector_name(
+                sel_pos,
+                f"System Sector of {planet_name}"
+            )
             grid.add_sector_object(sel_pos, _planets[planet_name])
 
         self.matrix: SystemSectorMatrix = grid
@@ -178,7 +191,8 @@ class PlanetarySystem(object):
                     name=f"{str(x)}-{i}",
                     faction=random.choice([y for y in Faction.__members__]),
                     planet_type=x,
-                    size=random.randint(10, 500) * .01
+                    size=random.randint(10, 500) * .01,
+                    motion_decay=self.star.motion_decay
                 )
                 for i, x in enumerate(planet_types)
             ]
@@ -199,8 +213,7 @@ class PlanetarySystem(object):
 
             star: Star = Star(
                 star_name,
-                star_type,
-                100 if star_motion_decay is None else star_motion_decay
+                star_type
             )
 
         print(f"Created star: {star.name}, Type: {star_type}")
@@ -210,11 +223,19 @@ class PlanetarySystem(object):
     def num_planets(self):
         return len(self.planets)
 
-    def print_system_items_positions(self):
+    def get_sector(self, _pos: Z2_POS) -> SystemSector:
+        return self.matrix.get_sector(_pos)
+
+    def get_object(self, _pos: Z2_POS, name: str) -> SECTOR_OBJECT:
+        return self.matrix.get_object(_pos, name)
+
+    def print_info(self):
         item_objs = (
             [
                 [
-                    (i.name, y.position) for i in y.objects
+                    (i.name,
+                     str(i.instance_of),
+                     y.position) for i in y.objects
                 ]
                 for x in self.matrix.sectors
                 for y in x if len(y.objects) > 0

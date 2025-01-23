@@ -1,4 +1,5 @@
 from space.space_structures.star_types import StarType
+from xmath.structures import Z2_POS
 
 
 class Star(object):
@@ -6,26 +7,30 @@ class Star(object):
             self,
             name: str,
             stellar_type: StarType,
-            motion_decay: int  # number of turns it moves on its path
     ):
-        self.name = name
+        self.name = name + " Star"
         self.stellar_type: StarType = stellar_type
-        self.motion_decay: int = motion_decay
+        self.position: Z2_POS = (0, 0)
 
     @property
     def energy(self):
         return self.stellar_type.energy
 
     @property
-    def stype(self):
+    def instance_of(self):
         return self.stellar_type.name
 
     @property
     def gravitational_strength(self):
         return self.stellar_type.gravitational_strength
 
+    @property
+    def motion_decay(self):
+        return self.stellar_type.motion_decay
+
     def print_info(self):
         print(f"Star Name: {self.name}")
-        print(f"Star Type: {self.stype}")
+        print(f"Star Type: {self.instance_of}")
         print(f"Energy: {self.energy}")
         print(f"Gravitational Strength: {self.gravitational_strength}")
+        print(f"Motion Decay: {self.motion_decay}")
