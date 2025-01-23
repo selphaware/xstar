@@ -39,6 +39,7 @@ class PlanetarySystem(object):
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
         self.planet_motion_paths: Optional[Dict[str, Z2]] = None
+        self.planet_motion_indexes: Dict[str, int] = {}
         self.matrix: Optional[SystemSectorMatrix] = None
 
         self.generate_planetary_system(
@@ -106,6 +107,13 @@ class PlanetarySystem(object):
 
             # set the motion index to planet
             _planets[planet_name].motion_index = rnd_idx
+            self.planet_motion_indexes[planet_name] = rnd_idx
+            # TODO: the indexes and paths should just in the
+            #  sector objects themselves.
+            #  SO - when we increment the turn number then
+            #  we increment each of the sector object indexes
+            #  THEN: Refreshing the system will get the updated
+            #  positions and update the Matrix.
 
             # get the random position from motion path
             sel_pos: Z2_POS = planet_path[rnd_idx]
