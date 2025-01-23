@@ -11,6 +11,7 @@ MATRIX_SYSTEM_SECTOR = List[VECTOR_SYSTEM_SECTOR]
 
 class SystemSectorMatrix(object):
     def __init__(self, size: Z2_POS):
+        print("Generating System Sector Matrix ...")
         x_max, y_max = size
 
         self._sectors: MATRIX_SYSTEM_SECTOR = [
@@ -44,8 +45,16 @@ class SystemSectorMatrix(object):
 
     def add_sector_object(self, position: Z2_POS, obj: SECTOR_OBJECT):
         x, y = position
-        self._sectors[y][x].objects.append(obj)
+        self._sectors[y][x].add_object(obj)
+
+    def remove_sector_object(self, position: Z2_POS, name: str):
+        x, y = position
+        self._sectors[y][x].remove_object(name)
 
     def get_sector(self, position: Z2_POS) -> SystemSector:
         x, y = position
         return self._sectors[y][x]
+
+    def get_object(self, position: Z2_POS, name: str) -> SECTOR_OBJECT:
+        x, y = position
+        return self._sectors[y][x].get_object(name)
