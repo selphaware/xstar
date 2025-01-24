@@ -22,6 +22,14 @@ def test_planetary_system_generation():
         True
     )
     # print([y.objects for x in ps.matrix.sectors for y in x])
+    wout = [
+        y.objects[0].name
+        if len(y.objects)
+        else ""
+        for x in ps.matrix.sectors for y in x
+    ]
+    with open("test/space.out", "w") as ff:
+        ff.write(str(wout))
 
     # ps.print_info()
 

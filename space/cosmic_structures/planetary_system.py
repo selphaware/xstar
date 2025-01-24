@@ -29,15 +29,18 @@ class PlanetarySystem(object):
     ):
         print("Starting to create star system: ", name)
         # main init
-        self.name: str = name
+        self.name: str = name + " System"
         self.planets: Optional[List[Planet]] = None
         self.star: Optional[Star] = None
-        self.real_positions: Optional[List[R2]] = None
-        self.int_positions: Optional[Z2_MATRIX] = None
-        self.position_coords: Optional[List[Z2]] = None
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
         self.matrix: Optional[SystemSectorMatrix] = None
+
+        # following are needed for the position calculations in
+        # generation of the system
+        self.real_positions: Optional[List[R2]] = None  # deleted later
+        self.int_positions: Optional[Z2_MATRIX] = None  # deleted later
+        self.position_coords: Optional[List[Z2]] = None  # deleted later
 
         self.generate_planetary_system(
             star_name,
@@ -48,6 +51,10 @@ class PlanetarySystem(object):
             num_planets,
             evenly_spaced
         )
+
+        del self.int_positions
+        del self.real_positions
+        del self.position_coords
 
     def generate_planetary_system(
             self,
@@ -124,10 +131,6 @@ class PlanetarySystem(object):
         self.matrix: SystemSectorMatrix = grid
         print("Shape: ", self.shape)
         print("Origin: ", self.origin)
-
-        del self.int_positions
-        del self.real_positions
-        del self.position_coords
 
     def calculate_int_positions(self):
         position_grid = generate_multi_param_num_grid(
