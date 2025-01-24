@@ -14,7 +14,6 @@ def test_planetary_system_generation():
         "Nixiru",
         None,
         StarType.Star,
-        100,
 
         # planets
         None,

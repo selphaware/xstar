@@ -22,7 +22,6 @@ class PlanetarySystem(object):
             star_name: str,
             star: Optional[Star] = None,
             star_type: Optional[StarType] = None,
-            star_motion_decay: Optional[int] = None,
             planets: Optional[List[Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
             num_planets: Optional[int] = None,
@@ -38,14 +37,12 @@ class PlanetarySystem(object):
         self.position_coords: Optional[List[Z2]] = None
         self.shape: Optional[Tuple[int, int]] = None
         self.origin: Optional[Tuple[int, int]] = None
-        self.planet_motion_paths: Optional[Dict[str, Z2]] = None
-        self.planet_motion_indexes: Dict[str, int] = {}
         self.matrix: Optional[SystemSectorMatrix] = None
 
         self.generate_planetary_system(
             star_name,
             star,
-            star_type, star_motion_decay,
+            star_type,
             planets,
             planet_types,
             num_planets,
@@ -57,14 +54,13 @@ class PlanetarySystem(object):
             star_name: str,
             star: Optional[Star] = None,
             star_type: Optional[StarType] = None,
-            star_motion_decay: Optional[int] = None,
             planets: Optional[List[Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
             num_planets: Optional[int] = None,
             evenly_spaced: bool = False
     ):
         # Initialise STAR
-        self.initialise_star(star_name, star, star_type, star_motion_decay)
+        self.initialise_star(star_name, star, star_type)
 
         # Initialise PLANETS
         self.initialise_planets(planets, planet_types, num_planets)
@@ -91,7 +87,7 @@ class PlanetarySystem(object):
             self.planets[idx].name: planet_path
             for idx, planet_path in enumerate(self.position_coords)
         }
-        self.planet_motion_paths: Dict[str, Z2] = planet_motion_paths
+        # self.planet_motion_paths: Dict[str, Z2] = planet_motion_paths
 
         _planets: Dict[str, Planet] = {
             _planet.name: _planet
@@ -107,7 +103,7 @@ class PlanetarySystem(object):
 
             # set the motion index to planet
             _planets[planet_name].motion_index = rnd_idx
-            self.planet_motion_indexes[planet_name] = rnd_idx
+            # self.planet_motion_indexes[planet_name] = rnd_idx
             # TODO: the indexes and paths should just in the
             #  sector objects themselves.
             #  SO - when we increment the turn number then
@@ -128,6 +124,10 @@ class PlanetarySystem(object):
         self.matrix: SystemSectorMatrix = grid
         print("Shape: ", self.shape)
         print("Origin: ", self.origin)
+
+        del self.int_positions
+        del self.real_positions
+        del self.position_coords
 
     def calculate_int_positions(self):
         position_grid = generate_multi_param_num_grid(
@@ -213,7 +213,6 @@ class PlanetarySystem(object):
             star_name: str,
             star: Optional[Star] = None,
             star_type: Optional[StarType] = None,
-            star_motion_decay: Optional[int] = None
     ):
         if star is None:
             star_type: StarType = random.choice(list(StarType)) \
