@@ -7,8 +7,9 @@ from space.cosmic_structures.functions.calculate import (
     calculate_int_positions
 )
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
-from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT, \
-    SECTOR_OBJECTS
+from space.cosmic_structures.system_sector import (SystemSector,
+                                                   SECTOR_OBJECT, \
+                                                   SECTOR_OBJECTS)
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
@@ -135,11 +136,6 @@ class PlanetarySystem(object):
                     self.objects_path[_planet]
                 )
                 new_pos = self.object_positions[_planet]
-
-                # update planet position
-                # TODO: MAYBE we dont need object positions since we have them
-                #  here already
-                self.planets[_planet].position = new_pos
 
                 if refresh_grid:
                     self.matrix.add_sector_object(

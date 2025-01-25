@@ -62,8 +62,6 @@ class StarShip(object):
         self.warp_speed: float = 0.0
         self.impulse_speed: float = 0.0
 
-        self.position: Z2_POS = (0, 0)
-
     def cloak(self, toggle: str) -> None:
         if self.cloak_available:
             toggle = toggle.upper()
