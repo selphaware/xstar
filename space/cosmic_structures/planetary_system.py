@@ -6,10 +6,6 @@ from space.cosmic_structures.functions.calculate import (
     calculate_real_positions,
     calculate_int_positions
 )
-from space.cosmic_structures.functions.gridf import (
-    initialise_grid,
-    add_object_to_grid
-)
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
 from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT
 from space.space_structures.planet_types import PlanetType
@@ -33,6 +29,7 @@ class PlanetarySystem(object):
     ):
         print("Starting to create star system: ", name)
         # main init
+        self.epoch: int = 0
         self.name: str = name + " System"
         self.planets: Optional[Dict[str, Planet]] = None
         self.planets_motion_path: Dict[str, Z2] = {}
@@ -79,6 +76,42 @@ class PlanetarySystem(object):
 
         return ppos
 
+    @property
+    def motion_decay(self) -> int:
+        return self.star.motion_decay
+
+    @property
+    def planet_names(self) -> List[str]:
+        return [x for x in self.planets.keys()]
+
+    def turn(self, refresh_grid: bool = False):
+        if (self.epoch > 0) and (self.epoch % self.star.motion_decay == 0):
+            # move all objects on next motion path
+            # TODO: do for all inc. ships (perhaps make planet generic to obj?)
+            for _planet in self.planet_names:
+                if refresh_grid:
+                    curr_pos = self.planet_positions[_planet]
+                    self.matrix.remove_sector_object(
+                        curr_pos,
+                        _planet
+                    )
+
+                self.planets_motion_index[_planet] += 1
+                new_pos = self.planet_positions[_planet]
+
+                # update planet position
+                # TODO: MAYBE we dont need object positions since we have them
+                #  here already
+                self.planets[_planet].position = new_pos
+
+                if refresh_grid:
+                    self.matrix.add_sector_object(
+                        new_pos,
+                        self.planets[_planet]
+                    )
+
+        self.epoch += 1
+
     def generate_planetary_system(
             self,
             star_name: str,
@@ -116,26 +149,23 @@ class PlanetarySystem(object):
 
         # initialise grid with empty sectors
         grid_size = len(position_grid[0]), len(position_grid)
-        grid: SystemSectorMatrix = initialise_grid(grid_size)
+        self.matrix: SystemSectorMatrix = SystemSectorMatrix(grid_size)
 
         # place star at origin
-        add_object_to_grid(grid, self.origin, "Origin", self.star)
+        self.matrix.add_sector_object(self.origin, self.star)
 
         # Assign Planet Motion Paths + PLACE PLANETS
         self.assign_planet_motion_paths(
-            grid,
             position_coords,
             real_positions,
             True
         )
 
-        self.matrix: SystemSectorMatrix = grid
         print("Shape: ", self.shape)
         print("Origin: ", self.origin)
 
     def assign_planet_motion_paths(
             self,
-            grid: SystemSectorMatrix,
             position_coords: List[Z2],
             real_positions: List[R2],
             add_to_grid: bool = False
@@ -156,12 +186,7 @@ class PlanetarySystem(object):
 
             if add_to_grid:
                 # add to grid
-                add_object_to_grid(
-                    grid,
-                    sel_pos,
-                    f"System Sector of {_name}",
-                    _planet
-                )
+                self.matrix.add_sector_object(sel_pos, _planet)
 
     def initialise_planets(
             self,
