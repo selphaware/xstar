@@ -1,17 +1,21 @@
 import random
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Dict
 
 from generic.factions import Faction
+from space.cosmic_structures.functions.calculate import (
+    calculate_real_positions,
+    calculate_int_positions
+)
+from space.cosmic_structures.functions.gridf import (
+    initialise_grid,
+    add_object_to_grid
+)
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
 from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
-from xmath.pcurve import (
-    generate_parametric_values,
-    generate_multi_param_num_grid, calculate_positions
-)
 from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2
 
 
@@ -22,7 +26,7 @@ class PlanetarySystem(object):
             star_name: str,
             star: Optional[Star] = None,
             star_type: Optional[StarType] = None,
-            planets: Optional[List[Planet]] = None,
+            planets: Optional[Dict[str, Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
             num_planets: Optional[int] = None,
             evenly_spaced: bool = False
@@ -30,17 +34,14 @@ class PlanetarySystem(object):
         print("Starting to create star system: ", name)
         # main init
         self.name: str = name + " System"
-        self.planets: Optional[List[Planet]] = None
+        self.planets: Optional[Dict[str, Planet]] = None
+        self.planets_motion_path: Dict[str, Z2] = {}
+        self.planets_motion_real_path: Dict[str, R2] = {}
+        self.planets_motion_index: Dict[str, int] = {}
         self.star: Optional[Star] = None
-        self.shape: Optional[Tuple[int, int]] = None
-        self.origin: Optional[Tuple[int, int]] = None
+        self.shape: Optional[Z2_POS] = None
+        self.origin: Optional[Z2_POS] = None
         self.matrix: Optional[SystemSectorMatrix] = None
-
-        # following are needed for the position calculations in
-        # generation of the system
-        self.real_positions: Optional[List[R2]] = None  # deleted later
-        self.int_positions: Optional[Z2_MATRIX] = None  # deleted later
-        self.position_coords: Optional[List[Z2]] = None  # deleted later
 
         self.generate_planetary_system(
             star_name,
@@ -51,10 +52,6 @@ class PlanetarySystem(object):
             num_planets,
             evenly_spaced
         )
-
-        del self.int_positions
-        del self.real_positions
-        del self.position_coords
 
     def generate_planetary_system(
             self,
@@ -73,120 +70,79 @@ class PlanetarySystem(object):
         self.initialise_planets(planets, planet_types, num_planets)
 
         # Calculate planet positions
-        self.calculate_real_positions(evenly_spaced)
+        real_positions: List[R2] = calculate_real_positions(
+            self.num_planets,
+            evenly_spaced
+        )
 
         # Motion Paths (int positions of planets)
-        self.calculate_int_positions()
+        position_grid: Z2_MATRIX
+        position_coords: List[Z2]
+        shape: Z2_POS
+        origin: Z2_POS
+
+        position_grid, position_coords, shape, origin = (
+            calculate_int_positions(real_positions)
+        )
+
+        self.shape = shape
+        self.origin = origin
 
         # initialise grid with empty sectors
-        system_size: Z2_POS = (
-            len(self.int_positions[0]),
-            len(self.int_positions)
-        )
-        grid: SystemSectorMatrix = SystemSectorMatrix(system_size)
+        grid_size = len(position_grid[0]), len(position_grid)
+        grid: SystemSectorMatrix = initialise_grid(grid_size)
 
         # place star at origin
-        grid.set_sector_name(self.origin, "Origin")
-        grid.add_sector_object(self.origin, self.star)
+        add_object_to_grid(grid, self.origin, "Origin", self.star)
 
-        # PLACE PLANETS
-        planet_motion_paths = {
-            self.planets[idx].name: planet_path
-            for idx, planet_path in enumerate(self.position_coords)
-        }
-        # self.planet_motion_paths: Dict[str, Z2] = planet_motion_paths
-
-        _planets: Dict[str, Planet] = {
-            _planet.name: _planet
-            for _planet in self.planets
-        }
-
-        for planet_name, planet_path in planet_motion_paths.items():
-            # set motion path to planet
-            _planets[planet_name].motion_path = planet_path
-
-            # get random int for index
-            rnd_idx: int = random.randint(0, len(planet_path) - 1)
-
-            # set the motion index to planet
-            _planets[planet_name].motion_index = rnd_idx
-            # self.planet_motion_indexes[planet_name] = rnd_idx
-            # TODO: the indexes and paths should just in the
-            #  sector objects themselves.
-            #  SO - when we increment the turn number then
-            #  we increment each of the sector object indexes
-            #  THEN: Refreshing the system will get the updated
-            #  positions and update the Matrix.
-
-            # get the random position from motion path
-            sel_pos: Z2_POS = planet_path[rnd_idx]
-
-            # add planet to sector
-            grid.set_sector_name(
-                sel_pos,
-                f"System Sector of {planet_name}"
-            )
-            grid.add_sector_object(sel_pos, _planets[planet_name])
+        # Assign Planet Motion Paths + PLACE PLANETS
+        self.assign_planet_motion_paths(
+            grid,
+            position_coords,
+            real_positions,
+            True
+        )
 
         self.matrix: SystemSectorMatrix = grid
         print("Shape: ", self.shape)
         print("Origin: ", self.origin)
 
-    def calculate_int_positions(self):
-        position_grid = generate_multi_param_num_grid(
-            self.real_positions
-        )
-        self.int_positions = position_grid
-
-        self.position_coords: List[Z2] = [
-            calculate_positions(planet_position_array)[0]
-            for planet_position_array in self.real_positions
-        ]
-
-        self.shape: Tuple[int, int] = (len(self.int_positions[0]),
-                                       len(self.int_positions))
-
-        self.origin: Z2_POS = (
-            int(round(self.shape[0] / 2, 0)) - 1,
-            int(round(self.shape[1] / 2, 0)) - 1
-        )
-
-    def calculate_real_positions(self, evenly_spaced: bool = False):
-        time_range = (0, 100)
-        num_points = 1000
-        factor = 25
-        planet_range = range(1, self.num_planets + 1)
-        dist_metric = lambda rator, denom: rator - denom \
-            if evenly_spaced else rator / denom
-
-        planet_real_positions = [
-            generate_parametric_values(
-                "circle",
-                time_range,
-                num_points,
-                factor,
-                r=dist_metric(18, x), hs=0, vs=0
+    def assign_planet_motion_paths(
+            self,
+            grid: SystemSectorMatrix,
+            position_coords: List[Z2],
+            real_positions: List[R2],
+            add_to_grid: bool = False
+    ):
+        # Assign planet to a motion path, and
+        # assign a random position along the path
+        for idx, (_name, _planet) in enumerate(self.planets.items()):
+            self.planets_motion_path[_name] = position_coords[idx]
+            self.planets_motion_real_path[_name] = real_positions[idx]
+            self.planets_motion_index[_name] = random.randint(
+                0, len(self.planets_motion_path) - 1
             )
-            for x in planet_range
-            if x % 2 == 1
-        ]
 
-        planet_real_positions.extend([
-            generate_parametric_values(
-                "elipse",
-                time_range,
-                num_points,
-                factor,
-                a=dist_metric(20, x), b=dist_metric(16, x),
-                hs=0, vs=0
-            )
-            for x in planet_range
-            if x % 2 == 0
-        ])
+            # add planet to sector
+            sel_pos = self.planets_motion_path[_name][
+                self.planets_motion_index[_name]
+            ]
 
-        self.real_positions = planet_real_positions
+            if add_to_grid:
+                # add to grid
+                add_object_to_grid(
+                    grid,
+                    sel_pos,
+                    f"System Sector of {_name}",
+                    _planet
+                )
 
-    def initialise_planets(self, planets, planet_types, num_planets):
+    def initialise_planets(
+            self,
+            planets: Optional[Dict[str, Planet]] = None,
+            planet_types: Optional[List[PlanetType]] = None,
+            num_planets: Optional[int] = None
+    ):
         if planets is None:
             if planet_types is None:
                 num_planets: int = random.randint(5, 25) \
@@ -197,16 +153,15 @@ class PlanetarySystem(object):
                     for _ in range(num_planets)
                 ]
 
-            planets: List[Planet] = [
-                Planet(
+            planets: Dict[str, Planet] = {
+                f"{str(x)}-{i}": Planet(
                     name=f"{str(x)}-{i}",
                     faction=random.choice([y for y in Faction.__members__]),
                     planet_type=x,
                     size=random.randint(10, 500) * .01,
-                    motion_decay=self.star.motion_decay
                 )
                 for i, x in enumerate(planet_types)
-            ]
+            }
 
         print(f"Created {num_planets} planets")
         self.planets = planets
@@ -251,5 +206,6 @@ class PlanetarySystem(object):
                 for y in x if len(y.objects) > 0
             ]
         )
+
         for item_obj in item_objs:
             print(item_obj)

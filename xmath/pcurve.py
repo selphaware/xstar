@@ -76,7 +76,7 @@ def generate_parametric_num_grid(
         markers: List[Tuple[int, int]] = [(0, 1)]
 
     # int_vals ints from floats
-    new_vals, range_x, range_y = calculate_positions(values)
+    new_vals, range_x, range_y = calculate_offset_positions(values)
 
     grid: Z2_MATRIX = [[0 for _ in range_x] for _ in range_y]
     for idx, new_val in enumerate(new_vals):
@@ -90,7 +90,7 @@ def generate_parametric_num_grid(
     return grid
 
 
-def calculate_positions(values: R2) -> Tuple[Z2, range, range]:
+def calculate_offset_positions(values: R2) -> Tuple[Z2, range, range]:
     int_vals: Z2 = [
         (
             int(round(x, 0)), int(round(y, 0))
