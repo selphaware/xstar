@@ -7,7 +7,8 @@ from space.cosmic_structures.functions.calculate import (
     calculate_int_positions
 )
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
-from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT
+from space.cosmic_structures.system_sector import SystemSector, SECTOR_OBJECT, \
+    SECTOR_OBJECTS
 from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
@@ -29,12 +30,12 @@ class PlanetarySystem(object):
     ):
         print("Starting to create star system: ", name)
         # main init
-        self.epoch: int = 0
+        self.epoch: int = 1
         self.name: str = name + " System"
         self.planets: Optional[Dict[str, Planet]] = None
-        self.planets_motion_path: Dict[str, Z2] = {}
-        self.planets_motion_real_path: Dict[str, R2] = {}
-        self.planets_motion_index: Dict[str, int] = {}
+        self.objects_path: Dict[str, Z2] = {}
+        self.objects_real_path: Dict[str, R2] = {}
+        self.objects_position_index: Dict[str, int] = {}
         self.star: Optional[Star] = None
         self.shape: Optional[Z2_POS] = None
         self.origin: Optional[Z2_POS] = None
@@ -56,22 +57,22 @@ class PlanetarySystem(object):
 
     @property
     def star_position(self) -> Z2_POS:
-        return self.star.position
+        return self.object_positions[self.star.name]
 
     @property
-    def planet_positions(self) -> Dict[str, Z2_POS]:
+    def object_positions(self) -> Dict[str, Z2_POS]:
         ppos: Dict[str, Z2_POS] = {
-            _name: _path[self.planets_motion_index[_name]]
-            for _name, _path in self.planets_motion_path.items()
+            _name: _path[self.objects_position_index[_name]]
+            for _name, _path in self.objects_path.items()
         }
 
         return ppos
 
     @property
-    def planet_real_positions(self) -> Dict[str, R2_POS]:
+    def object_real_positions(self) -> Dict[str, R2_POS]:
         ppos: Dict[str, R2_POS] = {
-            _name: _path[self.planets_motion_index[_name]]
-            for _name, _path in self.planets_motion_real_path.items()
+            _name: _path[self.objects_position_index[_name]]
+            for _name, _path in self.objects_real_path.items()
         }
 
         return ppos
@@ -84,20 +85,56 @@ class PlanetarySystem(object):
     def planet_names(self) -> List[str]:
         return [x for x in self.planets.keys()]
 
+    @property
+    def object_names(self) -> List[str]:
+        return [self.star.name] + self.planet_names
+
+    @property
+    def objects(self) -> Dict[str, SECTOR_OBJECT]:
+        dret: Dict[str, SECTOR_OBJECT] = {
+            k: v for k, v in self.planets.items()
+        }
+        dret[self.star.name] = self.star
+
+        return dret
+
+    def get_objects_from_position(self, position: Z2_POS) -> SECTOR_OBJECTS:
+        objects: SECTOR_OBJECTS = [
+            self.objects[obj_name]
+            for obj_name, curr_pos in self.object_positions.items()
+            if position == curr_pos
+        ]
+
+        return objects
+
+    def get_object_names_from_position(
+            self, position: Z2_POS
+    ) -> List[str]:
+        object_names: List[str] = [
+            obj_name
+            for obj_name, curr_pos in self.object_positions.items()
+            if position == curr_pos
+        ]
+
+        return object_names
+
     def turn(self, refresh_grid: bool = False):
         if (self.epoch > 0) and (self.epoch % self.star.motion_decay == 0):
             # move all objects on next motion path
             # TODO: do for all inc. ships (perhaps make planet generic to obj?)
             for _planet in self.planet_names:
                 if refresh_grid:
-                    curr_pos = self.planet_positions[_planet]
+                    curr_pos = self.object_positions[_planet]
                     self.matrix.remove_sector_object(
                         curr_pos,
                         _planet
                     )
 
-                self.planets_motion_index[_planet] += 1
-                new_pos = self.planet_positions[_planet]
+                self.objects_position_index[_planet] += 1
+                self.objects_position_index[_planet] %= len(
+                    self.objects_path[_planet]
+                )
+                new_pos = self.object_positions[_planet]
 
                 # update planet position
                 # TODO: MAYBE we dont need object positions since we have them
@@ -111,6 +148,10 @@ class PlanetarySystem(object):
                     )
 
         self.epoch += 1
+
+    # TODO: PLOT POSITIONS + VECTOR ARROWS !!!!!
+
+    # TODO: MULTIPY ON ADDING LARGE NUM OF OBJECTS
 
     def generate_planetary_system(
             self,
@@ -161,6 +202,11 @@ class PlanetarySystem(object):
             True
         )
 
+        # add star to motion path variables
+        self.objects_path[self.star.name] = [self.origin]
+        self.objects_real_path[self.star.name] = [(0., 0.)]
+        self.objects_position_index[self.star.name] = 0
+
         print("Shape: ", self.shape)
         print("Origin: ", self.origin)
 
@@ -173,15 +219,15 @@ class PlanetarySystem(object):
         # Assign planet to a motion path, and
         # assign a random position along the path
         for idx, (_name, _planet) in enumerate(self.planets.items()):
-            self.planets_motion_path[_name] = position_coords[idx]
-            self.planets_motion_real_path[_name] = real_positions[idx]
-            self.planets_motion_index[_name] = random.randint(
-                0, len(self.planets_motion_path) - 1
+            self.objects_path[_name] = position_coords[idx]
+            self.objects_real_path[_name] = real_positions[idx]
+            self.objects_position_index[_name] = random.randint(
+                0, len(self.objects_path) - 1
             )
 
             # add planet to sector
-            sel_pos = self.planets_motion_path[_name][
-                self.planets_motion_index[_name]
+            sel_pos = self.objects_path[_name][
+                self.objects_position_index[_name]
             ]
 
             if add_to_grid:
@@ -204,9 +250,11 @@ class PlanetarySystem(object):
                     for _ in range(num_planets)
                 ]
 
+            name_trans = lambda _x, _i, _n: f"{str(_x)}-{_i} ({_n})"
+
             planets: Dict[str, Planet] = {
-                f"{str(x)}-{i}": Planet(
-                    name=f"{str(x)}-{i}",
+                name_trans(x, i, self.name): Planet(
+                    name=name_trans(x, i, self.name),
                     faction=random.choice([y for y in Faction.__members__]),
                     planet_type=x,
                     size=random.randint(10, 500) * .01,
@@ -241,18 +289,19 @@ class PlanetarySystem(object):
     def get_object(self, _pos: Z2_POS, name: str) -> SECTOR_OBJECT:
         return self.matrix.get_object(_pos, name)
 
-    def print_info(self):
-        item_objs = (
+    def print_info(self, full: bool = False):
+        item_objs = [
             [
-                [
-                    (i.name,
-                     str(i.instance_of),
-                     y.position) for i in y.objects
-                ]
-                for x in self.matrix.sectors
-                for y in x if len(y.objects) > 0
+                (
+                    w.name,
+                    str(w.instance_of),
+                    (i, j)
+                ) for w in x.objects
             ]
-        )
+            for j, y in enumerate(self.matrix.sectors)
+            for i, x in enumerate(y)
+            if len(x.objects) > 0 or full
+        ]
 
         for item_obj in item_objs:
-            print(item_obj)
+            print(item_obj, end=" " if full else "\n")

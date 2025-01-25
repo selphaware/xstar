@@ -9,6 +9,8 @@ VECTOR_SYSTEM_SECTOR = List[SystemSector]
 MATRIX_SYSTEM_SECTOR = List[VECTOR_SYSTEM_SECTOR]
 
 
+# TODO: DO NOT DO A PHYSICAL GRID, CALCULATE IT
+
 class SystemSectorMatrix(object):
     def __init__(self, size: Z2_POS):
         print("Generating System Sector Matrix ...")

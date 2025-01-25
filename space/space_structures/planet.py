@@ -33,7 +33,6 @@ class Planet(object):
         self.name = name
         self.faction: Faction = faction
         self.instance_of: PlanetType = planet_type
-        self.position: Z2_POS = (0, 0)
         self.size = size
 
         countries: List[Country] = []
@@ -94,7 +93,6 @@ class Planet(object):
 
     def print_info(self):
         print(f"Planet Name: {self.name}")
-        print(f"Position: {self.position}")
         print(f"Population: {self.population}")
         print(f"Num. Countries: {self.num_countries}")
         print(f"Food: {self.food}")

@@ -46,7 +46,7 @@ def test_planetary_system_generation():
 
     pdb.set_trace()
 
-    print("\nDestroying Alice-1 and Black Hole star systems...")
+    print("\nDestroying star systems...")
 
 
 if __name__ == "__main__":
