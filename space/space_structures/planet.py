@@ -101,5 +101,5 @@ class Planet(object):
         elif isinstance(self.morale, str):
             print(f"Morale: {self.morale}")
         print(f"Energy: {self.energy}")
-        print(f"Size Radius: {self.radius} KM")
-        print(f"Size Radius: {self.volume} KM^3")
+        print(f"Size (Radius): {self.radius} KM")
+        print(f"Size (Volume): {self.volume} KM^3")
