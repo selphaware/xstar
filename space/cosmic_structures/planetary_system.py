@@ -342,7 +342,7 @@ class PlanetarySystem(object):
                     name=name_trans(x, i, self.name),
                     faction=random.choice([y for y in Faction.__members__]),
                     planet_type=x,
-                    size=random.randint(500, 50_000) * .001,
+                    size=random.randint(5000, 50_0000) * .001,
                 )
                 for i, x in enumerate(planet_types)
             }

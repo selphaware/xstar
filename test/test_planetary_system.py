@@ -40,7 +40,7 @@ def test_planetary_system_generation():
     print("Creating a black hole system...")
     bs = PlanetarySystem(
         "PX3", "PX3", None, StarType.BlackHole,
-        num_planets=50, evenly_spaced=True
+        num_planets=100, evenly_spaced=True
     )
     print("Completed [ps, bs].")
 
