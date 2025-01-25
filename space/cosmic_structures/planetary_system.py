@@ -4,7 +4,8 @@ from typing import List, Optional, Dict
 from generic.factions import Faction
 from space.cosmic_structures.functions.calculate import (
     calculate_real_positions,
-    calculate_int_positions
+    calculate_int_positions, get_vector_between_positions,
+    get_distance_between_positions
 )
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
 from space.cosmic_structures.system_sector import (SystemSector,
@@ -79,6 +80,60 @@ class PlanetarySystem(object):
         return ppos
 
     @property
+    def next_object_positions(self) -> Dict[str, Z2_POS]:
+        ppos: Dict[str, Z2_POS] = {
+            _name: _path[
+                self.objects_position_index[_name] + 1 % len(
+                    self.objects_path[_name]
+                )
+                ]
+            for _name, _path in self.objects_path.items()
+        }
+
+        return ppos
+
+    @property
+    def next_object_real_positions(self) -> Dict[str, R2_POS]:
+        ppos: Dict[str, R2_POS] = {
+            _name: _path[
+                self.objects_position_index[_name] + 1 % len(
+                    self.objects_path[_name]
+                )
+                ]
+            for _name, _path in self.objects_real_path.items()
+        }
+
+        return ppos
+
+    @property
+    def next_object_vectors(self) -> Dict[str, Z2_POS]:
+        nvecs: Dict[str, Z2_POS] = {
+            _name:
+                (
+                    self.next_object_positions[_name][0] -
+                    self.object_positions[_name][0],
+
+                    self.next_object_positions[_name][1] -
+                    self.object_positions[_name][1]
+                )
+            for _name in self.object_names
+        }
+
+        return nvecs
+
+    @property
+    def next_object_real_vectors(self) -> Dict[str, R2_POS]:
+        nvecs: Dict[str, R2_POS] = {
+            _name: get_vector_between_positions(
+                self.next_object_real_positions[_name],
+                self.object_real_positions[_name]
+            )
+            for _name in self.object_names
+        }
+
+        return nvecs
+
+    @property
     def motion_decay(self) -> int:
         return self.star.motion_decay
 
@@ -88,6 +143,7 @@ class PlanetarySystem(object):
 
     @property
     def object_names(self) -> List[str]:
+        # TODO: + ships
         return [self.star.name] + self.planet_names
 
     @property
@@ -96,6 +152,7 @@ class PlanetarySystem(object):
             k: v for k, v in self.planets.items()
         }
         dret[self.star.name] = self.star
+        # TODO: + ships
 
         return dret
 
@@ -118,6 +175,38 @@ class PlanetarySystem(object):
         ]
 
         return object_names
+
+    def get_vector_between_objects(self, name1: str, name2: str) -> Z2_POS:
+        return get_vector_between_positions(
+            self.object_positions[name1],
+            self.object_positions[name2]
+        )
+
+    def get_real_vector_between_objects(
+            self, name1: str, name2: str
+    ) -> Z2_POS:
+        return get_vector_between_positions(
+            self.object_real_positions[name1],
+            self.object_real_positions[name2]
+        )
+
+    def get_distance_between_objects(
+            self, name1: str, name2: str
+    ) -> int:
+        return get_distance_between_positions(
+            self.object_positions[name1],
+            self.object_positions[name2],
+            roundit=True
+        )
+
+    def get_real_distance_between_objects(
+            self, name1: str, name2: str
+    ) -> float:
+        return get_distance_between_positions(
+            self.object_real_positions[name1],
+            self.object_real_positions[name2],
+            roundit=False
+        )
 
     def turn(self, refresh_grid: bool = False):
         if (self.epoch > 0) and (self.epoch % self.star.motion_decay == 0):

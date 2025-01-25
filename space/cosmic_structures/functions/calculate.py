@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from xmath.pcurve import (
     generate_multi_param_num_grid,
     calculate_offset_positions, generate_parametric_values
 )
-from xmath.structures import R2, Z2_MATRIX, Z2, Z2_POS
+from xmath.structures import R2, Z2_MATRIX, Z2, Z2_POS, R2_POS
 
 
 def calculate_int_positions(
@@ -67,3 +67,22 @@ def calculate_real_positions(
     ])
 
     return planet_real_positions
+
+
+def get_vector_between_positions(
+        x1: Union[Z2_POS, R2_POS],
+        x2: Union[Z2_POS, R2_POS]
+) -> Z2_POS:
+    return (x2[0] - x1[0], x2[1] - x1[0])
+
+
+def get_distance_between_positions(
+        x1: Union[Z2_POS, R2_POS],
+        x2: Union[Z2_POS, R2_POS],
+        roundit: bool = True
+) -> Union[float, int]:
+    a, b = get_vector_between_positions(x1, x2)
+    dist = ((a ** 2) + (b ** 2)) ** .5
+    dist = int(round(dist, 0)) if roundit else dist
+
+    return dist

@@ -85,7 +85,7 @@ class Planet(object):
 
     @property
     def radius(self) -> float:
-        return self.size * 10E5
+        return self.size * 1E3
 
     @property
     def volume(self) -> float:
