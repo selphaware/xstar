@@ -16,7 +16,7 @@ from space.space_structures.planet_types import PlanetType
 from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
-from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2
+from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2, R2_POS
 
 
 class PlanetarySystem(object):
@@ -52,6 +52,32 @@ class PlanetarySystem(object):
             num_planets,
             evenly_spaced
         )
+
+    @property
+    def num_planets(self) -> int:
+        return len(self.planets)
+
+    @property
+    def star_position(self) -> Z2_POS:
+        return self.star.position
+
+    @property
+    def planet_positions(self) -> Dict[str, Z2_POS]:
+        ppos: Dict[str, Z2_POS] = {
+            _name: _path[self.planets_motion_index[_name]]
+            for _name, _path in self.planets_motion_path.items()
+        }
+
+        return ppos
+
+    @property
+    def planet_real_positions(self) -> Dict[str, R2_POS]:
+        ppos: Dict[str, R2_POS] = {
+            _name: _path[self.planets_motion_index[_name]]
+            for _name, _path in self.planets_motion_real_path.items()
+        }
+
+        return ppos
 
     def generate_planetary_system(
             self,
@@ -183,10 +209,6 @@ class PlanetarySystem(object):
 
         print(f"Created star: {star.name}, Type: {star_type}")
         self.star = star
-
-    @property
-    def num_planets(self):
-        return len(self.planets)
 
     def get_sector(self, _pos: Z2_POS) -> SystemSector:
         return self.matrix.get_sector(_pos)
