@@ -73,7 +73,7 @@ def get_vector_between_positions(
         x1: Union[Z2_POS, R2_POS],
         x2: Union[Z2_POS, R2_POS]
 ) -> Z2_POS:
-    return (x2[0] - x1[0], x2[1] - x1[0])
+    return (x2[0] - x1[0], x2[1] - x1[1])
 
 
 def get_distance_between_positions(
