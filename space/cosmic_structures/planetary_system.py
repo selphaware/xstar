@@ -366,7 +366,7 @@ class PlanetarySystem(object):
             self.objects_path[_name] = position_coords[idx]
             self.objects_real_path[_name] = real_positions[idx]
             self.objects_position_index[_name] = random.randint(
-                0, len(self.objects_path) - 1
+                0, len(self.objects_path[_name]) - 1
             )
 
             # add planet to sector
