@@ -51,6 +51,8 @@ def generate_parametric_values(
         for (x, y) in results
     ]
 
+    # TODO:   generate  numpy array of tuples[int, int]'s
+
     return results
 
 
