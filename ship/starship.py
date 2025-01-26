@@ -63,7 +63,7 @@ class StarShip(object):
         self.impulse_speed: float = 0.0
 
         # motion
-        self.motion_vector: Z2_POS = (0, 0)
+        self._course_vector: Z2_POS = (0, 0)
 
         # position
         self.position: Optional[Z2_POS] = None
@@ -91,23 +91,20 @@ class StarShip(object):
             if self.impulse_engine.maximum_speed > speed else \
             self.impulse_engine.maximum_speed
 
-    def move(
-            self,
-            required_vector: Union[Z2_POS, R2_POS]
-    ) -> None:
+    @property
+    def motion_vector(self) -> Union[Z2_POS, R2_POS]:
+        required_vector: Z2_POS = self._course_vector
+
         sector_speed: float = self.impulse_speed * 10
         print("Sector Speed: ", sector_speed)
+
         required_sector_speed: float = calculate_magnitude(required_vector)
         print("Req: ", required_sector_speed)
+
         factor: float = sector_speed / required_sector_speed
 
         isint: bool = isinstance(required_sector_speed, int)
         isfloat: bool = isinstance(required_sector_speed, float)
-
-        if not (isint or isfloat):
-            raise ValueError("Required Vector must be Z2_POS or R2_POS")
-
-        print("Factor: ", factor)
 
         motion_vector: Union[Z2_POS, R2_POS] = (
             required_vector[0] * factor if isfloat else ceil(
@@ -118,6 +115,14 @@ class StarShip(object):
             ),
         )
 
-        self.motion_vector = motion_vector
+        return motion_vector
+
+    @property
+    def course_vector(self) -> Union[Z2_POS, R2_POS]:
+        return self._course_vector
+
+    @course_vector.setter
+    def course_vector(self, cv: Union[Z2_POS, R2_POS]):
+        self._course_vector = cv
 
     # TODO: SENSORS

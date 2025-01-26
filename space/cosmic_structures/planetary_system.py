@@ -17,8 +17,7 @@ from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
 from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2, R2_POS
-
-random.seed(41)
+from xmath.xrandom import random_int_generator
 
 
 class PlanetarySystem(object):
@@ -365,9 +364,11 @@ class PlanetarySystem(object):
         for idx, (_name, _planet) in enumerate(self.planets.items()):
             self.objects_path[_name] = position_coords[idx]
             self.objects_real_path[_name] = real_positions[idx]
-            self.objects_position_index[_name] = random.randint(
-                0, len(self.objects_path) - 1
+
+            rand_int_gen = random_int_generator(
+                0, len(self.objects_path[_name]) - 1
             )
+            self.objects_position_index[_name] = next(rand_int_gen)
 
             # add planet to sector
             sel_pos = self.objects_path[_name][
@@ -386,22 +387,30 @@ class PlanetarySystem(object):
     ):
         if planets is None:
             if planet_types is None:
-                num_planets: int = random.randint(5, 25) \
+                rand_int_gen = random_int_generator(5, 25)
+                num_planets: int = next(rand_int_gen) \
                     if num_planets is None else num_planets
 
+                rand_choice_gen = random_int_generator(
+                    0, len(list(PlanetType)) - 1
+                )
                 planet_types: List[PlanetType] = [
-                    random.choice(list(PlanetType))
+                    list(PlanetType)[next(rand_choice_gen)]
                     for _ in range(num_planets)
                 ]
 
             name_trans = lambda _x, _i, _n: f"{str(_x)}-{_i} ({_n})"
 
+            rand_int_gen = random_int_generator(5000, 500_000)
+            rand_choice_gen = random_int_generator(
+                0, len(list(Faction)) - 1
+            )
             planets: Dict[str, Planet] = {
                 name_trans(x, i, self.name): Planet(
                     name=name_trans(x, i, self.name),
-                    faction=random.choice([y for y in Faction.__members__]),
+                    faction=list(Faction)[next(rand_choice_gen)],
                     planet_type=x,
-                    size=random.randint(5000, 50_0000) * .001,
+                    size=next(rand_int_gen) * .001,
                 )
                 for i, x in enumerate(planet_types)
             }
@@ -416,7 +425,10 @@ class PlanetarySystem(object):
             star_type: Optional[StarType] = None,
     ):
         if star is None:
-            star_type: StarType = random.choice(list(StarType)) \
+            rand_choice_gen = random_int_generator(
+                0, len(list(StarType)) - 1
+            )
+            star_type: StarType = list(StarType)[next(rand_choice_gen)] \
                 if (star_type is None) else star_type
 
             star: Star = Star(
