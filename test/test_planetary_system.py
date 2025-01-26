@@ -27,17 +27,8 @@ def test_planetary_system_generation():
         16,
         True
     )
-    # print([y.objects for x in ps.matrix.sectors for y in x])
-    wout = [
-        y.objects[0].name
-        if len(y.objects)
-        else ""
-        for x in ps.matrix.sectors for y in x
-    ]
-    with open("test/space.out", "w") as ff:
-        ff.write(str(wout))
 
-    # ps.print_info()
+    ps.print_info()
 
     print(f"\nShape: {ps.shape}, Origin: {ps.origin}")
 
@@ -67,32 +58,35 @@ def test_planetary_system_generation():
         Faction.Klingon
     )
 
-    cs.add_ship(
-        StarShip(
-            "Shuttlecraft-0",
-            Faction.Federation,
-            "A-001",
-            "Usman Ahmad",
-            Mission.Scientific,
-            100,
-            Shields.Tachyon,
-            True,
-            [
-                PrimaryWeapon.PhaserArray,
-                PrimaryWeapon.DisruptorCannons
-            ],
-            [
-                SecondaryWeapon.QuantumMines,
-                SecondaryWeapon.PolaronBursts
-            ],
-            WarpEngine.StandardWarpDrive,
-            ImpulseEngine.FusionDrive
-        ),
-        cs.object_positions[cs.planet_names[0]],
-        True
+    ship_name = "Shuttlecraft-X1"
+
+    ship = StarShip(
+        ship_name,
+        Faction.Federation,
+        "A-001",
+        "Usman Ahmad",
+        Mission.Scientific,
+        100,
+        Shields.Tachyon,
+        True,
+        [
+            PrimaryWeapon.PhaserArray,
+            PrimaryWeapon.DisruptorCannons
+        ],
+        [
+            SecondaryWeapon.QuantumMines,
+            SecondaryWeapon.PolaronBursts
+        ],
+        WarpEngine.StandardWarpDrive,
+        ImpulseEngine.ExperimentalImpulse
     )
 
-    shuttle = cs.ships["Shuttlecraft-0 (A-001)"]
+    cs.add_ship(
+        ship,
+        cs.object_positions[cs.planet_names[0]]
+    )
+
+    shuttle = cs.ships[ship.name]
 
     cs.print_info()
 
