@@ -99,21 +99,25 @@ class StarShip(object):
         print("Sector Speed: ", sector_speed)
 
         required_sector_speed: float = calculate_magnitude(required_vector)
-        print("Req: ", required_sector_speed)
 
-        factor: float = sector_speed / required_sector_speed
+        motion_vector: Union[Z2_POS, R2_POS] = (0, 0)
 
-        isint: bool = isinstance(required_sector_speed, int)
-        isfloat: bool = isinstance(required_sector_speed, float)
+        if required_sector_speed > 0:
+            print("Req: ", required_sector_speed)
 
-        motion_vector: Union[Z2_POS, R2_POS] = (
-            required_vector[0] * factor if isfloat else ceil(
-                required_vector[0] * factor
-            ),
-            required_vector[1] * factor if isfloat else ceil(
-                required_vector[1] * factor
-            ),
-        )
+            factor: float = sector_speed / required_sector_speed
+
+            isint: bool = isinstance(required_sector_speed, int)
+            isfloat: bool = isinstance(required_sector_speed, float)
+
+            motion_vector: Union[Z2_POS, R2_POS] = (
+                required_vector[0] * factor if isfloat else ceil(
+                    required_vector[0] * factor
+                ),
+                required_vector[1] * factor if isfloat else ceil(
+                    required_vector[1] * factor
+                ),
+            )
 
         return motion_vector
 
