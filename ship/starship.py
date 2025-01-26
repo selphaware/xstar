@@ -1,11 +1,13 @@
-from typing import List, Optional
+from typing import List, Optional, Union
+from math import ceil
 
 from generic.factions import Faction
 from ship.ship_types.engines import WarpEngine, ImpulseEngine
 from ship.ship_types.missions import Mission
 from ship.ship_types.shields import Shields
 from ship.ship_types.weapons import PrimaryWeapon, SecondaryWeapon
-from xmath.structures import Z2_POS
+from space.cosmic_structures.functions.calculate import calculate_magnitude
+from xmath.structures import Z2_POS, R2_POS
 
 
 class StarShip(object):
@@ -23,7 +25,6 @@ class StarShip(object):
             # defence
             shields: Shields,
             cloaking_device: bool,
-            shields_version: int,
 
             # weapons
             primary_weapons: List[PrimaryWeapon],
@@ -37,15 +38,14 @@ class StarShip(object):
             # TODO: SENDORS
 
     ):
-        self.name: str = name
+        self.name: str = f"{name} ({designation})"
         self.faction: Faction = faction
-        self.instance_of: str = f"STARSHIP: {faction}"
+        self.instance_of: str = f"STARSHIP: {faction}"  # TODO: StarShipType
         self.designation: str = designation
         self.captain: str = captain
         self.mission_type: Mission = mission_type
 
         self.operational_range: int = operational_range
-        self.current_turnage: int = 0
 
         self.shields: Shields = shields
         self.shields_on: bool = False
@@ -61,6 +61,14 @@ class StarShip(object):
         self.impulse_engine = impulse_engine
         self.warp_speed: float = 0.0
         self.impulse_speed: float = 0.0
+
+        # motion
+        self.motion_vector: Z2_POS = (0, 0)
+
+        # position
+        self.position: Optional[Z2_POS] = None
+
+        # TODO: Add sensors to get info on system
 
     def cloak(self, toggle: str) -> None:
         if self.cloak_available:
@@ -78,7 +86,38 @@ class StarShip(object):
     def is_cloaked(self):
         return self.cloaked
 
-    def move(self, velocity: Z2_POS):
-        pass
+    def set_impulse_speed(self, speed: float):
+        self.impulse_speed = speed \
+            if self.impulse_engine.maximum_speed > speed else \
+            self.impulse_engine.maximum_speed
+
+    def move(
+            self,
+            required_vector: Union[Z2_POS, R2_POS]
+    ) -> None:
+        sector_speed: float = self.impulse_speed * 10
+        print("Sector Speed: ", sector_speed)
+        required_sector_speed: float = calculate_magnitude(required_vector)
+        print("Req: ", required_sector_speed)
+        factor: float = sector_speed / required_sector_speed
+
+        isint: bool = isinstance(required_sector_speed, int)
+        isfloat: bool = isinstance(required_sector_speed, float)
+
+        if not (isint or isfloat):
+            raise ValueError("Required Vector must be Z2_POS or R2_POS")
+
+        print("Factor: ", factor)
+
+        motion_vector: Union[Z2_POS, R2_POS] = (
+            required_vector[0] * factor if isfloat else ceil(
+                required_vector[0] * factor
+            ),
+            required_vector[1] * factor if isfloat else ceil(
+                required_vector[1] * factor
+            ),
+        )
+
+        self.motion_vector = motion_vector
 
     # TODO: SENSORS

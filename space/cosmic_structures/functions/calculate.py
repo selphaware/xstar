@@ -81,8 +81,28 @@ def get_distance_between_positions(
         x2: Union[Z2_POS, R2_POS],
         roundit: bool = True
 ) -> Union[float, int]:
-    a, b = get_vector_between_positions(x1, x2)
+    vec = get_vector_between_positions(x1, x2)
+    dist = calculate_magnitude(vec)
+
+    return dist
+
+
+def calculate_magnitude(
+        inx: Union[Z2_POS, R2_POS],
+        roundit: bool = True
+) -> Union[int, float]:
+    a, b = inx
     dist = ((a ** 2) + (b ** 2)) ** .5
     dist = int(round(dist, 0)) if roundit else dist
 
     return dist
+
+
+def add_vectors(
+        v1: Union[Z2_POS, R2_POS],
+        v2: Union[Z2_POS, R2_POS]
+) -> Union[Z2_POS, R2_POS]:
+    return (
+        v1[0] + v2[0],
+        v1[1] + v2[1]
+    )

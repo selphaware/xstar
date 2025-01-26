@@ -1,11 +1,12 @@
 import random
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 
 from generic.factions import Faction
+from ship.starship import StarShip
 from space.cosmic_structures.functions.calculate import (
     calculate_real_positions,
     calculate_int_positions, get_vector_between_positions,
-    get_distance_between_positions
+    get_distance_between_positions, add_vectors
 )
 from space.cosmic_structures.matrix_structure import SystemSectorMatrix
 from space.cosmic_structures.system_sector import (SystemSector,
@@ -16,6 +17,8 @@ from space.space_structures.stars import Star
 from space.space_structures.star_types import StarType
 from space.space_structures.planet import Planet
 from xmath.structures import Z2_POS, R2, Z2_MATRIX, Z2, R2_POS
+
+random.seed(41)
 
 
 class PlanetarySystem(object):
@@ -42,6 +45,7 @@ class PlanetarySystem(object):
         self.shape: Optional[Z2_POS] = None
         self.origin: Optional[Z2_POS] = None
         self.matrix: Optional[SystemSectorMatrix] = None
+        self.ships: Dict[str, StarShip] = {}
 
         self.generate_planetary_system(
             star_name,
@@ -56,6 +60,9 @@ class PlanetarySystem(object):
     @property
     def num_planets(self) -> int:
         return len(self.planets)
+
+    def num_ships(self) -> int:
+        return len(self.ships)
 
     @property
     def star_position(self) -> Z2_POS:
@@ -142,19 +149,42 @@ class PlanetarySystem(object):
         return [x for x in self.planets.keys()]
 
     @property
+    def ship_names(self) -> List[str]:
+        return [x for x in self.ships.keys()]
+
+    @property
     def object_names(self) -> List[str]:
-        # TODO: + ships
-        return [self.star.name] + self.planet_names
+        return [self.star.name] + self.planet_names + self.ship_names
 
     @property
     def objects(self) -> Dict[str, SECTOR_OBJECT]:
         dret: Dict[str, SECTOR_OBJECT] = {
             k: v for k, v in self.planets.items()
         }
+
         dret[self.star.name] = self.star
-        # TODO: + ships
+
+        dret.update({
+            k: v for k, v in self.ships.items()
+        })
 
         return dret
+
+    def add_ship(
+            self,
+            ship: StarShip,
+            _pos: Union[Z2_POS, R2_POS],
+            refresh_grid: bool = False
+    ) -> None:
+        print(f"Adding star ship {ship.name} to {_pos}")
+        self.ships[ship.name] = ship
+        self.objects_path[ship.name] = [_pos]
+        self.objects_position_index[ship.name] = 0
+        self.objects_real_path[ship.name] = [_pos]
+        ship.position = _pos
+
+        if refresh_grid:
+            self.matrix.add_sector_object(_pos, ship)
 
     def get_objects_from_position(self, position: Z2_POS) -> SECTOR_OBJECTS:
         objects: SECTOR_OBJECTS = [
@@ -209,30 +239,59 @@ class PlanetarySystem(object):
         )
 
     def turn(self, refresh_grid: bool = False):
+        # move all objects on next motion path
         if (self.epoch > 0) and (self.epoch % self.star.motion_decay == 0):
-            # move all objects on next motion path
-            # TODO: do for all inc. ships (perhaps make planet generic to obj?)
-            for _planet in self.planet_names:
-                if refresh_grid:
-                    curr_pos = self.object_positions[_planet]
-                    self.matrix.remove_sector_object(
-                        curr_pos,
-                        _planet
-                    )
+            # move planets if motion decay in play
+            self.turn_planets(refresh_grid)
 
-                self.objects_position_index[_planet] += 1
-                self.objects_position_index[_planet] %= len(
-                    self.objects_path[_planet]
-                )
-                new_pos = self.object_positions[_planet]
-
-                if refresh_grid:
-                    self.matrix.add_sector_object(
-                        new_pos,
-                        self.planets[_planet]
-                    )
+        # move ships along their motion paths
+        self.turn_ships(refresh_grid)
 
         self.epoch += 1
+
+    def turn_ships(self, refresh_grid: bool = False):
+        for _ship in self.ship_names:
+            curr_pos = self.object_positions[_ship]
+
+            if refresh_grid:
+                self.matrix.remove_sector_object(
+                    curr_pos,
+                    _ship
+                )
+
+            new_pos = add_vectors(
+                curr_pos,
+                self.ships[_ship].motion_vector
+            )
+            self.objects_path[_ship] = [new_pos]
+            self.ships[_ship].position = new_pos
+
+            if refresh_grid:
+                self.matrix.add_sector_object(
+                    new_pos,
+                    self.ships[_ship]
+                )
+
+    def turn_planets(self, refresh_grid: bool = False):
+        for _planet in self.planet_names:
+            if refresh_grid:
+                curr_pos = self.object_positions[_planet]
+                self.matrix.remove_sector_object(
+                    curr_pos,
+                    _planet
+                )
+
+            self.objects_position_index[_planet] += 1
+            self.objects_position_index[_planet] %= len(
+                self.objects_path[_planet]
+            )
+            new_pos = self.object_positions[_planet]
+
+            if refresh_grid:
+                self.matrix.add_sector_object(
+                    new_pos,
+                    self.planets[_planet]
+                )
 
     # TODO: PLOT POSITIONS + VECTOR ARROWS !!!!!
 
