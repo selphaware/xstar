@@ -12,11 +12,10 @@ SECTOR_OBJECTS = List[SECTOR_OBJECT]
 class SystemSector(object):
     def __init__(
             self,
-            name: str,
             pos: Z2_POS,
             objects: Optional[SECTOR_OBJECTS] = None
     ):
-        self.name: str = name + " System Sector"
+        self.name: str = "System Sector " + str(pos)
         self.pos: Z2_POS = pos
         self.objects: SECTOR_OBJECTS = [] if objects is None else objects
 
@@ -50,6 +49,8 @@ class SystemSector(object):
         return self.pos
 
     def print_info(self):
+        print(self.name)
+        print("==============")
         if not self.is_empty:
             for obj in self.objects:
                 print(f"--- {obj.name} ---")

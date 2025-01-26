@@ -21,7 +21,8 @@ class ImpulseEngine(Enum):
     FusionDrive = ("Standard fusion-powered impulse drive", 0.25)
     HighEfficiencyImpulse = ("High-efficiency impulse drive", 0.5)
     AdvancedIonDrive = ("Advanced ion-based impulse drive", 0.75)
-    ExperimentalImpulse = ("Experimental drive with extreme speeds", 0.9)
+    DilithiumPoweredDrive = ("Dilithium impulse drive", 1.0)
+    ExperimentalImpulse = ("Experimental drive with extreme speeds", 2.0)
 
     def __init__(self, description, maximum_speed):
         self.description = description

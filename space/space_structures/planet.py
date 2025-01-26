@@ -1,8 +1,9 @@
-from typing import List, Optional, Union
+from typing import List, Union
+from math import pi
 
 from generic.factions import Faction
 from space.space_structures.planet_types import PlanetType
-from xmath.structures import Z2, Z2_POS
+from xmath.structures import Z2_POS
 
 
 class Country(object):
@@ -28,17 +29,11 @@ class Planet(object):
             faction: Faction,
             planet_type: PlanetType,
             size: float = 1.0,
-            motion_path: Optional[Z2] = None,
-            motion_index: Optional[int] = None,
-            motion_decay: Optional[int] = None
     ):
         self.name = name
         self.faction: Faction = faction
         self.instance_of: PlanetType = planet_type
-        self.motion_path = motion_path,
-        self.motion_decay = motion_decay
-        self.motion_index = motion_index
-        self.position: Z2_POS = (0, 0)
+        self.size = size
 
         countries: List[Country] = []
         if planet_type.supports_life:
@@ -88,6 +83,14 @@ class Planet(object):
     def num_countries(self) -> int:
         return len(self.countries)
 
+    @property
+    def radius(self) -> float:
+        return self.size * 1E3
+
+    @property
+    def volume(self) -> float:
+        return (4 / 3) * pi * self.radius ** 3
+
     def print_info(self):
         print(f"Planet Name: {self.name}")
         print(f"Population: {self.population}")
@@ -98,3 +101,5 @@ class Planet(object):
         elif isinstance(self.morale, str):
             print(f"Morale: {self.morale}")
         print(f"Energy: {self.energy}")
+        print(f"Size (Radius): {self.radius} KM")
+        print(f"Size (Volume): {self.volume} KM^3")

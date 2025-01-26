@@ -10,7 +10,6 @@ class Star(object):
     ):
         self.name = name + " Star"
         self.stellar_type: StarType = stellar_type
-        self.position: Z2_POS = (0, 0)
 
     @property
     def energy(self):
