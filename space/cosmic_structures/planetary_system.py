@@ -1,4 +1,3 @@
-import random
 from typing import List, Optional, Dict, Union
 
 from generic.factions import Faction
@@ -30,7 +29,8 @@ class PlanetarySystem(object):
             planets: Optional[Dict[str, Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
             num_planets: Optional[int] = None,
-            evenly_spaced: bool = False
+            evenly_spaced: bool = False,
+            faction: Optional[Faction] = None
     ):
         print("Starting to create star system: ", name)
         # main init
@@ -53,7 +53,8 @@ class PlanetarySystem(object):
             planets,
             planet_types,
             num_planets,
-            evenly_spaced
+            evenly_spaced,
+            faction
         )
 
     @property
@@ -304,13 +305,14 @@ class PlanetarySystem(object):
             planets: Optional[List[Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
             num_planets: Optional[int] = None,
-            evenly_spaced: bool = False
+            evenly_spaced: bool = False,
+            faction: Optional[Faction] = None
     ):
         # Initialise STAR
         self.initialise_star(star_name, star, star_type)
 
         # Initialise PLANETS
-        self.initialise_planets(planets, planet_types, num_planets)
+        self.initialise_planets(planets, planet_types, num_planets, faction)
 
         # Calculate planet positions
         real_positions: List[R2] = calculate_real_positions(
@@ -383,7 +385,8 @@ class PlanetarySystem(object):
             self,
             planets: Optional[Dict[str, Planet]] = None,
             planet_types: Optional[List[PlanetType]] = None,
-            num_planets: Optional[int] = None
+            num_planets: Optional[int] = None,
+            faction: Optional[Faction] = None
     ):
         if planets is None:
             if planet_types is None:
@@ -402,13 +405,18 @@ class PlanetarySystem(object):
             name_trans = lambda _x, _i, _n: f"{str(_x)}-{_i} ({_n})"
 
             rand_int_gen = random_int_generator(5000, 500_000)
+
             rand_choice_gen = random_int_generator(
                 0, len(list(Faction)) - 1
             )
+
+            if faction is None:
+                faction = list(Faction)[next(rand_choice_gen)]
+
             planets: Dict[str, Planet] = {
                 name_trans(x, i, self.name): Planet(
                     name=name_trans(x, i, self.name),
-                    faction=list(Faction)[next(rand_choice_gen)],
+                    faction=faction,
                     planet_type=x,
                     size=next(rand_int_gen) * .001,
                 )

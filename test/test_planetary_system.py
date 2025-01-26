@@ -46,7 +46,7 @@ def test_planetary_system_generation():
     print("Creating a black hole system...")
     bs = PlanetarySystem(
         "PX3", "PX3", None, StarType.BlackHole,
-        num_planets=35, evenly_spaced=True
+        num_planets=35, evenly_spaced=True, faction=Faction.Ferengi
     )
     print("Completed [ps, bs].\n\n")
 
@@ -63,7 +63,8 @@ def test_planetary_system_generation():
         None,
         None,
         3,
-        False
+        False,
+        Faction.Klingon
     )
 
     cs.add_ship(
