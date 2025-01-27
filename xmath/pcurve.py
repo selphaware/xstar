@@ -23,7 +23,7 @@ def generate_parametric_values(
         factor: float,
         **parameter_values
 ) -> R2:
-    t_values: R1 = list(np.linspace(t_range[0], t_range[1], num_points))
+    t_values = np.linspace(t_range[0], t_range[1], num_points)
 
     equation: List[Lambda] = PARAMETRIC_EQNS[equation_type]
     eqn_x: Lambda = equation[0]
@@ -31,25 +31,17 @@ def generate_parametric_values(
     sig_x: List[str] = list(signature(eqn_x).parameters.keys())
     sig_y: List[str] = list(signature(eqn_y).parameters.keys())
 
-    results: R2 = []
-    for i, t in enumerate(t_values):
-        x: float = eqn_x(
-            t,
-            **{k: v for k, v in parameter_values.items() if k in sig_x}
-        )
+    x_vals = eqn_x(
+        t_values,
+        **{k: v for k, v in parameter_values.items() if k in sig_x}
+    ) * factor
 
-        y: float = eqn_y(
-            t,
-            **{k: v for k, v in parameter_values.items() if k in sig_y}
-        )
+    y_vals = eqn_y(
+        t_values,
+        **{k: v for k, v in parameter_values.items() if k in sig_y}
+    ) * factor
 
-        val: R2_POS = (x, y)
-        results.append(val)
-
-    results: R2 = [
-        (x * factor, y * factor)
-        for (x, y) in results
-    ]
+    results: R2 = np.c_[x_vals, y_vals]
 
     # TODO:   generate  numpy array of tuples[int, int]'s
 
