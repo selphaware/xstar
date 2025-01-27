@@ -9,6 +9,11 @@ PARAMETRIC_EQNS: EQN_STRUCT = {
         lambda t, C, L, hs, vs: C * np.exp(L * t) * np.sin(t) + vs
     ],
 
+    "log_spiral2": [  # used for galaxy deployment of systems
+        lambda t, C, L, rot, hs, vs: C * np.exp(L * t) * np.cos(rot * t) + hs,
+        lambda t, C, L, rot, hs, vs: C * np.exp(L * t) * np.sin(rot * t) + vs
+    ],
+
     "circle": [  # used for planetary system planet/objects/ships deployment
         lambda t, r, hs, vs: r * np.cos(t) + hs,
         lambda t, r, hs, vs: r * np.sin(t) + vs

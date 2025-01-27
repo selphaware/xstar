@@ -30,7 +30,7 @@ def calculate_int_positions(
     return position_grid, position_coords, shape, origin
 
 
-def calculate_real_positions(
+def calculate_planetary_sys_real_pos(
         num_planets: int,
         evenly_spaced: bool = False
 ) -> List[R2]:
@@ -68,6 +68,45 @@ def calculate_real_positions(
 
     return planet_real_positions
 
+
+# TODO: FINISH
+def calculate_galaxy_real_pos(
+        num_planets: int,
+        evenly_spaced: bool = False
+) -> List[R2]:
+    time_range = (0, 100)
+    num_points = 1000
+    factor = 25
+    planet_range = range(1, num_planets + 1)
+    dist_metric = lambda rator, denom: rator - denom \
+        if evenly_spaced else rator / denom
+
+    planet_real_positions = [
+        generate_parametric_values(
+            "circle",
+            time_range,
+            num_points,
+            factor,
+            r=dist_metric(18, x), hs=0, vs=0
+        )
+        for x in planet_range
+        if x % 2 == 1
+    ]
+
+    planet_real_positions.extend([
+        generate_parametric_values(
+            "elipse",
+            time_range,
+            num_points,
+            factor,
+            a=dist_metric(20, x), b=dist_metric(16, x),
+            hs=0, vs=0
+        )
+        for x in planet_range
+        if x % 2 == 0
+    ])
+
+    return planet_real_positions
 
 def get_vector_between_positions(
         x1: Union[Z2_POS, R2_POS],

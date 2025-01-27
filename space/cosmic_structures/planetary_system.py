@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Union
 from generic.factions import Faction
 from ship.starship import StarShip
 from space.cosmic_structures.functions.calculate import (
-    calculate_real_positions,
+    calculate_planetary_sys_real_pos,
     calculate_int_positions, get_vector_between_positions,
     get_distance_between_positions, add_vectors
 )
@@ -285,7 +285,7 @@ class PlanetarySystem(object):
         self.initialise_planets(planets, planet_types, num_planets, faction)
 
         # Calculate planet positions
-        real_positions: List[R2] = calculate_real_positions(
+        real_positions: List[R2] = calculate_planetary_sys_real_pos(
             self.num_planets,
             evenly_spaced
         )

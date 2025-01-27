@@ -5,11 +5,14 @@ from datetime import datetime
 from time import time
 
 
-def random_int_generator(a: int, b: int):
+def random_int_generator(a: int, b: int, unique: bool = False):
     idx = 0
+
+    visited = []
 
     while True:
         # seed code (unique on each yield iteration)
+
         seed_str = (
                 str(datetime.now())
                 + str(time())
@@ -18,7 +21,14 @@ def random_int_generator(a: int, b: int):
 
         random.seed(seed_str)
 
-        yield random.randint(a, b)
+        rnd_int = random.randint(a, b)
+        print(visited, rnd_int)
+
+        if (not unique) or (rnd_int not in visited):
+            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n\n\n")
+            yield rnd_int
+
+        visited.append(rnd_int)
 
         idx += 1
 
