@@ -430,6 +430,15 @@ def test_log_spiral3():
 
 
 def test_log_spiral4():
+    galaxy = generate_galaxy((0,0), 20)
+
+    plot_parametric(galaxy)
+
+
+def generate_galaxy(
+        origin: Tuple[int, int],
+        num_systems: int
+):
     # Example usage
     _C = 1
     _L = 0.075
@@ -442,22 +451,14 @@ def test_log_spiral4():
         _t_range,
         _num_points,
         _factor,
-        C=_C, L=_L, hs=0, vs=0
+        C=_C, L=_L, hs=origin[0], vs=origin[1]
     )
 
     magnitudes = np.array([
         calculate_magnitude(x, roundit=False) for x in coordinates
     ])
-
     min_mag, max_mag = min(magnitudes), max(magnitudes)
-
-    num_galaxies = 200
-
-    even_space = np.linspace(min_mag, max_mag, num_galaxies)
-
-    import pdb
-    pdb.set_trace()
-
+    even_space = np.linspace(min_mag, max_mag, num_systems)
     locations = [
         coordinates[bisect(list(magnitudes), x) - 1]
         for x in even_space
@@ -477,7 +478,7 @@ def test_log_spiral4():
             _t_range,
             _num_points,
             _factor,
-            r=_R / x, hs=o1, vs=o2
+            r=_R / x, hs=o1 + origin[0], vs=o2 + origin[1]
         )
         for (o1, o2) in locations
         for x in range(1, 16)
@@ -485,7 +486,7 @@ def test_log_spiral4():
 
     galaxy = [coordinates] + planets
 
-    plot_parametric(galaxy)
+    return galaxy
 
 
 if __name__ == "__main__":
