@@ -209,6 +209,51 @@ def test_log_spiral2():
 
     plot_parametric([coordinates])
 
+
+def test_log_spiral3():
+    # Example usage
+    _C = 1
+    _L = 0.075
+    _t_range = (0, 1_000)
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
+
+    coordinates = generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=0, vs=0
+    )
+
+    c3 = coordinates[0: 9500]
+    c4 = coordinates[9500:]
+
+    rnd_int3 = random_int_generator(0, len(c3) - 1, True)
+    rnd_int4 = random_int_generator(0, len(c4) - 1, True)
+
+    _R = 0.01
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+
+    planets = [
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x, hs=o1, vs=o2
+        )
+        for (o1, o2) in [(0, 0)] + [c4[next(rnd_int4)] for _ in range(200)]
+        for x in range(1, 16)
+    ]
+
+    galaxy = [coordinates] + planets
+
+    plot_parametric(galaxy)
+
+
 def test_elipse():
     # Example usage
     _t_range = (0, 100)
@@ -394,6 +439,8 @@ if __name__ == "__main__":
     # test_log_spiral_circle()
     # test_multi_circle()
     # test_multi_circle_elipse()
-    test_big_log_spirals()
-    test_log_spiral2()
+
+    # test_big_log_spirals()
+    test_log_spiral3()
+
     # test_multi_big_log_spirals()
