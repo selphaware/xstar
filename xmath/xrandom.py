@@ -22,10 +22,8 @@ def random_int_generator(a: int, b: int, unique: bool = False):
         random.seed(seed_str)
 
         rnd_int = random.randint(a, b)
-        print(visited, rnd_int)
 
         if (not unique) or (rnd_int not in visited):
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n\n\n")
             yield rnd_int
 
         visited.append(rnd_int)

@@ -161,7 +161,8 @@ def test_big_log_spirals():
     _factor = (10 ** -32) / 5
     print(_factor)
 
-    rnd = random_int_generator(1, 30, unique=True)
+    num_galaxies = 10
+    rnd = random_int_generator(-num_galaxies, num_galaxies, unique=True)
 
     coordinates = [generate_parametric_values(
         "log_spiral",
@@ -179,7 +180,7 @@ def test_big_log_spirals():
             _factor + (_i * _factor / 10),
             C=_C, L=_L, hs=next(rnd) / _factor, vs=next(rnd) / _factor
         )
-        for _i in range(15)
+        for _i in range(num_galaxies)
     ])
 
     for coordinate in coordinates:
@@ -190,48 +191,23 @@ def test_big_log_spirals():
     # _gen_bool_and_plot(coordinates)
 
 
-def test_multi_big_log_spirals():
+def test_log_spiral2():
     # Example usage
     _C = 1
-    _L = .075
+    _L = 0.075
     _t_range = (0, 1_000)
-    _num_points = 100_000
-    _factor = 1
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
 
-    universe_coordinates = [
-        generate_parametric_values(
-            "log_spiral",
-            _t_range,
-            _num_points,
-            _factor + (_i / 10),
-            C=_C, L=_L, hs=0, vs=0
-        )
-        for _i in range(10)
-    ]
+    coordinates = generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=0, vs=0
+    )
 
-    _C = 1
-    _L = .075
-    _t_range = (0, 1_0)
-    _num_points = 1_000
-    _factor = 1
-
-    universe_galaxy_coordinates = [
-        generate_parametric_values(
-            "log_spiral",
-            _t_range,
-            _num_points,
-            _factor + (_i / 10),
-            C=_C, L=_L, hs=o1, vs=o2
-        )
-        for coord_set in universe_coordinates
-        for _j, (o1, o2) in enumerate(coord_set)
-        for _i in range(10)
-        if (o1 + o1 >= 4) and (_j % 1000 == 0)
-    ]
-
-    plot_parametric(universe_galaxy_coordinates)
-    # _gen_bool_and_plot(coordinates)
-
+    plot_parametric([coordinates])
 
 def test_elipse():
     # Example usage
@@ -419,4 +395,5 @@ if __name__ == "__main__":
     # test_multi_circle()
     # test_multi_circle_elipse()
     test_big_log_spirals()
+    test_log_spiral2()
     # test_multi_big_log_spirals()
