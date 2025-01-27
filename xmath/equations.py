@@ -5,8 +5,8 @@ from xmath.structures import EQN_STRUCT
 PARAMETRIC_EQNS: EQN_STRUCT = {
 
     "log_spiral": [  # used for galaxy deployment of systems
-        lambda t, C, L, hs, vs: C * np.exp(L * t) * np.cos(t) + hs,
-        lambda t, C, L, hs, vs: C * np.exp(L * t) * np.sin(t) + vs
+        lambda t, C, L: C * np.exp(L * t) * np.cos(t),
+        lambda t, C, L: C * np.exp(L * t) * np.sin(t)
     ],
 
     "log_spiral2": [  # used for galaxy deployment of systems
@@ -15,8 +15,8 @@ PARAMETRIC_EQNS: EQN_STRUCT = {
     ],
 
     "circle": [  # used for planetary system planet/objects/ships deployment
-        lambda t, r, hs, vs: r * np.cos(t) + hs,
-        lambda t, r, hs, vs: r * np.sin(t) + vs
+        lambda t, r: r * np.cos(t),
+        lambda t, r: r * np.sin(t)
     ],
 
     "elipse": [

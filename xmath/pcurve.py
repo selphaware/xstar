@@ -41,7 +41,13 @@ def generate_parametric_values(
         **{k: v for k, v in parameter_values.items() if k in sig_y}
     ) * factor
 
-    results: R2 = np.c_[x_vals, y_vals]
+    h_shift = parameter_values.get("hs")
+    v_shift = parameter_values.get("vs")
+
+    h_shift = 0 if h_shift is None else h_shift
+    v_shift = 0 if v_shift is None else v_shift
+
+    results: R2 = np.c_[x_vals + h_shift, y_vals + v_shift]
 
     # TODO:   generate  numpy array of tuples[int, int]'s
 

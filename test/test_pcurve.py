@@ -4,7 +4,8 @@ from typing import Tuple, List
 
 import numpy as np
 
-from space.cosmic_structures.functions.calculate import calculate_magnitude
+from space.cosmic_structures.functions.calculate import calculate_magnitude, \
+    get_vector_between_positions
 from xmath.pcurve import (
     generate_parametric_values,
     generate_parametric_num_grid,
@@ -430,9 +431,18 @@ def test_log_spiral3():
 
 
 def test_log_spiral4():
-    galaxy = generate_galaxy((0,0), 20)
+    galaxy1 = generate_galaxy((0,0), 100)
+    galaxy2 = generate_galaxy((1,1), 100)
 
-    plot_parametric(galaxy)
+    plot_parametric(galaxy1 + galaxy2)
+
+
+def test_log_spiral5():
+    universe = []
+    for i in range(0, 60, 5):
+        universe.extend(generate_galaxy((i,i), 20))
+
+    plot_parametric(universe)
 
 
 def generate_galaxy(
@@ -455,9 +465,14 @@ def generate_galaxy(
     )
 
     magnitudes = np.array([
-        calculate_magnitude(x, roundit=False) for x in coordinates
+        calculate_magnitude(
+            get_vector_between_positions(origin, x),
+            roundit=False
+        )
+        for x in coordinates
     ])
     min_mag, max_mag = min(magnitudes), max(magnitudes)
+    print(f"min={min_mag}, max={max_mag}")
     even_space = np.linspace(min_mag, max_mag, num_systems)
     locations = [
         coordinates[bisect(list(magnitudes), x) - 1]
@@ -471,6 +486,7 @@ def generate_galaxy(
     _t_range = (0, 100)
     _num_points = 1000
     _factor = 1
+    _ofactor = (10 ** -32) / 5
 
     planets = [
         generate_parametric_values(
@@ -478,7 +494,9 @@ def generate_galaxy(
             _t_range,
             _num_points,
             _factor,
-            r=_R / x, hs=o1 + origin[0], vs=o2 + origin[1]
+            r=_R / x,
+            hs=o1,
+            vs=o2
         )
         for (o1, o2) in locations
         for x in range(1, 16)
@@ -506,6 +524,8 @@ if __name__ == "__main__":
     # test_multi_circle_elipse()
 
     # test_big_log_spirals()
+
     test_log_spiral4()
+    test_log_spiral5()
 
     # test_multi_big_log_spirals()
