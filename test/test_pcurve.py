@@ -5,7 +5,7 @@ from typing import Tuple, List
 import numpy as np
 
 from space.cosmic_structures.functions.calculate import calculate_magnitude, \
-    get_vector_between_positions
+    get_vector_between_positions, get_distance_between_positions
 from xmath.pcurve import (
     generate_parametric_values,
     generate_parametric_num_grid,
@@ -433,8 +433,8 @@ def test_log_spiral3():
 
 
 def test_log_spiral4():
-    galaxy1 = generate_galaxy((0,0), 100)
-    galaxy2 = generate_galaxy((1,1), 100)
+    galaxy1 = generate_galaxy((0, 0), 100)
+    galaxy2 = generate_galaxy((1, 1), 100)
 
     plot_parametric(galaxy1 + galaxy2)
 
@@ -443,7 +443,7 @@ def test_log_spiral5():
     universe = []
     for j in range(0, 60, 10):
         for i in range(0, 60, 10):
-            universe.extend(generate_galaxy((i,j), 20))
+            universe.extend(generate_galaxy((i, j), 20))
 
     plot_parametric(universe)
 
@@ -620,43 +620,65 @@ def generate_galaxy2(
 
 
 def generate_universe_parametric_values(
-        rand_size_range: Tuple[int, int] = (0, 60),
+        num_galaxies: int = 36,
         galaxy_density: int = 5,
         num_systems: int = 20,
         num_planet_orbits: int = 16
 ):
+    rand_size_range: Tuple[int, int] = (0, int(num_galaxies ** .5) * 10 + 1)
     universe = []
-    i_rand = random_int_generator(*rand_size_range)
-    j_rand = random_int_generator(*rand_size_range)
-    _ = next(i_rand)
-    for j in range(*rand_size_range, 10):
-        for i in range(*rand_size_range, 10):
-            universe.extend(generate_galaxy_parametric_values(
-                (next(i_rand), next(j_rand)),
-                galaxy_density,
-                num_systems,
-                num_planet_orbits
-            ))
+    i_rand = random_int_generator(*rand_size_range, seed="I_RAND")
+    j_rand = random_int_generator(*rand_size_range, seed="J_RAND")
+    rnd_factor = random_int_generator(5, 20, seed="FACTOR")
+
+    visited = []
+    for galaxy in range(num_galaxies):
+
+        origin = (0, 0)
+        galaxy_size = next(rnd_factor) / 10
+        for _ in range(10):
+            origin = (next(i_rand), next(j_rand))
+
+            too_close = [
+                get_distance_between_positions(origin, _x)
+                for _x in visited
+            ]
+
+            too_close = [_x for _x in too_close if _x < 6]
+
+            if len(too_close) == 0:
+                break
+
+        visited.append(origin)
+        universe.extend(generate_galaxy_parametric_values(
+            origin,
+            galaxy_density,
+            galaxy_size,
+            num_systems,
+            num_planet_orbits
+        ))
 
     print(universe)
 
     plot_parametric(universe)
 
+
 def generate_galaxy_parametric_values(
-        origin: Tuple[int, int],
+        origin: Tuple[int, int] = (0, 0),
         galaxy_density: int = 5,
+        galaxy_size: int = 1,
         num_systems: int = 20,
-        num_planet_orbits: int = 16
+        num_planet_orbits: int = 16,
 ):
-    # Example usage
+    # galaxy parametric parameters
     _C = 1
     _L = 0.075
     _t_range = (0, 1_000)
     _num_points = 10_000
-    _factor = (10 ** -32) / 5
+    _factor = ((10 ** -32) / 5) * galaxy_size
 
     coordinates = []
-    for x in range(5):
+    for x in range(galaxy_density):
         coordinates.append(generate_parametric_values(
             "log_spiral",
             _t_range,
@@ -700,13 +722,22 @@ def generate_galaxy_parametric_values(
     _factor = 1
     _ofactor = (10 ** -32) / 5
 
+    evenly_spaced_orbit = lambda _radius, _r_factor: _radius - (
+        _radius / _r_factor
+    )
+    expo_spaced_orbit = lambda _radius, _r_factor: _radius / _r_factor
+
     planets = [
         generate_parametric_values(
             "circle",
             _t_range,
             _num_points,
             _factor,
-            r=_R / x,
+            r=evenly_spaced_orbit(
+                _R, x
+            ) if x % 2 == 1 else expo_spaced_orbit(
+                _R, x
+            ),
             hs=o1,
             vs=o2
         )
@@ -746,8 +777,8 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     generate_universe_parametric_values(
-        (0, 100),
+        10,
         5,
-        50,
+        10,
         15
     )

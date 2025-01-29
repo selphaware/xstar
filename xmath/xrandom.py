@@ -5,7 +5,12 @@ from datetime import datetime
 from time import time
 
 
-def random_int_generator(a: int, b: int, unique: bool = False):
+def random_int_generator(
+        a: int,
+        b: int,
+        seed: str,
+        unique: bool = False
+):
     idx = 0
 
     visited = []
@@ -13,7 +18,7 @@ def random_int_generator(a: int, b: int, unique: bool = False):
     while True:
         # seed code (unique on each yield iteration)
 
-        seed_str = (
+        seed_str = seed + (
                 str(datetime.now())
                 + str(time())
                 + (str(idx + 1) * (idx + 1))
