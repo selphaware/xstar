@@ -142,9 +142,9 @@ def test_log_spiral():
 def test_log_spiral_shift():
     # Example usage
     _C = 1
-    _L = .075
-    _t_range = (0, 40)
-    _num_points = 1000
+    _L = .015
+    _t_range = (0, 250)
+    _num_points = 2000
     _factor = 1
 
     coordinates = generate_parametric_values(
@@ -155,7 +155,7 @@ def test_log_spiral_shift():
         C=_C, L=_L, hs=15, vs=15
     )
 
-    _gen_bool_and_plot(coordinates)
+    plot_parametric([coordinates])
 
 
 def test_big_log_spirals():
@@ -621,11 +621,10 @@ def generate_galaxy2(
 
 def generate_universe_parametric_values(
         num_galaxies: int = 36,
-        galaxy_density: int = 5,
         num_systems: int = 20,
         num_planet_orbits: int = 16
 ):
-    rand_size_range: Tuple[int, int] = (0, int(num_galaxies ** .5) * 10 + 1)
+    rand_size_range: Tuple[int, int] = (0, int(num_galaxies * 25))
     universe = []
     i_rand = random_int_generator(*rand_size_range, seed="I_RAND")
     j_rand = random_int_generator(*rand_size_range, seed="J_RAND")
@@ -636,7 +635,7 @@ def generate_universe_parametric_values(
 
         origin = (0, 0)
         galaxy_size = next(rnd_factor) / 10
-        for _ in range(10):
+        while True:
             origin = (next(i_rand), next(j_rand))
 
             too_close = [
@@ -644,7 +643,7 @@ def generate_universe_parametric_values(
                 for _x in visited
             ]
 
-            too_close = [_x for _x in too_close if _x < 6]
+            too_close = [_x for _x in too_close if _x < 10]
 
             if len(too_close) == 0:
                 break
@@ -652,7 +651,6 @@ def generate_universe_parametric_values(
         visited.append(origin)
         universe.extend(generate_galaxy_parametric_values(
             origin,
-            galaxy_density,
             galaxy_size,
             num_systems,
             num_planet_orbits
@@ -665,38 +663,24 @@ def generate_universe_parametric_values(
 
 def generate_galaxy_parametric_values(
         origin: Tuple[int, int] = (0, 0),
-        galaxy_density: int = 5,
         galaxy_size: int = 1,
         num_systems: int = 20,
         num_planet_orbits: int = 16,
 ):
     # galaxy parametric parameters
     _C = 1
-    _L = 0.075
-    _t_range = (0, 1_000)
-    _num_points = 10_000
-    _factor = ((10 ** -32) / 5) * galaxy_size
+    _L = 0.015
+    _t_range = (0, 250)
+    _num_points = 2_000
+    _factor = .1 * galaxy_size
 
-    coordinates = []
-    for x in range(galaxy_density):
-        coordinates.append(generate_parametric_values(
-            "log_spiral",
-            _t_range,
-            _num_points,
-            _factor * x,
-            C=_C, L=_L, hs=origin[0], vs=origin[1]
-        ))
-
-    coordinates = np.concatenate(coordinates)
-
-    # unique values
-    vv = []
-    new_cc = []
-    for cc in coordinates:
-        if cc not in vv:
-            new_cc.append(cc)
-
-    coordinates = np.array(new_cc)
+    coordinates = generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=origin[0], vs=origin[1]
+    )
 
     magnitudes = np.array([
         calculate_magnitude(
@@ -720,12 +704,10 @@ def generate_galaxy_parametric_values(
     _t_range = (0, 100)
     _num_points = 1000
     _factor = 1
-    _ofactor = (10 ** -32) / 5
 
     evenly_spaced_orbit = lambda _radius, _r_factor: _radius - (
-        _radius / _r_factor
+        _radius * (_r_factor / (num_planet_orbits + 1))
     )
-    expo_spaced_orbit = lambda _radius, _r_factor: _radius / _r_factor
 
     planets = [
         generate_parametric_values(
@@ -733,11 +715,7 @@ def generate_galaxy_parametric_values(
             _t_range,
             _num_points,
             _factor,
-            r=evenly_spaced_orbit(
-                _R, x
-            ) if x % 2 == 1 else expo_spaced_orbit(
-                _R, x
-            ),
+            r=evenly_spaced_orbit(_R, x),
             hs=o1,
             vs=o2
         )
@@ -746,6 +724,7 @@ def generate_galaxy_parametric_values(
     ]
 
     galaxy = [coordinates] + planets
+    # galaxy = planets
 
     return galaxy
 
@@ -778,7 +757,6 @@ if __name__ == "__main__":
 
     generate_universe_parametric_values(
         10,
-        5,
-        10,
-        15
+        120,
+        9,
     )
