@@ -47,7 +47,6 @@ def plot_parametric_universe(
             plot_parametric(gname, [galaxy['motion_path']], line_style="--",
                             line_width=0.5)
 
-
     if show_planets_motion_path:
         system_coords = []
         for gname, galaxy in values.items():
