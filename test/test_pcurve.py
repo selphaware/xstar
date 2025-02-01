@@ -5,6 +5,7 @@ import numpy as np
 
 from space.cosmic_structures.functions.calculate import calculate_magnitude, \
     get_vector_between_positions
+from space.universe import Universe
 from xmath.generate_universe import generate_universe_parametric_values
 from xmath.pcurve import (
     generate_parametric_values,
@@ -646,16 +647,16 @@ if __name__ == "__main__":
 
     # test_multi_big_log_spirals()
 
-    _aq = generate_universe_parametric_values(
+    _aq = Universe(
         3,
-        100,
+        10,
         16,
     )
 
-    print(_aq)
+    print(_aq.universe_positions)
 
     plot_parametric_universe(
-        _aq,
+        _aq.universe_positions,
         show_galaxy_motion_path=True,
         show_planets_motion_path=True,
         show_stars=True,

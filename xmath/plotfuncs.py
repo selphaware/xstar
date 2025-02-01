@@ -59,13 +59,13 @@ def plot_parametric_universe(
             for sname, system in galaxy['star_systems'].items():
                 if system['is_centre'] and show_black_holes:
                     plot_parametric(
-                        sname, system['origin'], marker_type="o",
+                        sname, [system['origin']], marker_type="o",
                         marker_size=11, marker_color="black",
                         marker_edge="black"
                     )
                 elif show_stars:
                     plot_parametric(
-                        sname, system['origin'], marker_type="*",
+                        sname, [system['origin']], marker_type="*",
                         marker_size=8
                     )
 

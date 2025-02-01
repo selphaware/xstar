@@ -31,7 +31,11 @@ def generate_universe_parametric_values(
             "SYSTEMS-X1"
         )
 
-        galaxy_size, origin = calculate_galaxy_origin(rand_size_range, visited)
+        galaxy_size, origin = calculate_origin(
+            rand_size_range,
+            visited,
+            10
+        )
 
         visited.append(origin)
         universe[f"Galaxy {galaxy}"] = generate_galaxy_parametric_values(
@@ -46,7 +50,11 @@ def generate_universe_parametric_values(
 
 
 # TODO: Simplify this
-def calculate_galaxy_origin(rand_size_range: Z2_POS, visited: List[Z2_POS]):
+def calculate_origin(
+        rand_size_range: Z2_POS,
+        visited: List[Z2_POS],
+        distance: float = 10.
+):
     i_rand = random_int_generator(*rand_size_range, seed="I_RAND")
     j_rand = random_int_generator(*rand_size_range, seed="J_RAND")
     rnd_factor = random_int_generator(5, 20, seed="FACTOR")
@@ -61,7 +69,7 @@ def calculate_galaxy_origin(rand_size_range: Z2_POS, visited: List[Z2_POS]):
             for _x in visited
         ]
 
-        too_close = [_x for _x in too_close if _x < 10]
+        too_close = [_x for _x in too_close if _x < distance]
 
         if len(too_close) == 0:
             break
@@ -130,11 +138,14 @@ def generate_galaxy_parametric_values(
     star_systems = {
         f"{galaxy_name}, System {system_no}":
         {
-            "name": f"{galaxy_name}, System {system_no}",
+            "name": (gname := f"System {system_no}, {galaxy_name}"),
 
-            "origin": [[(o1, o2)]],
+            "origin": [(o1, o2)],
 
-            "is_centre": (o1, o2) == origin,
+            "is_centre": (is_centre := (o1, o2) == origin),
+
+            "star_name": f"Black Hole: {gname}" if is_centre else f"Star: "
+                                                                  f"{gname}",
 
             "num_planets": (_rn := next(rnd_planets)),
 
