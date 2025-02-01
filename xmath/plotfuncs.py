@@ -1,10 +1,15 @@
-from typing import List
+from typing import List, Dict, Union
 from matplotlib import pyplot as plt
 
-from xmath.structures import R2, R1, Z2_MATRIX
+from xmath.structures import R2, R1, Z2_MATRIX, UNIVERSE_STRUCT
 
 
-def plot_parametric(values: List[R2]):
+def plot_parametric(name: str,
+                    values: List[R2],
+                    marker_type: str = None,
+                    marker_size: float = None,
+                    line_style: str = None,
+                    line_width: float = None):
     # Extract x and y values for plotting
     x_values: List[R1] = []
     y_values: List[R1] = []
@@ -13,13 +18,51 @@ def plot_parametric(values: List[R2]):
         y_values.append([coord[1] for coord in _values])
 
     # Plotting
-    plt.figure(figsize=(8, 6))
     for i in range(len(values)):
-        plt.plot(x_values[i], y_values[i], label=f"Curve {i + 1}")
+        plt.plot(x_values[i], y_values[i],
+                 marker=marker_type,
+                 markersize=marker_size,
+                 linestyle=line_style,
+                 linewidth=line_width,
+                 label=f"{name}: {i + 1}")
+
+
+def plot_parametric_universe(
+        values: UNIVERSE_STRUCT,
+        show_galaxy_motion_path: bool = True,
+        show_planets_motion_path: bool = True,
+        show_stars: bool = True
+
+):
+    plt.figure(figsize=(8, 6))
+
+    if show_galaxy_motion_path:
+        galaxy_coords = []
+        for gname, galaxy in values.items():
+            galaxy_coords.append(galaxy['motion_path'])
+            plot_parametric(gname, [galaxy['motion_path']], line_style="--",
+                            line_width=0.5)
+
+
+    if show_planets_motion_path:
+        system_coords = []
+        for gname, galaxy in values.items():
+            for sname, system in galaxy['star_systems'].items():
+                system_coords.extend(system['planet_orbit_path'])
+                plot_parametric(sname, system['planet_orbit_path'])
+
+    if show_stars:
+        star_coords = []
+        for gname, galaxy in values.items():
+            for sname, system in galaxy['star_systems'].items():
+                star_coords.extend(system['origin'])
+                plot_parametric(
+                    sname, system['origin'], marker_type="*", marker_size=8
+                )
 
     plt.xlabel("X")
     plt.ylabel("Y")
-    plt.title("Parametric Curve")
+    plt.title("Universe Parametric Curve")
     plt.legend()
     plt.grid(True)
 

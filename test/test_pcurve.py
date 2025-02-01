@@ -11,8 +11,9 @@ from xmath.pcurve import (
     generate_parametric_num_grid,
     generate_multi_param_num_grid
 )
-from xmath.plotfuncs import plot_num_grid, plot_parametric
-from xmath.structures import R2
+from xmath.plotfuncs import plot_num_grid, plot_parametric, \
+    plot_parametric_universe
+from xmath.structures import R2, UNIVERSE_STRUCT
 from xmath.xrandom import random_int_generator
 
 
@@ -623,9 +624,9 @@ def generate_universe_parametric_values(
         num_galaxies: int = 36,
         num_systems: int = 20,
         num_planet_orbits: int = 16
-):
-    rand_size_range: Tuple[int, int] = (0, int(num_galaxies * 25))
-    universe = []
+) -> UNIVERSE_STRUCT:
+    rand_size_range: Tuple[int, int] = (0, int(num_galaxies * 5))
+    universe = {}
     i_rand = random_int_generator(*rand_size_range, seed="I_RAND")
     j_rand = random_int_generator(*rand_size_range, seed="J_RAND")
     rnd_factor = random_int_generator(5, 20, seed="FACTOR")
@@ -633,7 +634,7 @@ def generate_universe_parametric_values(
     visited = []
     for galaxy in range(num_galaxies):
 
-        origin = (0, 0)
+        origin = None
         galaxy_size = next(rnd_factor) / 10
         while True:
             origin = (next(i_rand), next(j_rand))
@@ -649,20 +650,29 @@ def generate_universe_parametric_values(
                 break
 
         visited.append(origin)
-        universe.extend(generate_galaxy_parametric_values(
-            origin,
+        universe[f"Galaxy {galaxy}"] = generate_galaxy_parametric_values(
+            f"Galaxy {galaxy}",
+            (float(origin[0]), float(origin[1])),
             galaxy_size,
             num_systems,
             num_planet_orbits
-        ))
+        )
 
     print(universe)
 
-    plot_parametric(universe)
+    plot_parametric_universe(
+        universe,
+        show_galaxy_motion_path=True,
+        show_planets_motion_path=True,
+        show_stars=True
+    )
+
+    return universe
 
 
 def generate_galaxy_parametric_values(
-        origin: Tuple[int, int] = (0, 0),
+        galaxy_name: str,
+        origin: Tuple[float, float] = (0, 0),
         galaxy_size: int = 1,
         num_systems: int = 20,
         num_planet_orbits: int = 16,
@@ -689,13 +699,17 @@ def generate_galaxy_parametric_values(
         )
         for x in coordinates
     ])
+
     min_mag, max_mag = min(magnitudes), max(magnitudes)
     print(f"min={min_mag}, max={max_mag}")
     even_space = np.linspace(min_mag, max_mag, num_systems)
+
     locations = [
         coordinates[bisect(list(magnitudes), x) - 1]
         for x in even_space
     ]
+    locations.insert(0,
+                     (float(origin[0]), float(origin[1])))
 
     # rnd_int3 = random_int_generator(0, len(c3) - 1, True)
     # rnd_int4 = random_int_generator(0, len(c4) - 1, True)
@@ -709,22 +723,36 @@ def generate_galaxy_parametric_values(
         _radius * (_r_factor / (num_planet_orbits + 1))
     )
 
-    planets = [
-        generate_parametric_values(
-            "circle",
-            _t_range,
-            _num_points,
-            _factor,
-            r=evenly_spaced_orbit(_R, x),
-            hs=o1,
-            vs=o2
-        )
-        for (o1, o2) in locations
-        for x in range(1, num_planet_orbits + 1)
-    ]
+    star_systems = {
+        f"{galaxy_name}, System {system_no}":
+        {
+            "name": f"{galaxy_name}, System {system_no}",
 
-    galaxy = [coordinates] + planets
-    # galaxy = planets
+            "origin": [[(o1, o2)]],
+
+            "is_centre": (o1, o2) == origin,
+
+            "planet_orbit_path": [
+                generate_parametric_values(
+                    "circle",
+                    _t_range,
+                    _num_points,
+                    _factor,
+                    r=evenly_spaced_orbit(_R, x),
+                    hs=o1,
+                    vs=o2
+                )
+                for x in range(1, num_planet_orbits + 1)
+            ]
+        }
+        for system_no, (o1, o2) in enumerate(locations)
+    }
+
+    galaxy = {
+        "name": galaxy_name,
+        "motion_path": coordinates,
+        "star_systems": star_systems
+    }
 
     return galaxy
 
@@ -755,8 +783,10 @@ if __name__ == "__main__":
 
     # test_multi_big_log_spirals()
 
-    generate_universe_parametric_values(
-        10,
-        120,
-        9,
+    _aq = generate_universe_parametric_values(
+        7,
+        20,
+        12,
     )
+
+    print(_aq)
