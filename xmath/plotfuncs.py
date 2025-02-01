@@ -50,9 +50,9 @@ def plot_parametric_universe(
     if show_planets_motion_path:
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
-                plot_parametric(sname, system['planet_orbit_path'],
+                plot_parametric(sname, system['planet_orbit_paths'],
                                 line_style="--",
-                                line_width=0.5)
+                                line_width=0.1)
 
     if show_stars or show_black_holes:
         for gname, galaxy in values.items():
@@ -80,7 +80,7 @@ def plot_parametric_universe(
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.title("Universe Parametric Curve")
-    plt.legend()
+    # plt.legend()
     plt.grid(True)
 
     # Ensure x and y axis grid units are equal

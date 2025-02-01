@@ -647,9 +647,9 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     _aq = generate_universe_parametric_values(
-        5,
-        10,
-        12,
+        3,
+        100,
+        30,
     )
 
     print(_aq)

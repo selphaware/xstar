@@ -1,3 +1,5 @@
+import datetime
+import time
 from bisect import bisect
 from typing import Tuple, List
 import random
@@ -23,6 +25,12 @@ def generate_universe_parametric_values(
     visited = []
     for galaxy in range(num_galaxies):
 
+        rnd_systems = random_int_generator(
+            num_systems - int(.25 * num_systems),
+            num_systems + int(.25 * num_systems),
+            "SYSTEMS-X1"
+        )
+
         galaxy_size, origin = calculate_galaxy_origin(rand_size_range, visited)
 
         visited.append(origin)
@@ -30,7 +38,7 @@ def generate_universe_parametric_values(
             f"Galaxy {galaxy}",
             (float(origin[0]), float(origin[1])),
             galaxy_size,
-            num_systems,
+            next(rnd_systems),
             num_planet_orbits
         )
 
@@ -94,11 +102,11 @@ def generate_galaxy_parametric_values(
     print(f"min={min_mag}, max={max_mag}")
     even_space = np.linspace(min_mag, max_mag, num_systems)
 
-    locations = [
+    star_locs = [
         coordinates[bisect(list(magnitudes), x) - 1]
         for x in even_space
     ]
-    locations.insert(0,
+    star_locs.insert(0,
                      (float(origin[0]), float(origin[1])))
 
     # rnd_int3 = random_int_generator(0, len(c3) - 1, True)
@@ -109,8 +117,14 @@ def generate_galaxy_parametric_values(
     _num_points = 1000
     _factor = 1
 
-    evenly_spaced_orbit = lambda _radius, _r_factor: _radius - (
-        _radius * (_r_factor / (num_planet_orbits + 1))
+    rnd_planets = random_int_generator(
+        num_planet_orbits - int(.75 * num_planet_orbits),
+        num_planet_orbits + int(.5 * num_planet_orbits),
+        "RND_PLANETS-Y2"
+    )
+
+    evenly_spaced_orbit = lambda _radius, _r_factor, _rn: _radius - (
+        _radius * (_r_factor / (_rn + 1))
     )
 
     star_systems = {
@@ -122,17 +136,19 @@ def generate_galaxy_parametric_values(
 
             "is_centre": (o1, o2) == origin,
 
-            "planet_orbit_path": ( planet_orbit_paths := [
+            "num_planets": (_rn := next(rnd_planets)),
+
+            "planet_orbit_paths": ( planet_orbit_paths := [
                 generate_parametric_values(
                     "circle",
                     _t_range,
                     _num_points,
                     _factor,
-                    r=evenly_spaced_orbit(_R, x),
+                    r=evenly_spaced_orbit(_R, x, _rn),
                     hs=o1,
                     vs=o2
                 )
-                for x in range(1, num_planet_orbits + 1)
+                for x in range(1, _rn + 1)
             ] ),
 
             "planets": [
@@ -140,7 +156,7 @@ def generate_galaxy_parametric_values(
                 for planet_coords in planet_orbit_paths
             ]
         }
-        for system_no, (o1, o2) in enumerate(locations)
+        for system_no, (o1, o2) in enumerate(star_locs)
     }
 
     galaxy = {
