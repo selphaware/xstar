@@ -72,8 +72,9 @@ def plot_parametric_universe(
     if show_planets:
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
-                for planet_name, planet_position in system['planets'].items():
-                    plot_parametric(planet_name, [planet_position],
+                for planet_name, planet_data in system['planets'].items():
+                    plot_parametric(planet_name,
+                                    [planet_data['position']],
                                     marker_type="o",
                                     marker_size=4)
 

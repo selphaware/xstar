@@ -163,7 +163,10 @@ def generate_galaxy_parametric_values(
             ] ),
 
             "planets": {
-                f"Planet {_idxp}: {gname}": [random.choice(planet_coords)]
+                f"Planet {_idxp}: {gname}": {
+                    "position": [random.choice(planet_coords)],
+                    "motion_path": planet_coords
+                }
                 for _idxp, planet_coords in enumerate(planet_orbit_paths)
             }
         }

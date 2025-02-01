@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from xmath.generate_universe import generate_universe_parametric_values
 from xmath.structures import UNIVERSE_STRUCT, R2, R2_POS
@@ -61,12 +61,12 @@ class Universe(object):
         return _stars
 
     @property
-    def planets(self) -> Dict[str, R2_POS]:
-        _planets: Dict[str, R2_POS] = {}
+    def planets(self) -> Dict[str, Any]:
+        _planets: Dict[str, Any] = {}
         for gname, galaxy in self.universe_positions.items():
             for sname, system in galaxy['star_systems'].items():
                 for planet_name, planet_position in system['planets'].items():
-                    _planets[planet_name] = planet_position[0]
+                    _planets[planet_name] = planet_position
         return _planets
 
     @property
@@ -78,5 +78,15 @@ class Universe(object):
         return [x for x in self.black_holes.values()]
 
     @property
-    def planet_positions(self) -> R2:
-        return [x for x in self.planets.values()]
+    def planet_positions(self) -> Dict[str, R2]:
+        return {
+            w:
+            x['position'][0] for w, x in self.planets.items()
+        }
+
+    @property
+    def planet_paths(self) -> Dict[str, R2]:
+        return {
+            w:
+            x['motion_path'] for w, x in self.planets.items()
+        }
