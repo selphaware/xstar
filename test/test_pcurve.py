@@ -649,7 +649,7 @@ if __name__ == "__main__":
     _aq = generate_universe_parametric_values(
         3,
         100,
-        30,
+        16,
     )
 
     print(_aq)
@@ -662,3 +662,6 @@ if __name__ == "__main__":
         show_black_holes=True,
         show_planets=True
     )
+
+    import pdb
+    pdb.set_trace()
