@@ -1,6 +1,6 @@
 from bisect import bisect
 from typing import Tuple, List
-
+import random
 import numpy as np
 
 from space.cosmic_structures.functions.calculate import \
@@ -33,15 +33,6 @@ def generate_universe_parametric_values(
             num_systems,
             num_planet_orbits
         )
-
-    print(universe)
-
-    plot_parametric_universe(
-        universe,
-        show_galaxy_motion_path=True,
-        show_planets_motion_path=True,
-        show_stars=True
-    )
 
     return universe
 
@@ -131,7 +122,7 @@ def generate_galaxy_parametric_values(
 
             "is_centre": (o1, o2) == origin,
 
-            "planet_orbit_path": [
+            "planet_orbit_path": ( planet_orbit_paths := [
                 generate_parametric_values(
                     "circle",
                     _t_range,
@@ -142,6 +133,11 @@ def generate_galaxy_parametric_values(
                     vs=o2
                 )
                 for x in range(1, num_planet_orbits + 1)
+            ] ),
+
+            "planets": [
+                [random.choice(planet_coords)]
+                for planet_coords in planet_orbit_paths
             ]
         }
         for system_no, (o1, o2) in enumerate(locations)

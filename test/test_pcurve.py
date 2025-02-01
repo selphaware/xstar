@@ -11,7 +11,8 @@ from xmath.pcurve import (
     generate_parametric_num_grid,
     generate_multi_param_num_grid
 )
-from xmath.plotfuncs import plot_num_grid, plot_parametric
+from xmath.plotfuncs import plot_num_grid, plot_parametric, \
+    plot_parametric_universe
 from xmath.structures import R2
 from xmath.xrandom import random_int_generator
 
@@ -646,9 +647,18 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     _aq = generate_universe_parametric_values(
-        25,
-        25,
+        5,
+        10,
         12,
     )
 
     print(_aq)
+
+    plot_parametric_universe(
+        _aq,
+        show_galaxy_motion_path=True,
+        show_planets_motion_path=True,
+        show_stars=True,
+        show_black_holes=True,
+        show_planets=True
+    )

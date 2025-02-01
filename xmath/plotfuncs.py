@@ -35,41 +35,47 @@ def plot_parametric_universe(
         values: UNIVERSE_STRUCT,
         show_galaxy_motion_path: bool = True,
         show_planets_motion_path: bool = True,
-        show_stars: bool = True
-
+        show_stars: bool = True,
+        show_black_holes: bool = True,
+        show_planets: bool = True
 ):
     plt.figure(figsize=(8, 6))
 
     if show_galaxy_motion_path:
-        galaxy_coords = []
         for gname, galaxy in values.items():
-            galaxy_coords.append(galaxy['motion_path'])
-            plot_parametric(gname, [galaxy['motion_path']], line_style="--",
+            plot_parametric(gname, [galaxy['motion_path']],
+                            line_style="--",
                             line_width=0.5)
 
     if show_planets_motion_path:
-        system_coords = []
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
-                system_coords.extend(system['planet_orbit_path'])
-                plot_parametric(sname, system['planet_orbit_path'])
+                plot_parametric(sname, system['planet_orbit_path'],
+                                line_style="--",
+                                line_width=0.5)
 
-    if show_stars:
-        star_coords = []
+    if show_stars or show_black_holes:
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
-                star_coords.extend(system['origin'])
-                if system['is_centre']:
+                if system['is_centre'] and show_black_holes:
                     plot_parametric(
                         sname, system['origin'], marker_type="o",
                         marker_size=11, marker_color="black",
                         marker_edge="black"
                     )
-                else:
+                elif show_stars:
                     plot_parametric(
                         sname, system['origin'], marker_type="*",
                         marker_size=8
                     )
+
+    if show_planets:
+        for gname, galaxy in values.items():
+            for sname, system in galaxy['star_systems'].items():
+                plot_parametric(sname, system['planets'],
+                                marker_type="o",
+                                marker_size=4)
+
 
     plt.xlabel("X")
     plt.ylabel("Y")
