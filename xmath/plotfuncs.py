@@ -72,9 +72,10 @@ def plot_parametric_universe(
     if show_planets:
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
-                plot_parametric(sname, system['planets'],
-                                marker_type="o",
-                                marker_size=4)
+                for planet_name, planet_position in system['planets'].items():
+                    plot_parametric(planet_name, [planet_position],
+                                    marker_type="o",
+                                    marker_size=4)
 
 
     plt.xlabel("X")

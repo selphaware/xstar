@@ -27,7 +27,8 @@ UNIVERSE_STRUCT = Dict[                     # universe
                             Union[
                                 str,        # star system name
                                 R2,         # origin
-                                List[R2]    # all planet orbit paths
+                                List[R2],   # all planet orbit paths
+                                Dict[str, List[R2_POS]]  # planet positions
                             ]
                         ]
                     ]

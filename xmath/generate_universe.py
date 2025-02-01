@@ -162,10 +162,10 @@ def generate_galaxy_parametric_values(
                 for x in range(1, _rn + 1)
             ] ),
 
-            "planets": [
-                [random.choice(planet_coords)]
-                for planet_coords in planet_orbit_paths
-            ]
+            "planets": {
+                f"Planet {_idxp}: {gname}": [random.choice(planet_coords)]
+                for _idxp, planet_coords in enumerate(planet_orbit_paths)
+            }
         }
         for system_no, (o1, o2) in enumerate(star_locs)
     }

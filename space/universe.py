@@ -24,6 +24,25 @@ class Universe(object):
         return [str(x) for x in self.universe_positions.keys()]
 
     @property
+    def galaxy_paths(self) -> Dict[str, R2]:
+        _gp: Dict[str, R2] = {}
+        for gname, galaxy in self.universe_positions.items():
+            _gp[gname] = galaxy['motion_path']
+        return _gp
+
+    @property
+    def star_names(self) -> List[str]:
+        return [str(x) for x in self.stars.keys()]
+
+    @property
+    def black_hole_names(self) -> List[str]:
+        return [str(x) for x in self.black_holes.keys()]
+
+    @property
+    def planet_names(self) -> List[str]:
+        return [str(x) for x in self.planets.keys()]
+
+    @property
     def stars(self) -> Dict[str, R2_POS]:
         _stars: Dict[str, R2_POS] = {}
         for gname, galaxy in self.universe_positions.items():
@@ -42,9 +61,22 @@ class Universe(object):
         return _stars
 
     @property
+    def planets(self) -> Dict[str, R2_POS]:
+        _planets: Dict[str, R2_POS] = {}
+        for gname, galaxy in self.universe_positions.items():
+            for sname, system in galaxy['star_systems'].items():
+                for planet_name, planet_position in system['planets'].items():
+                    _planets[planet_name] = planet_position[0]
+        return _planets
+
+    @property
     def star_positions(self) -> R2:
         return [x for x in self.stars.values()]
 
     @property
     def black_hole_positions(self) -> R2:
         return [x for x in self.black_holes.values()]
+
+    @property
+    def planet_positions(self) -> R2:
+        return [x for x in self.planets.values()]
