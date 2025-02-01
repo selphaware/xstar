@@ -8,6 +8,8 @@ def plot_parametric(name: str,
                     values: List[R2],
                     marker_type: str = None,
                     marker_size: float = None,
+                    marker_color: str = None,
+                    marker_edge: str = None,
                     line_style: str = None,
                     line_width: float = None):
     # Extract x and y values for plotting
@@ -22,6 +24,8 @@ def plot_parametric(name: str,
         plt.plot(x_values[i], y_values[i],
                  marker=marker_type,
                  markersize=marker_size,
+                 markerfacecolor=marker_color,
+                 markeredgecolor=marker_edge,
                  linestyle=line_style,
                  linewidth=line_width,
                  label=f"{name}: {i + 1}")
@@ -56,9 +60,17 @@ def plot_parametric_universe(
         for gname, galaxy in values.items():
             for sname, system in galaxy['star_systems'].items():
                 star_coords.extend(system['origin'])
-                plot_parametric(
-                    sname, system['origin'], marker_type="*", marker_size=8
-                )
+                if system['is_centre']:
+                    plot_parametric(
+                        sname, system['origin'], marker_type="o",
+                        marker_size=11, marker_color="black",
+                        marker_edge="black"
+                    )
+                else:
+                    plot_parametric(
+                        sname, system['origin'], marker_type="*",
+                        marker_size=8
+                    )
 
     plt.xlabel("X")
     plt.ylabel("Y")
