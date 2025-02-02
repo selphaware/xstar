@@ -1,7 +1,8 @@
 from bisect import bisect
 from typing import Tuple, List
-
+from math import pi
 import numpy as np
+from pprint import pp
 
 from space.cosmic_structures.functions.calculate import calculate_magnitude, \
     get_vector_between_positions
@@ -141,6 +142,27 @@ def test_log_spiral():
     _gen_bool_and_plot(coordinates)
 
 
+def test_log_spiral2():
+    # Example usage
+    _a_C = 1
+    _b_C = 2
+    _L = .075
+    _t_range = (0, 40)
+    _num_points = 1000
+    _factor = 1
+
+    coordinates = generate_parametric_values(
+        "log_spiral2",
+        _t_range,
+        _num_points,
+        _factor,
+        a_C=_a_C, b_C=_b_C, L=_L, rot=2 * pi, hs=0, vs=0
+    )
+
+    print(coordinates)
+
+    plot_parametric("LSR Test", [coordinates], show=True)
+
 def test_log_spiral_shift():
     # Example usage
     _C = 1
@@ -197,27 +219,6 @@ def test_big_log_spirals():
 
     plot_parametric(coordinates)
     # _gen_bool_and_plot(coordinates)
-
-
-def test_log_spiral2():
-    # Example usage
-    _C = 1
-    _L = 0.075
-    _t_range = (0, 1_000)
-    _num_points = 10_000
-    _factor = (10 ** -32) / 5
-
-    coordinates = [generate_parametric_values(
-        "log_spiral",
-        _t_range,
-        _num_points,
-        _factor * x,
-        C=_C, L=_L, hs=0, vs=0
-    )
-        for x in range(1, 5)
-    ]
-
-    plot_parametric(coordinates)
 
 
 def test_elipse():
@@ -648,11 +649,11 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     _aq = Universe(
-        3,
-        175,
+        10,
+        75,
         16,
-        3,
-        3,
+        10,
+        5,
         20
     )
 

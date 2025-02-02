@@ -4,6 +4,7 @@ from bisect import bisect
 from typing import Tuple, List
 import random
 import numpy as np
+from math import pi
 
 from space.cosmic_structures.functions.calculate import \
     get_distance_between_positions, calculate_magnitude, \
@@ -52,7 +53,7 @@ def generate_universe_parametric_values(
         )
 
     # Add other universe stellar objects
-    rnd_stellar = random_int_generator(1, 10, "STELLAR")
+    rnd_stellar = random_int_generator(0, 10, "STELLAR")
     for _ibx in range(num_black_holes):
         _, origin = calculate_origin(
             rand_size_range,
@@ -106,18 +107,27 @@ def generate_galaxy_parametric_values(
         num_planet_orbits: int = 16,
 ):
     # galaxy parametric parameters
-    _C = 1
+    elip_rnd_a = random_int_generator(10, 25, "AELIP_LOG_A")
+    elip_rnd_b = random_int_generator(10, 25, "BELIP_LOG_B")
+
+    _a_C = next(elip_rnd_a) / 10.
+    _b_C = next(elip_rnd_b) / 10.
     _L = 0.015
     _t_range = (0, 250)
     _num_points = 2_000
     _factor = .1 * galaxy_size
 
     coordinates = generate_parametric_values(
-        "log_spiral",
+        "log_spiral2",
         _t_range,
         _num_points,
         _factor,
-        C=_C, L=_L, hs=origin[0], vs=origin[1]
+        hs=origin[0], vs=origin[1],
+
+        # log spiral params
+        a_C=_a_C, b_C=_b_C,
+        rot=random.choice([2 * pi * x / 20. for x in range(0, 20)]),
+        L=_L
     )
 
     magnitudes = np.array([

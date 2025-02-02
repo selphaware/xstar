@@ -11,7 +11,8 @@ def plot_parametric(name: str,
                     marker_color: str = None,
                     marker_edge: str = None,
                     line_style: str = None,
-                    line_width: float = None):
+                    line_width: float = None,
+                    show: bool = False):
     # Extract x and y values for plotting
     x_values: List[R1] = []
     y_values: List[R1] = []
@@ -29,6 +30,21 @@ def plot_parametric(name: str,
                  linestyle=line_style,
                  linewidth=line_width,
                  label=f"{name}: {i + 1}")
+
+    if show:
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.title(name)
+        # plt.legend()
+        plt.grid(True)
+
+        # Ensure x and y axis grid units are equal
+        plt.gca().set_aspect('equal', adjustable='datalim')
+
+        # Optional: Adjust the limits to ensure the aspect ratio is enforced
+        plt.tight_layout()
+
+        plt.show()
 
 
 def plot_parametric_universe(
@@ -60,13 +76,13 @@ def plot_parametric_universe(
                 if system['is_centre'] and show_black_holes:
                     plot_parametric(
                         sname, [system['origin']], marker_type="o",
-                        marker_size=11, marker_color="black",
+                        marker_size=4, marker_color="black",
                         marker_edge="black"
                     )
                 elif show_stars:
                     plot_parametric(
                         sname, [system['origin']], marker_type="*",
-                        marker_size=8
+                        marker_size=4
                     )
 
     if show_planets:
