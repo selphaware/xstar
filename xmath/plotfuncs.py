@@ -76,13 +76,13 @@ def plot_parametric_universe(
                 if system['is_centre'] and show_black_holes:
                     plot_parametric(
                         sname, [system['origin']], marker_type="o",
-                        marker_size=4, marker_color="black",
+                        marker_size=6, marker_color="black",
                         marker_edge="black"
                     )
                 elif show_stars:
                     plot_parametric(
                         sname, [system['origin']], marker_type="*",
-                        marker_size=4
+                        marker_size=6
                     )
 
     if show_planets:
