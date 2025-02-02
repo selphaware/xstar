@@ -649,8 +649,11 @@ if __name__ == "__main__":
 
     _aq = Universe(
         3,
-        10,
+        175,
         16,
+        3,
+        3,
+        20
     )
 
     print(_aq.universe_positions)

@@ -9,11 +9,16 @@ class Universe(object):
             self,
             num_galaxies: int = 36,
             num_systems: int = 20,
-            num_planet_orbits: int = 16
+            num_planet_orbits: int = 16,
+            rand_size_range_limit: int = 5,
+            galaxy_distance: float = 10.,
+            num_black_holes: int = 10
     ):
         self.universe_positions: UNIVERSE_STRUCT = (
             generate_universe_parametric_values(
-                num_galaxies, num_systems, num_planet_orbits
+                num_galaxies, num_systems, num_planet_orbits,
+                rand_size_range_limit, galaxy_distance,
+                num_black_holes
             )
         )
 

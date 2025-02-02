@@ -17,9 +17,14 @@ from xmath.xrandom import random_int_generator
 def generate_universe_parametric_values(
         num_galaxies: int = 36,
         num_systems: int = 20,
-        num_planet_orbits: int = 16
+        num_planet_orbits: int = 16,
+        rand_size_range_limit: int = 5,
+        galaxy_distance: float = 10.,
+        num_black_holes: int = 10
 ) -> UNIVERSE_STRUCT:
-    rand_size_range: Tuple[int, int] = (0, int(num_galaxies * 5))
+    rand_size_range: Tuple[int, int] = (
+        0, int(num_galaxies * rand_size_range_limit)
+    )
     universe = {}
 
     visited = []
@@ -34,7 +39,7 @@ def generate_universe_parametric_values(
         galaxy_size, origin = calculate_origin(
             rand_size_range,
             visited,
-            10
+            galaxy_distance
         )
 
         visited.append(origin)
@@ -44,6 +49,22 @@ def generate_universe_parametric_values(
             galaxy_size,
             next(rnd_systems),
             num_planet_orbits
+        )
+
+    # Add other universe stellar objects
+    rnd_stellar = random_int_generator(1, 10, "STELLAR")
+    for _ibx in range(num_black_holes):
+        _, origin = calculate_origin(
+            rand_size_range,
+            visited,
+            galaxy_distance
+        )
+        universe[f"Black Hole BH{_ibx}"] = generate_galaxy_parametric_values(
+            f"Black Hole BH{_ibx}",
+            (float(origin[0]), float(origin[1])),
+            next(rnd_stellar) / 10,
+            0,
+            0
         )
 
     return universe
@@ -61,7 +82,7 @@ def calculate_origin(
 
     origin = None
     galaxy_size = next(rnd_factor) / 10
-    while True:
+    for _ in range(rand_size_range[1] ** 2):
         origin = (next(i_rand), next(j_rand))
 
         too_close = [
@@ -73,6 +94,7 @@ def calculate_origin(
 
         if len(too_close) == 0:
             break
+
     return galaxy_size, origin
 
 
