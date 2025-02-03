@@ -60,12 +60,12 @@ class Universe(object):
 
     @property
     def black_holes(self) -> Dict[str, R2_POS]:
-        _stars: Dict[str, R2_POS] = {}
+        _black_holes: Dict[str, R2_POS] = {}
         for gname, galaxy in self.universe_positions.items():
             for sname, system in galaxy['star_systems'].items():
                 if system['is_centre']:
-                    _stars[system['star_name']] = system['origin'][0]
-        return _stars
+                    _black_holes[system['star_name']] = system['origin'][0]
+        return _black_holes
 
     @property
     def planets(self) -> Dict[str, Any]:
@@ -96,8 +96,11 @@ class Universe(object):
         return [x for x in self.stars.values()]
 
     @property
-    def black_hole_positions(self) -> R2:
-        return [x for x in self.black_holes.values()]
+    def black_hole_positions(self) -> Dict[str, R2_POS]:
+        return {
+            w: x
+            for w, x in self.black_holes.items()
+        }
 
     @property
     def planet_positions(self) -> Dict[str, R2]:

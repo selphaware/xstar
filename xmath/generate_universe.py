@@ -25,7 +25,7 @@ def generate_universe_parametric_values(
         num_black_holes: int = 10
 ) -> UNIVERSE_STRUCT:
     rand_size_range: Tuple[int, int] = (
-        0, int(num_galaxies * rand_size_range_limit)
+        0, rand_size_range_limit
     )
     universe = {}
 
@@ -150,55 +150,9 @@ def generate_galaxy_parametric_values(
     star_locs.insert(0,
                      (float(origin[0]), float(origin[1])))
 
-    # rnd_int3 = random_int_generator(0, len(c3) - 1, True)
-    # rnd_int4 = random_int_generator(0, len(c4) - 1, True)
-
-    _R = 0.01
-    _t_range = (0, 100)
-    _num_points = 1000
-    _factor = 1
-
-    rnd_planets = random_int_generator(
-        num_planet_orbits - int(.75 * num_planet_orbits),
-        num_planet_orbits + int(.5 * num_planet_orbits),
-        "RND_PLANETS-Y2"
+    star_systems = generate_star_systems_parametric_values(
+        galaxy_name, num_planet_orbits, origin, star_locs
     )
-
-    evenly_spaced_orbit = lambda _radius, _r_factor, _rrrn: _radius - (
-        _radius * (_r_factor / (_rrrn + 1))
-    )
-
-    star_systems = {
-        (sys_name := f"{galaxy_name}: System {system_no}"):
-        {
-            "name": sys_name,
-            "origin": [(o1, o2)],
-            "is_centre": (is_centre := (o1, o2) == origin),
-            "star_name": f"Black Hole: {sys_name}" \
-                if is_centre else f"Star: {sys_name}",
-            "num_planets": (_rn := next(rnd_planets)),
-            "planet_orbit_paths": ( planet_orbit_paths := [
-                generate_parametric_values(
-                    "circle",
-                    _t_range,
-                    _num_points,
-                    _factor,
-                    r=evenly_spaced_orbit(_R, x, _rn),
-                    hs=o1,
-                    vs=o2
-                )
-                for x in range(1, _rn + 1)
-            ] ),
-            "planets": {
-                f"{sys_name}: Planet {_idxp}": {
-                    "position": [random.choice(planet_coords)],
-                    "motion_path": planet_coords
-                }
-                for _idxp, planet_coords in enumerate(planet_orbit_paths)
-            }
-        }
-        for system_no, (o1, o2) in enumerate(star_locs)
-    }
 
     galaxy = {
         "name": galaxy_name,
@@ -207,3 +161,58 @@ def generate_galaxy_parametric_values(
     }
 
     return galaxy
+
+
+def generate_star_systems_parametric_values(galaxy_name, num_planet_orbits,
+                                            origin, star_locs):
+    _R = 0.01
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+    rnd_planets = random_int_generator(
+        num_planet_orbits - int(.75 * num_planet_orbits),
+        num_planet_orbits + int(.5 * num_planet_orbits),
+        "RND_PLANETS-Y2"
+    )
+    evenly_spaced_orbit = lambda _radius, _r_factor, _rrrn: _radius - (
+            _radius * (_r_factor / (_rrrn + 1))
+    )
+    star_systems = {
+        f"System {system_no}":
+            {
+                "name": (sys_name := f"{galaxy_name}: System {system_no}"),
+                "origin": [(o1, o2)],
+                "is_centre": (is_centre := (o1, o2) == origin),
+                "star_name": f"Black Hole: {sys_name}" \
+                    if is_centre else f"Star: {sys_name}",
+                "num_planets": (_rn := next(rnd_planets)),
+                "planet_orbit_paths": (planet_orbit_paths := [
+                    generate_parametric_values(
+                        "circle",
+                        _t_range,
+                        _num_points,
+                        _factor,
+                        r=evenly_spaced_orbit(_R, x, _rn),
+                        hs=o1,
+                        vs=o2
+                    )
+                    for x in range(1, _rn + 1)
+                ]),
+                "planets": generate_planets_parametric_values(
+                    planet_orbit_paths, sys_name
+                )
+            }
+        for system_no, (o1, o2) in enumerate(star_locs)
+    }
+    return star_systems
+
+
+def generate_planets_parametric_values(planet_orbit_paths, sys_name):
+    return {
+        f"Planet {_idxp}": {
+            "name": f"{sys_name}: Planet {_idxp}",
+            "position": [random.choice(planet_coords)],
+            "motion_path": planet_coords
+        }
+        for _idxp, planet_coords in enumerate(planet_orbit_paths)
+    }

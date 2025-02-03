@@ -649,11 +649,11 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     _aq = Universe(
-        10,
-        75,
+        25,
+        100,
         16,
-        30,
-        10,
+        100,
+        7,
         3,
         20
     )
@@ -664,9 +664,9 @@ if __name__ == "__main__":
         _aq.universe_positions,
         show_galaxy_motion_path=True,
         show_planets_motion_path=True,
-        show_stars=True,
+        show_stars=False,
         show_black_holes=True,
-        show_planets=True
+        show_planets=False
     )
 
     import pdb
