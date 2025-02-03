@@ -10,7 +10,6 @@ from space.cosmic_structures.functions.calculate import \
     get_distance_between_positions, calculate_magnitude, \
     get_vector_between_positions
 from xmath.pcurve import generate_parametric_values
-from xmath.plotfuncs import plot_parametric_universe
 from xmath.structures import UNIVERSE_STRUCT, R2, Z2, Z2_POS
 from xmath.xrandom import random_int_generator
 

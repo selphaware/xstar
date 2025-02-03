@@ -13,7 +13,7 @@ from xmath.pcurve import (
     generate_parametric_num_grid,
     generate_multi_param_num_grid
 )
-from xmath.plotfuncs import plot_num_grid, plot_parametric, \
+from xmath.fplot.plotfuncs import plot_num_grid, plot_parametric, \
     plot_parametric_universe
 from xmath.structures import R2
 from xmath.xrandom import random_int_generator
@@ -649,13 +649,13 @@ if __name__ == "__main__":
     # test_multi_big_log_spirals()
 
     _aq = SubUniverse(
-        3,
-        500,
+        5,
+        175,
         16,
-        16,
-        7,
+        50,
+        15,
         3,
-        20
+        5
     )
 
     print(_aq.universe_positions)
