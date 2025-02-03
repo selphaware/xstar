@@ -21,6 +21,7 @@ def generate_universe_parametric_values(
         num_planet_orbits: int = 16,
         rand_size_range_limit: int = 5,
         galaxy_distance: float = 10.,
+        black_hole_distance: float = 3.,
         num_black_holes: int = 10
 ) -> UNIVERSE_STRUCT:
     rand_size_range: Tuple[int, int] = (
@@ -58,7 +59,7 @@ def generate_universe_parametric_values(
         _, origin = calculate_origin(
             rand_size_range,
             visited,
-            3
+            black_hole_distance
         )
         universe[f"Black Hole BH{_ibx}"] = generate_galaxy_parametric_values(
             f"Black Hole BH{_ibx}",

@@ -12,12 +12,14 @@ class Universe(object):
             num_planet_orbits: int = 16,
             rand_size_range_limit: int = 5,
             galaxy_distance: float = 10.,
+            black_hole_distance: float = 3.,
             num_black_holes: int = 10
     ):
         self.universe_positions: UNIVERSE_STRUCT = (
             generate_universe_parametric_values(
                 num_galaxies, num_systems, num_planet_orbits,
                 rand_size_range_limit, galaxy_distance,
+                black_hole_distance,
                 num_black_holes
             )
         )
