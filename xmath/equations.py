@@ -9,7 +9,7 @@ PARAMETRIC_EQNS: EQN_STRUCT = {
         lambda t, C, L: C * np.exp(L * t) * np.sin(t)
     ],
 
-    "log_spiral2": [  # used for galaxy deployment of systems
+    "log_spiral_elipse": [  # used for galaxy deployment of systems
         lambda t, a_C, L, rot: a_C * np.exp(L * t) * np.cos(rot + t),
 
         lambda t, b_C, L, rot: b_C * np.exp(L * t) * np.sin(rot + t)

@@ -58,7 +58,7 @@ def generate_universe_parametric_values(
         _, origin = calculate_origin(
             rand_size_range,
             visited,
-            galaxy_distance
+            3
         )
         universe[f"Black Hole BH{_ibx}"] = generate_galaxy_parametric_values(
             f"Black Hole BH{_ibx}",
@@ -107,8 +107,8 @@ def generate_galaxy_parametric_values(
         num_planet_orbits: int = 16,
 ):
     # galaxy parametric parameters
-    elip_rnd_a = random_int_generator(10, 25, "AELIP_LOG_A")
-    elip_rnd_b = random_int_generator(10, 25, "BELIP_LOG_B")
+    elip_rnd_a = random_int_generator(10, 15, "AELIP_LOG_A")
+    elip_rnd_b = random_int_generator(10, 15, "BELIP_LOG_B")
 
     _a_C = next(elip_rnd_a) / 10.
     _b_C = next(elip_rnd_b) / 10.
@@ -118,7 +118,7 @@ def generate_galaxy_parametric_values(
     _factor = .1 * galaxy_size
 
     coordinates = generate_parametric_values(
-        "log_spiral2",
+        "log_spiral_elipse",
         _t_range,
         _num_points,
         _factor,
@@ -163,24 +163,19 @@ def generate_galaxy_parametric_values(
         "RND_PLANETS-Y2"
     )
 
-    evenly_spaced_orbit = lambda _radius, _r_factor, _rn: _radius - (
-        _radius * (_r_factor / (_rn + 1))
+    evenly_spaced_orbit = lambda _radius, _r_factor, _rrrn: _radius - (
+        _radius * (_r_factor / (_rrrn + 1))
     )
 
     star_systems = {
-        f"{galaxy_name}, System {system_no}":
+        (sys_name := f"{galaxy_name}: System {system_no}"):
         {
-            "name": (gname := f"System {system_no}, {galaxy_name}"),
-
+            "name": sys_name,
             "origin": [(o1, o2)],
-
             "is_centre": (is_centre := (o1, o2) == origin),
-
-            "star_name": f"Black Hole: {gname}" if is_centre else f"Star: "
-                                                                  f"{gname}",
-
+            "star_name": f"Black Hole: {sys_name}" \
+                if is_centre else f"Star: {sys_name}",
             "num_planets": (_rn := next(rnd_planets)),
-
             "planet_orbit_paths": ( planet_orbit_paths := [
                 generate_parametric_values(
                     "circle",
@@ -193,9 +188,8 @@ def generate_galaxy_parametric_values(
                 )
                 for x in range(1, _rn + 1)
             ] ),
-
             "planets": {
-                f"Planet {_idxp}: {gname}": {
+                f"{sys_name}: Planet {_idxp}": {
                     "position": [random.choice(planet_coords)],
                     "motion_path": planet_coords
                 }

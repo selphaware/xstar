@@ -70,9 +70,24 @@ class Universe(object):
         _planets: Dict[str, Any] = {}
         for gname, galaxy in self.universe_positions.items():
             for sname, system in galaxy['star_systems'].items():
-                for planet_name, planet_position in system['planets'].items():
-                    _planets[planet_name] = planet_position
+                for planet_name, planet_data in system['planets'].items():
+                    _planets[planet_name] = planet_data
         return _planets
+
+    @property
+    def star_systems(self) -> Dict[str, Any]:
+        _star_systems: Dict[str, Any] = {}
+        for gname, galaxy in self.universe_positions.items():
+            for sname, system in galaxy['star_systems'].items():
+                _star_systems[sname] = system
+        return _star_systems
+
+    @property
+    def galaxies(self) -> Dict[str, Any]:
+        _galaxies: Dict[str, Any] = {}
+        for gname, galaxy in self.universe_positions.items():
+            _galaxies[gname] = galaxy
+        return _galaxies
 
     @property
     def star_positions(self) -> R2:
