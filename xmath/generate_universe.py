@@ -38,7 +38,7 @@ def generate_universe_parametric_values(
             "SYSTEMS-X1"
         )
 
-        galaxy_size, origin = calculate_origin(
+        galaxy_size, origin = calc_range_and_origin(
             rand_size_range,
             visited,
             galaxy_distance
@@ -56,7 +56,7 @@ def generate_universe_parametric_values(
     # Add other universe stellar objects
     rnd_stellar = random_int_generator(0, 10, "STELLAR")
     for _ibx in range(num_black_holes):
-        _, origin = calculate_origin(
+        _, origin = calc_range_and_origin(
             rand_size_range,
             visited,
             black_hole_distance
@@ -72,8 +72,7 @@ def generate_universe_parametric_values(
     return universe
 
 
-# TODO: Simplify this
-def calculate_origin(
+def calc_range_and_origin(
         rand_size_range: Z2_POS,
         visited: List[Z2_POS],
         distance: float = 10.
@@ -83,7 +82,7 @@ def calculate_origin(
     rnd_factor = random_int_generator(5, 20, seed="FACTOR")
 
     origin = None
-    galaxy_size = next(rnd_factor) / 10
+    prange = next(rnd_factor) / 10
     for _ in range(rand_size_range[1] ** 2):
         origin = (next(i_rand), next(j_rand))
 
@@ -97,7 +96,7 @@ def calculate_origin(
         if len(too_close) == 0:
             break
 
-    return galaxy_size, origin
+    return prange, origin
 
 
 def generate_galaxy_parametric_values(
@@ -113,6 +112,7 @@ def generate_galaxy_parametric_values(
 
     _a_C = next(elip_rnd_a) / 10.
     _b_C = next(elip_rnd_b) / 10.
+    _a_C = _b_C = 1  # TEMPORARY # TODO
     _L = 0.015
     _t_range = (0, 250)
     _num_points = 2_000

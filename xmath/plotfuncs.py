@@ -57,6 +57,16 @@ def plot_parametric_universe(
 ):
     plt.figure(figsize=(8, 6))
 
+    plt.rcParams.update({
+        'axes.facecolor': 'black',  # Black background for all axes
+        'axes.edgecolor': 'white',  # White border
+        'axes.labelcolor': 'black',  # White axis labels
+        'xtick.color': 'black',  # White tick marks
+        'ytick.color': 'black',  # White tick marks
+        'grid.color': 'dimgray',  # Dark grey grid lines
+        'figure.facecolor': 'black',  # Black figure background
+    })
+
     if show_galaxy_motion_path:
         for gname, galaxy in values.items():
             plot_parametric(gname, [galaxy['motion_path']],
@@ -76,13 +86,13 @@ def plot_parametric_universe(
                 if system['is_centre'] and show_black_holes:
                     plot_parametric(
                         sname, [system['origin']], marker_type="o",
-                        marker_size=6, marker_color="black",
-                        marker_edge="black"
+                        marker_size=8, marker_color="black",
+                        marker_edge="orange"
                     )
                 elif show_stars:
                     plot_parametric(
                         sname, [system['origin']], marker_type="*",
-                        marker_size=6
+                        marker_size=8
                     )
 
     if show_planets:

@@ -6,7 +6,7 @@ from pprint import pp
 
 from space.cosmic_structures.functions.calculate import calculate_magnitude, \
     get_vector_between_positions
-from space.universe import Universe
+from space.subuniverse import SubUniverse
 from xmath.generate_universe import generate_universe_parametric_values
 from xmath.pcurve import (
     generate_parametric_values,
@@ -648,11 +648,11 @@ if __name__ == "__main__":
 
     # test_multi_big_log_spirals()
 
-    _aq = Universe(
-        25,
-        100,
+    _aq = SubUniverse(
+        3,
+        500,
         16,
-        100,
+        16,
         7,
         3,
         20
@@ -664,9 +664,9 @@ if __name__ == "__main__":
         _aq.universe_positions,
         show_galaxy_motion_path=True,
         show_planets_motion_path=True,
-        show_stars=False,
+        show_stars=True,
         show_black_holes=True,
-        show_planets=False
+        show_planets=True
     )
 
     import pdb

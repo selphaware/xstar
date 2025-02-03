@@ -4,7 +4,7 @@ from xmath.generate_universe import generate_universe_parametric_values
 from xmath.structures import UNIVERSE_STRUCT, R2, R2_POS
 
 
-class Universe(object):
+class SubUniverse(object):
     def __init__(
             self,
             num_galaxies: int = 36,
