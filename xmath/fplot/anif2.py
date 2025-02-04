@@ -1,17 +1,21 @@
+from math import pi
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-
 # Dictionary of parametric curves
 curves = {
     "log_spiral_elipse": [
-        # x(t) = a_C * exp(L*t) * cos(rot + t)
         lambda t, a_C, L, rot: a_C * np.exp(L * t) * np.cos(rot + t),
-        # y(t) = b_C * exp(L*t) * sin(rot + t)
         lambda t, b_C, L, rot: b_C * np.exp(L * t) * np.sin(rot + t)
+    ],
+
+    "circle_elipse": [
+        lambda t, a, rot: a * np.cos(rot * t),
+        lambda t, b, rot: b * np.sin(rot, t)
     ]
 }
+
 
 def compute_spiral(curve_type="log_spiral_elipse",
                    a_C=1.0, b_C=1.0, L=0.1, rot=0.0,
@@ -30,6 +34,7 @@ def compute_spiral(curve_type="log_spiral_elipse",
     y_vals = y_func(t_vals, b_C, L, rot)
 
     return t_vals, x_vals, y_vals
+
 
 def plot_spiral_static():
     """
@@ -59,8 +64,11 @@ def plot_spiral_static():
 
 def animate_spiral_rotation(curve_type="log_spiral_elipse",
                             a_C=1.0, b_C=1.0, L=0.1,
-                            rot_step=0.01,  # how much to increment rotation each frame
-                            frames=100,     # total frames
+                            rot_step=0.01,
+                            a_C_step=0.01,
+                            b_C_step=0.01,
+                            # how much to increment rotation each frame
+                            frames=100,  # total frames
                             t_min=0.0, t_max=10.0,
                             interval=50):
     """
@@ -68,10 +76,11 @@ def animate_spiral_rotation(curve_type="log_spiral_elipse",
     """
     fig, ax = plt.subplots()
     line, = ax.plot([], [], 'r-')  # a single line object we'll update
+    point, = ax.plot([], [], "o")
 
     # Set plot bounds so we can see the curve (adjust as needed)
-    ax.set_xlim(-50, 50)
-    ax.set_ylim(-50, 50)
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(-100, 100)
     ax.set_title("Rotating Log-Spiral Ellipse")
 
     # Optional: add a grid
@@ -80,64 +89,64 @@ def animate_spiral_rotation(curve_type="log_spiral_elipse",
     def init():
         # Initialize the line to empty
         line.set_data([], [])
+        point.set_data([], [])
         return (line,)
 
     def update(frame):
         # Current rotation = frame index * rot_step
         current_rot = frame * rot_step
 
+        # expand/contract horizontally and vertically
+        frame_bin_size = 10E2
+        frame_bin = frames // frame_bin_size
+        current_a_C = abs(np.cos(2 * pi * frame / frame_bin)) * a_C + a_C
+        current_b_C = abs(np.sin(2 * pi * frame / frame_bin)) * b_C + b_C
+
+
         # Compute x,y for that rotation
         _, x_vals, y_vals = compute_spiral(
             curve_type=curve_type,
-            a_C=a_C,
-            b_C=b_C,
+            a_C=current_a_C,
+            b_C=current_b_C,
             L=L,
-            rot=current_rot,    # rotation changes each frame
+            rot=current_rot,  # rotation changes each frame
             t_min=t_min,
             t_max=t_max
         )
         # Update the line data
+        print(x_vals[-2:], y_vals[-2:])
         line.set_data(x_vals, y_vals)
-        return (line,)
+        point.set_data([x_vals[-1]], [y_vals[-1]])
+        return (line, point)
 
     # Create the animation
     anim = FuncAnimation(
         fig,
-        update,            # function called for each frame
-        frames=frames,     # how many frames total
-        init_func=init,    # sets up background
-        blit=True,         # improves performance
+        update,  # function called for each frame
+        frames=frames,  # how many frames total
+        init_func=init,  # sets up background
+        blit=True,  # improves performance
         interval=interval  # delay between frames in ms
     )
 
     plt.show()
     return anim
 
+
 # Example usage
 if __name__ == "__main__":
     animate_spiral_rotation(
         curve_type="log_spiral_elipse",
         a_C=1.0,
-        b_C=1.1,
+        b_C=1.0,
         L=0.015,
-        rot_step=0.01,   # rotation increment
-        frames=int(1E6),      # total animation frames
+        rot_step=0.01,  # rotation increment
+        frames=int(1E6),  # total animation frames
         t_min=0.0,
         t_max=250.0,
-        interval=5
+        interval=15
     )
 
-    animate_spiral_rotation(
-        curve_type="log_spiral_elipse",
-        a_C=1.0,
-        b_C=1.5,
-        L=0.075,
-        rot_step=0.01,   # rotation increment
-        frames=int(1E6),      # total animation frames
-        t_min=0.0,
-        t_max=10250.0,
-        interval=5
-    )
 
     # Run the static plot demonstration
     # plot_spiral_static()
