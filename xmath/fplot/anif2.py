@@ -6,20 +6,37 @@ from matplotlib.animation import FuncAnimation
 # Dictionary of parametric curves
 curves = {
     "log_spiral_elipse": [
-        lambda t, a_C, L, rot: a_C * np.exp(L * t) * np.cos(rot + t),
-        lambda t, b_C, L, rot: b_C * np.exp(L * t) * np.sin(rot + t)
+        lambda t, a_C, b_C, L, rot: a_C * np.exp(L * t) * np.cos(rot + t),
+        lambda t, a_C, b_C, L, rot: b_C * np.exp(L * t) * np.sin(rot + t)
     ],
 
     "circle_elipse": [
-        lambda t, a, rot: a * np.cos(rot * t),
-        lambda t, b, rot: b * np.sin(rot, t)
+        lambda t, a, b, rot: a * np.cos(rot + t),
+        lambda t, a, b, rot: b * np.sin(rot + t)
+    ],
+
+    "square": [
+        lambda t, a, b, rot: a * np.cos(
+            rot + t
+        ) / np.maximum(
+            np.abs(np.cos(rot + t)),
+            np.abs(np.sin(rot + t))
+        ),
+
+        lambda t, a, b, rot: b * np.sin(
+            rot + t
+        ) / np.maximum(
+            np.abs(np.cos(rot + t)),
+            np.abs(np.sin(rot + t))
+        )
     ]
+
 }
 
 
 def compute_spiral(curve_type="log_spiral_elipse",
-                   a_C=1.0, b_C=1.0, L=0.1, rot=0.0,
-                   t_min=0.0, t_max=10.0, num_points=1000):
+                   t_min=0.0, t_max=10.0, num_points=1000,
+                   **curve_params):
     """
     Returns (t_vals, x_vals, y_vals) for the specified curve over t_min..t_max.
     """
@@ -30,8 +47,8 @@ def compute_spiral(curve_type="log_spiral_elipse",
     t_vals = np.linspace(t_min, t_max, num_points)
 
     # Evaluate x(t), y(t)
-    x_vals = x_func(t_vals, a_C, L, rot)
-    y_vals = y_func(t_vals, b_C, L, rot)
+    x_vals = x_func(t_vals, **curve_params)
+    y_vals = y_func(t_vals, **curve_params)
 
     return t_vals, x_vals, y_vals
 
@@ -43,13 +60,15 @@ def plot_spiral_static():
     # Compute spiral data
     t_vals, x_vals, y_vals = compute_spiral(
         curve_type="log_spiral_elipse",
+        t_min=0,
+        t_max=10,
+        num_points=1000,
+
+        # params
         a_C=1.0,
         b_C=1.0,
         L=0.1,
-        rot=0.0,
-        t_min=0,
-        t_max=10,
-        num_points=1000
+        rot=0.0
     )
 
     # Plot
@@ -61,6 +80,59 @@ def plot_spiral_static():
     plt.grid(True)
     plt.show()
 
+
+def plot_elipse():
+    """
+    1) Compute and plot the spiral curve (single, static plot).
+    """
+    # Compute spiral data
+    t_vals, x_vals, y_vals = compute_spiral(
+        curve_type="circle_elipse",
+        t_min=0,
+        t_max=10,
+        num_points=1000,
+
+        # params
+        a=10.0,
+        b=11.5,
+        rot=0.0
+    )
+
+    # Plot
+    plt.figure()
+    plt.plot(x_vals, y_vals, 'r-')
+    plt.title("Static Ellipse")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.grid(True)
+    plt.show()
+
+
+def plot_square():
+    """
+    1) Compute and plot the spiral curve (single, static plot).
+    """
+    # Compute spiral data
+    t_vals, x_vals, y_vals = compute_spiral(
+        curve_type="square",
+        t_min=0,
+        t_max=10,
+        num_points=1000,
+
+        # params
+        a=10.0,
+        b=15.0,
+        rot=0.0
+    )
+
+    # Plot
+    plt.figure()
+    plt.plot(x_vals, y_vals, 'r-')
+    plt.title("Static Ellipse")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.grid(True)
+    plt.show()
 
 def animate_spiral_rotation(curve_type="log_spiral_elipse",
                             a_C=1.0, b_C=1.0, L=0.1,
@@ -135,18 +207,21 @@ def animate_spiral_rotation(curve_type="log_spiral_elipse",
 
 # Example usage
 if __name__ == "__main__":
-    animate_spiral_rotation(
-        curve_type="log_spiral_elipse",
-        a_C=1.0,
-        b_C=1.0,
-        L=0.015,
-        rot_step=0.01,  # rotation increment
-        frames=int(1E6),  # total animation frames
-        t_min=0.0,
-        t_max=250.0,
-        interval=15
-    )
+    if False:
+        animate_spiral_rotation(
+            curve_type="log_spiral_elipse",
+            a_C=1.0,
+            b_C=1.0,
+            L=0.015,
+            rot_step=0.01,  # rotation increment
+            frames=int(1E6),  # total animation frames
+            t_min=0.0,
+            t_max=250.0,
+            interval=15
+        )
 
 
-    # Run the static plot demonstration
-    # plot_spiral_static()
+        # Run the static plot demonstration
+        plot_spiral_static()
+
+    plot_square()
