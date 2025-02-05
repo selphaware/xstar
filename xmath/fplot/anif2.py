@@ -121,7 +121,7 @@ def animate(
         # Initialize the line to empty
         line.set_data([], [])
         point.set_data([], [])
-        return (line,)
+        return line, point
 
     def update(frame: int):
         updated_params = {
