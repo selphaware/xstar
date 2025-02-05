@@ -201,3 +201,65 @@ if __name__ == "__main__":
             "y": 2.1
         }
     )
+
+    animate(
+        "log_spiral_elipse",
+        0,
+        100,
+        10000,
+        10000,
+        25,
+        (-2000, 2000), (-1000, 1000),
+
+        # initial sizes/rotation
+        curve_params={
+            "a": 1,
+            "b": 1,
+            "L": 0.055,
+            "rot": 0
+        },
+
+        # transformation vector and rotation angle
+        curve_shift_params={
+            "a": 0,  # size transformation x1
+            "b": 0,  # size transformation x2
+            "L": 0,  # logarithm transformation
+            "rot": 0.1  # rotation transformation
+        },
+
+        # vector speed (velocity)
+        shift_params={
+            "x": 0.9,
+            "y": -2.1
+        }
+    )
+
+    animate(
+        "circle_elipse",
+        0,
+        100,
+        10000,
+        10000,
+        25,
+        (-2000, 2000), (-1000, 1000),
+
+        # initial sizes/rotation
+        curve_params={
+            "a": 5,
+            "b": 2,
+            "rot": 0
+        },
+
+        # transformation vector and rotation angle
+        curve_shift_params={
+            "a": 0.1,  # size transformation x1
+            "b": 0.1,  # size transformation x2
+            "rot": 0.1  # rotation transformation
+        },
+
+        # vector speed (velocity)
+        shift_params={
+            "x": 0.9,
+            "y": 0.1
+        }
+    )
