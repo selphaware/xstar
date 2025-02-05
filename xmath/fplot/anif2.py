@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -28,7 +28,7 @@ def plot_static_values(
     # Compute spiral data
     t_vals, x_vals, y_vals = compute_values(
         curve_type,
-        0,
+        0, 0,
         t_min=t_min,
         t_max=t_max,
         num_points=num_points,
@@ -66,26 +66,53 @@ def plot_static_values(
     plt.show()
 
 
-def animate_spiral_rotation(curve_type="log_spiral_elipse",
-                            a_C=1.0, b_C=1.0, L=0.1,
-                            rot_step=0.01,
-                            a_C_step=0.01,
-                            b_C_step=0.01,
-                            # how much to increment rotation each frame
-                            frames=100,  # total frames
-                            t_min=0.0, t_max=10.0,
-                            interval=50):
+def animate(
+        curve_type: str,
+        t_min: float = 0.0,
+        t_max: float = 10.0,
+        num_points: int = 1000,
+        frames: int = 100,
+        interval: int = 50,
+        xlim: Tuple[int, int] = (-20, 20),
+        ylim: Tuple[int, int] = (-10, 10),
+        **master_params
+):
     """
-    Animate the spiral while incrementing 'rot' by 'rot_step' each frame.
+
+    :param curve_type:
+    :param t_min:
+    :param t_max:
+    :param frames:
+    :param interval:
+    :param master_params:
+    :return:
     """
+    curve_params: Dict[str, float] = master_params.get("curve_params")
+    curve_shift_params: Dict[str, float] = master_params.get(
+        "curve_shift_params"
+    )
+    shift_params: Dict[str, float] = master_params.get("shift_params")
+    point_params: Dict[str, float] = master_params.get("point_params")
+
+    plt.rcParams.update({
+        'axes.facecolor': 'black',  # Black background for all axes
+        'axes.edgecolor': 'white',  # White border
+        'axes.labelcolor': 'white',  # White axis labels
+        'xtick.color': 'yellow',  # White tick marks
+        'ytick.color': 'yellow',  # White tick marks
+        'grid.color': 'dimgray',  # Dark grey grid lines
+        'figure.facecolor': 'black',  # Black figure background
+    })
+
     fig, ax = plt.subplots()
-    line, = ax.plot([], [], 'r-')  # a single line object we'll update
+    plt.gca().set_aspect('equal')
+
+    line, = ax.plot([], [], 'r-')
     point, = ax.plot([], [], "o")
 
-    # Set plot bounds so we can see the curve (adjust as needed)
-    ax.set_xlim(-50, 50)
-    ax.set_ylim(-50, 50)
-    ax.set_title("Rotating Log-Spiral Ellipse")
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_title(curve_type)
 
     # Optional: add a grid
     ax.grid(True)
@@ -96,34 +123,26 @@ def animate_spiral_rotation(curve_type="log_spiral_elipse",
         point.set_data([], [])
         return (line,)
 
-    def update(frame):
-        # Current rotation = frame index * rot_step
-        current_rot = frame * rot_step
+    def update(frame: int):
+        updated_params = {
+            k: v * frame + curve_params[k]
+            for k, v in curve_shift_params.items()
+        }
 
-        # expand/contract horizontally and vertically
-        frame_bin_size = 10E2
-        frame_bin = frames // frame_bin_size
-        current_a_C = a_C  # abs(np.cos(2 * pi * frame / frame_bin)) * a_C +
-        # a_C
-        current_b_C = b_C  # abs(np.sin(2 * pi * frame / frame_bin)) * b_C +
-        # b_C
-
-        # Compute x,y for that rotation
         _, x_vals, y_vals = compute_values(
             curve_type,
-            frame / 10,
-            a=current_a_C,
-            b=current_b_C,
-            # L=L,
-            rot=0,  # current_rot,  # rotation changes each frame
-            t_min=t_min,
-            t_max=t_max
+            shift_params['x'] * frame,
+            shift_params['y'] * frame,
+            t_min,
+            t_max,
+            num_points,
+            **updated_params
         )
         # Update the line data
         # print(x_vals[-2:], y_vals[-2:])
         line.set_data(x_vals, y_vals)
         point.set_data([x_vals[-1]], [y_vals[-1]])
-        return (line, point)
+        return line, point
 
     # Create the animation
     anim = FuncAnimation(
@@ -141,12 +160,38 @@ def animate_spiral_rotation(curve_type="log_spiral_elipse",
 
 # Example usage
 if __name__ == "__main__":
-    plot_static_values(
-        "circle_elipse",
+    plot_static = False
+    if plot_static:
+        plot_static_values(
+            "circle_elipse",
+            0,
+            10,
+            1000,
+            a=1,
+            b=1,
+            rot=0
+        )
+
+    animate(
+        "rectangle",
         0,
-        10,
-        1000,
-        a=1,
-        b=1,
-        rot=0
+        100,
+        10000,
+        10000,
+        25,
+        (-200, 200), (-100, 100),
+        curve_params={
+            "a": 5,
+            "b": 2,
+            "rot": 0
+        },
+        curve_shift_params={
+            "a": 0,
+            "b": 0,
+            "rot": 0.01
+        },
+        shift_params={
+            "x": 0.1,
+            "y": 0.1
+        }
     )

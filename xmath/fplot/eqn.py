@@ -4,8 +4,8 @@ import numpy as np
 # Dictionary of parametric curves
 eqns = {
     "log_spiral_elipse": [
-        lambda t, a_C, b_C, L, rot: a_C * np.exp(L * t) * np.cos(rot + t),
-        lambda t, a_C, b_C, L, rot: b_C * np.exp(L * t) * np.sin(rot + t)
+        lambda t, a, b, L, rot: a * np.exp(L * t) * np.cos(rot + t),
+        lambda t, a, b, L, rot: b * np.exp(L * t) * np.sin(rot + t)
     ],
 
     "circle_elipse": [
@@ -34,7 +34,8 @@ eqns = {
 
 def compute_values(
         curve_type: str,
-        shift: float,
+        shift_x: float,
+        shift_y: float,
         t_min: float = 0.0,
         t_max: float = 10.0,
         num_points: int = 1000,
@@ -61,4 +62,4 @@ def compute_values(
     x_vals = x_func(t_vals, **curve_params)
     y_vals = y_func(t_vals, **curve_params)
 
-    return t_vals, x_vals + shift, y_vals + shift
+    return t_vals, x_vals + shift_x, y_vals + shift_y
