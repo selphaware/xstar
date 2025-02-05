@@ -73,8 +73,9 @@ def animate(
         num_points: int = 1000,
         frames: int = 100,
         interval: int = 50,
-        xlim: Tuple[int, int] = (-20, 20),
-        ylim: Tuple[int, int] = (-10, 10),
+        _xlim: Tuple[int, int] = (-20, 20),
+        _ylim: Tuple[int, int] = (-10, 10),
+        centre: bool = False,
         **master_params
 ):
     """
@@ -110,6 +111,9 @@ def animate(
     line, = ax.plot([], [], 'r-')
     point, = ax.plot([], [], "o")
 
+    xlim = list(_xlim)
+    ylim = list(_ylim)
+
     ax.set_xlim(*xlim)
     ax.set_ylim(*ylim)
     ax.set_title(curve_type)
@@ -138,10 +142,41 @@ def animate(
             num_points,
             **updated_params
         )
+
+        if centre:
+            xlim[0] += shift_params['x']
+            xlim[1] += shift_params['x']
+            ylim[0] += shift_params['y']
+            ylim[1] += shift_params['y']
+
+        else:
+            veri_len = (_ylim[1] - _ylim[0])
+            hori_len = (_xlim[1] - _xlim[0])
+
+            if min(y_vals) <= ylim[0]:
+                ylim[1] -= veri_len
+                ylim[0] -= veri_len
+
+            if max(y_vals) >= ylim[1]:
+                ylim[1] += veri_len
+                ylim[0] += veri_len
+
+            if min(x_vals) <= xlim[0]:
+                xlim[1] -= hori_len
+                xlim[0] -= hori_len
+
+            if max(x_vals) >= xlim[1]:
+                xlim[1] += hori_len
+                xlim[0] += hori_len
+
+        ax.set_xlim(*xlim)
+        ax.set_ylim(*ylim)
+
         # Update the line data
         # print(x_vals[-2:], y_vals[-2:])
         line.set_data(x_vals, y_vals)
         point.set_data([x_vals[-1]], [y_vals[-1]])
+
         return line, point
 
     # Create the animation
@@ -150,7 +185,7 @@ def animate(
         update,  # function called for each frame
         frames=frames,  # how many frames total
         init_func=init,  # sets up background
-        blit=True,  # improves performance
+        blit=False,  # improves performance
         interval=interval  # delay between frames in ms
     )
 
@@ -180,6 +215,7 @@ if __name__ == "__main__":
         10000,
         25,
         (-2000, 2000), (-1000, 1000),
+        True,
 
         # initial sizes/rotation
         curve_params={
@@ -210,6 +246,7 @@ if __name__ == "__main__":
         10000,
         25,
         (-2000, 2000), (-1000, 1000),
+        True,
 
         # initial sizes/rotation
         curve_params={
@@ -242,6 +279,7 @@ if __name__ == "__main__":
         10000,
         25,
         (-2000, 2000), (-1000, 1000),
+        True,
 
         # initial sizes/rotation
         curve_params={
@@ -259,7 +297,7 @@ if __name__ == "__main__":
 
         # vector speed (velocity)
         shift_params={
-            "x": 0.9,
+            "x": -10.9,
             "y": 0.1
         }
     )
