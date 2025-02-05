@@ -179,19 +179,25 @@ if __name__ == "__main__":
         10000,
         10000,
         25,
-        (-200, 200), (-100, 100),
+        (-2000, 2000), (-1000, 1000),
+
+        # initial sizes/rotation
         curve_params={
             "a": 5,
             "b": 2,
             "rot": 0
         },
+
+        # transformation vector and rotation angle
         curve_shift_params={
-            "a": 0,
-            "b": 0,
-            "rot": 0.01
+            "a": 0,  # size transformation x1
+            "b": 0,  # size transformation x2
+            "rot": 0.0  # rotation transformation
         },
+
+        # vector speed (velocity)
         shift_params={
-            "x": 0.1,
-            "y": 0.1
+            "x": 5.9,
+            "y": 2.1
         }
     )
