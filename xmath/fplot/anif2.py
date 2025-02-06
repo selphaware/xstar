@@ -92,7 +92,7 @@ def animate(
     curve_shift_params: Dict[str, float] = master_params.get(
         "curve_shift_params"
     )
-    shift_params: Dict[str, float] = master_params.get("velocity_vector")
+    velocity_vector: Dict[str, float] = master_params.get("velocity_vector")
     point_params: Dict[str, float] = master_params.get("point_params")
 
     plt.rcParams.update({
@@ -135,8 +135,8 @@ def animate(
 
         _, x_vals, y_vals = compute_values(
             curve_type,
-            shift_params['x'] * frame,
-            shift_params['y'] * frame,
+            velocity_vector['x'] * frame,
+            velocity_vector['y'] * frame,
             t_min,
             t_max,
             num_points,
@@ -144,10 +144,10 @@ def animate(
         )
 
         if centre:
-            xlim[0] += shift_params['x']
-            xlim[1] += shift_params['x']
-            ylim[0] += shift_params['y']
-            ylim[1] += shift_params['y']
+            xlim[0] += velocity_vector['x']
+            xlim[1] += velocity_vector['x']
+            ylim[0] += velocity_vector['y']
+            ylim[1] += velocity_vector['y']
 
         else:
             veri_len = (_ylim[1] - _ylim[0])
