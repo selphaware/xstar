@@ -195,109 +195,36 @@ def animate(
 
 # Example usage
 if __name__ == "__main__":
-    plot_static = False
-    if plot_static:
-        plot_static_values(
-            "circle_elipse",
-            0,
-            10,
-            1000,
-            a=1,
-            b=1,
-            rot=0
-        )
+    base_inputs = [
+        0,  # t_min
+        100,  # t_max
+        10000,  # num points
+        10000,  # num frames
+        25,  # intervals
+        (-2000, 2000), (-1000, 1000),  # xlim, ylim
+        True
+    ]
 
     animate(
         "rectangle",
-        0,
-        100,
-        10000,
-        10000,
-        25,
-        (-2000, 2000), (-1000, 1000),
-        True,
-
-        # initial sizes/rotation
-        curve_params={
-            "a": 5,
-            "b": 2,
-            "rot": 0
-        },
-
-        # transformation vector and rotation angle
-        curve_shift_params={
-            "a": 0,  # size transformation x1
-            "b": 0,  # size transformation x2
-            "rot": 0.0  # rotation transformation
-        },
-
-        # vector speed (velocity)
-        shift_params={
-            "x": 5.9,
-            "y": 2.1
-        }
+        *base_inputs,
+        curve_params={"a": 5, "b": 2, "rot": 0},
+        curve_shift_params={"a": 0, "b": 0, "rot": 0.0},
+        shift_params={"x": 5.9, "y": 2.1}
     )
 
     animate(
         "log_spiral_elipse",
-        0,
-        100,
-        10000,
-        10000,
-        25,
-        (-2000, 2000), (-1000, 1000),
-        True,
-
-        # initial sizes/rotation
-        curve_params={
-            "a": 1,
-            "b": 1,
-            "L": 0.055,
-            "rot": 0
-        },
-
-        # transformation vector and rotation angle
-        curve_shift_params={
-            "a": 0,  # size transformation x1
-            "b": 0,  # size transformation x2
-            "L": 0,  # logarithm transformation
-            "rot": 0.1  # rotation transformation
-        },
-
-        # vector speed (velocity)
-        shift_params={
-            "x": 0.9,
-            "y": -2.1
-        }
+        *base_inputs,
+        curve_params={"a": 1, "b": 1, "L": 0.055, "rot": 0},
+        curve_shift_params={"a": 0, "b": 0, "L": 0, "rot": 0.1},
+        shift_params={"x": 0.9, "y": -2.1}
     )
 
     animate(
         "circle_elipse",
-        0,
-        100,
-        10000,
-        10000,
-        25,
-        (-2000, 2000), (-1000, 1000),
-        True,
-
-        # initial sizes/rotation
-        curve_params={
-            "a": 5,
-            "b": 2,
-            "rot": 0
-        },
-
-        # transformation vector and rotation angle
-        curve_shift_params={
-            "a": 0.1,  # size transformation x1
-            "b": 0.1,  # size transformation x2
-            "rot": 0.1  # rotation transformation
-        },
-
-        # vector speed (velocity)
-        shift_params={
-            "x": -10.9,
-            "y": 0.1
-        }
+        *base_inputs,
+        curve_params={"a": 5, "b": 2, "rot": 0},
+        curve_shift_params={"a": 0.1, "b": 0.1, "rot": 0.1},
+        shift_params={"x": -10.9, "y": 0.1}
     )
