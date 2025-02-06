@@ -92,7 +92,7 @@ def animate(
     curve_shift_params: Dict[str, float] = master_params.get(
         "curve_shift_params"
     )
-    shift_params: Dict[str, float] = master_params.get("shift_params")
+    shift_params: Dict[str, float] = master_params.get("velocity_vector")
     point_params: Dict[str, float] = master_params.get("point_params")
 
     plt.rcParams.update({
@@ -205,26 +205,36 @@ if __name__ == "__main__":
         True
     ]
 
+    init_test = False
+    if init_test:
+        animate(
+            "rectangle",
+            *base_inputs,
+            curve_params={"a": 5, "b": 2, "rot": 0},
+            curve_shift_params={"a": 0, "b": 0, "rot": 0.0},
+            shift_params={"x": 5.9, "y": 2.1}
+        )
+
+        animate(
+            "log_spiral_elipse",
+            *base_inputs,
+            curve_params={"a": 1, "b": 1, "L": 0.055, "rot": 0},
+            curve_shift_params={"a": 0, "b": 0, "L": 0, "rot": 0.1},
+            shift_params={"x": 0.9, "y": -2.1}
+        )
+
+        animate(
+            "circle_elipse",
+            *base_inputs,
+            curve_params={"a": 5, "b": 2, "rot": 0},
+            curve_shift_params={"a": 0.1, "b": 0.1, "rot": 0.1},
+            shift_params={"x": -10.9, "y": 0.1}
+        )
+
     animate(
         "rectangle",
         *base_inputs,
-        curve_params={"a": 5, "b": 2, "rot": 0},
+        curve_params={"a": 100, "b": 50, "rot": 0},
         curve_shift_params={"a": 0, "b": 0, "rot": 0.0},
-        shift_params={"x": 5.9, "y": 2.1}
-    )
-
-    animate(
-        "log_spiral_elipse",
-        *base_inputs,
-        curve_params={"a": 1, "b": 1, "L": 0.055, "rot": 0},
-        curve_shift_params={"a": 0, "b": 0, "L": 0, "rot": 0.1},
-        shift_params={"x": 0.9, "y": -2.1}
-    )
-
-    animate(
-        "circle_elipse",
-        *base_inputs,
-        curve_params={"a": 5, "b": 2, "rot": 0},
-        curve_shift_params={"a": 0.1, "b": 0.1, "rot": 0.1},
-        shift_params={"x": -10.9, "y": 0.1}
+        velocity_vector={"x": 5.9, "y": 2.1}
     )
