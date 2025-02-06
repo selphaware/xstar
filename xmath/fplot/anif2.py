@@ -76,7 +76,7 @@ def animate(
         _xlim: Tuple[int, int] = (-20, 20),
         _ylim: Tuple[int, int] = (-10, 10),
         centre: bool = False,
-        **master_params
+        **master_object_params
 ):
     """
 
@@ -88,13 +88,6 @@ def animate(
     :param master_params:
     :return:
     """
-    curve_params: Dict[str, float] = master_params.get("curve_params")
-    curve_shift_params: Dict[str, float] = master_params.get(
-        "curve_shift_params"
-    )
-    velocity_vector: Dict[str, float] = master_params.get("velocity_vector")
-    point_params: Dict[str, float] = master_params.get("point_params")
-
     plt.rcParams.update({
         'axes.facecolor': 'black',  # Black background for all axes
         'axes.edgecolor': 'white',  # White border
@@ -108,8 +101,11 @@ def animate(
     fig, ax = plt.subplots()
     plt.gca().set_aspect('equal')
 
-    line, = ax.plot([], [], 'r-')
-    point, = ax.plot([], [], "o")
+    for masterk, masterv in master_object_params.items():
+        master_object_params[masterk]["plot"], = ax.plot(
+            [], [],
+            master_object_params[masterk]["symbol"]
+        )
 
     xlim = list(_xlim)
     ylim = list(_ylim)
@@ -123,25 +119,41 @@ def animate(
 
     def init():
         # Initialize the line to empty
-        line.set_data([], [])
-        point.set_data([], [])
-        return line, point
+        for masterk, masterv in master_object_params.items():
+            master_object_params[masterk]["plot"].set_data([], [])
+
+        return tuple([
+            master_object_params[k]["plot"]
+            for k, v in master_object_params.items()
+        ])
 
     def update(frame: int):
-        updated_params = {
-            k: v * frame + curve_params[k]
-            for k, v in curve_shift_params.items()
-        }
+        for obj, master_params in master_object_params.items():
+            curve_params = master_params["curve_params"]
+            curve_shift_params = master_params["curve_shift_params"]
+            velocity_vector = master_params["velocity_vector"]
 
-        _, x_vals, y_vals = compute_values(
-            curve_type,
-            velocity_vector['x'] * frame,
-            velocity_vector['y'] * frame,
-            t_min,
-            t_max,
-            num_points,
-            **updated_params
-        )
+            master_params["updated_params"] = {
+                k: v * frame + curve_params[k]
+                for k, v in curve_shift_params.items()
+            }
+
+            _, x_vals, y_vals = compute_values(
+                curve_type,
+                velocity_vector['x'] * frame,
+                velocity_vector['y'] * frame,
+                t_min,
+                t_max,
+                num_points,
+                **master_params["updated_params"]
+            )
+
+            master_params["x_vals"] = x_vals
+            master_params["y_vals"] = y_vals
+
+        velocity_vector = master_object_params["main"]["velocity_vector"]
+        x_vals = master_object_params["main"]["x_vals"]
+        y_vals = master_object_params["main"]["y_vals"]
 
         if centre:
             xlim[0] += velocity_vector['x']
@@ -174,10 +186,12 @@ def animate(
 
         # Update the line data
         # print(x_vals[-2:], y_vals[-2:])
-        line.set_data(x_vals, y_vals)
-        point.set_data([x_vals[-1]], [y_vals[-1]])
+        ret = []
+        for masterk, masterv in master_object_params.items():
+            masterv["plot"].set_data(x_vals, y_vals)
+            ret.append(masterv["plot"])
 
-        return line, point
+        return tuple(ret)
 
     # Create the animation
     anim = FuncAnimation(
@@ -234,7 +248,10 @@ if __name__ == "__main__":
     animate(
         "rectangle",
         *base_inputs,
-        curve_params={"a": 100, "b": 50, "rot": 0},
-        curve_shift_params={"a": 0, "b": 0, "rot": 0.0},
-        velocity_vector={"x": 5.9, "y": 2.1}
+        main = {
+            "symbol": "r-",
+            "curve_params": {"a": 100, "b": 50, "rot": 0},
+            "curve_shift_params": {"a": 0, "b": 0, "rot": 0.0},
+            "velocity_vector": {"x": 5.9, "y": 2.1}
+        }
     )
