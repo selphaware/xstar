@@ -1,12 +1,22 @@
+from bisect import bisect
 from typing import Tuple, List
+from math import pi
+import numpy as np
+from pprint import pp
 
+from space.cosmic_structures.functions.calculate import calculate_magnitude, \
+    get_vector_between_positions
+from space.subuniverse import SubUniverse
+from xmath.generate_universe import generate_universe_parametric_values
 from xmath.pcurve import (
     generate_parametric_values,
     generate_parametric_num_grid,
     generate_multi_param_num_grid
 )
-from xmath.plotfuncs import plot_num_grid, plot_parametric
+from xmath.fplot.plotfuncs import plot_num_grid, plot_parametric, \
+    plot_parametric_universe
 from xmath.structures import R2
+from xmath.xrandom import random_int_generator
 
 
 def _gen_bool_and_plot(coordinates: R2):
@@ -132,12 +142,33 @@ def test_log_spiral():
     _gen_bool_and_plot(coordinates)
 
 
-def test_log_spiral_shift():
+def test_log_spiral2():
     # Example usage
-    _C = 1
+    _a_C = 1
+    _b_C = 2
     _L = .075
     _t_range = (0, 40)
     _num_points = 1000
+    _factor = 1
+
+    coordinates = generate_parametric_values(
+        "log_spiral2",
+        _t_range,
+        _num_points,
+        _factor,
+        a_C=_a_C, b_C=_b_C, L=_L, rot=2 * pi, hs=0, vs=0
+    )
+
+    print(coordinates)
+
+    plot_parametric("LSR Test", [coordinates], show=True)
+
+def test_log_spiral_shift():
+    # Example usage
+    _C = 1
+    _L = .015
+    _t_range = (0, 250)
+    _num_points = 2000
     _factor = 1
 
     coordinates = generate_parametric_values(
@@ -148,7 +179,46 @@ def test_log_spiral_shift():
         C=_C, L=_L, hs=15, vs=15
     )
 
-    _gen_bool_and_plot(coordinates)
+    plot_parametric([coordinates])
+
+
+def test_big_log_spirals():
+    # Example usage
+    _C = 1
+    _L = 0.075
+    _t_range = (0, 1_000)
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
+    print(_factor)
+
+    num_galaxies = 10
+    rnd = random_int_generator(-num_galaxies, num_galaxies, unique=True)
+
+    coordinates = [generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=0, vs=0
+    )]
+
+    coordinates.extend([
+        generate_parametric_values(
+            "log_spiral",
+            _t_range,
+            _num_points,
+            _factor + (_i * _factor / 10),
+            C=_C, L=_L, hs=next(rnd) / _factor, vs=next(rnd) / _factor
+        )
+        for _i in range(num_galaxies)
+    ])
+
+    for coordinate in coordinates:
+        print(max([x for (x, y) in coordinate]))
+        print(max([y for (x, y) in coordinate]))
+
+    plot_parametric(coordinates)
+    # _gen_bool_and_plot(coordinates)
 
 
 def test_elipse():
@@ -321,6 +391,237 @@ def test_log_spiral_circle():
     _gen_multi_bool_and_plot(mcoords)
 
 
+def test_log_spiral3():
+    # Example usage
+    _C = 1
+    _L = 0.075
+    _t_range = (0, 1_000)
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
+
+    coordinates = generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=0, vs=0
+    )
+
+    c3 = coordinates[0: 9500]
+    c4 = coordinates[9500:]
+
+    rnd_int3 = random_int_generator(0, len(c3) - 1, True)
+    rnd_int4 = random_int_generator(0, len(c4) - 1, True)
+
+    _R = 0.01
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+
+    planets = [
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x, hs=o1, vs=o2
+        )
+        for (o1, o2) in [(0, 0)] + [c4[next(rnd_int4)] for _ in range(200)]
+        for x in range(1, 16)
+    ]
+
+    galaxy = [coordinates] + planets
+
+    plot_parametric(galaxy)
+
+
+def test_log_spiral4():
+    galaxy1 = generate_galaxy((0, 0), 100)
+    galaxy2 = generate_galaxy((1, 1), 100)
+
+    plot_parametric(galaxy1 + galaxy2)
+
+
+def test_log_spiral5():
+    universe = []
+    for j in range(0, 60, 10):
+        for i in range(0, 60, 10):
+            universe.extend(generate_galaxy((i, j), 20))
+
+    plot_parametric(universe)
+
+
+def test_log_spiral6():
+    universe = []
+    i_rand = random_int_generator(0, 60)
+    j_rand = random_int_generator(0, 60)
+    _ = next(i_rand)
+    for j in range(0, 60, 10):
+        for i in range(0, 60, 10):
+            universe.extend(generate_galaxy(
+                (next(i_rand), next(j_rand)),
+                20
+            ))
+
+    print(universe)
+
+    plot_parametric(universe)
+
+
+def test_log_spiral7():
+    universe = []
+    i_rand = random_int_generator(0, 60)
+    j_rand = random_int_generator(0, 60)
+    _ = next(i_rand)
+    for j in range(0, 60, 10):
+        for i in range(0, 60, 10):
+            universe.extend(generate_galaxy2(
+                (next(i_rand), next(j_rand)),
+                20
+            ))
+
+    print(universe)
+
+    plot_parametric(universe)
+
+
+def generate_galaxy(
+        origin: Tuple[int, int],
+        num_systems: int
+):
+    # Example usage
+    _C = 1
+    _L = 0.075
+    _t_range = (0, 1_000)
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
+
+    coordinates = generate_parametric_values(
+        "log_spiral",
+        _t_range,
+        _num_points,
+        _factor,
+        C=_C, L=_L, hs=origin[0], vs=origin[1]
+    )
+
+    magnitudes = np.array([
+        calculate_magnitude(
+            get_vector_between_positions(origin, x),
+            roundit=False
+        )
+        for x in coordinates
+    ])
+    min_mag, max_mag = min(magnitudes), max(magnitudes)
+    print(f"min={min_mag}, max={max_mag}")
+    even_space = np.linspace(min_mag, max_mag, num_systems)
+    locations = [
+        coordinates[bisect(list(magnitudes), x) - 1]
+        for x in even_space
+    ]
+
+    # rnd_int3 = random_int_generator(0, len(c3) - 1, True)
+    # rnd_int4 = random_int_generator(0, len(c4) - 1, True)
+
+    _R = 0.01
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+    _ofactor = (10 ** -32) / 5
+
+    planets = [
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x,
+            hs=o1,
+            vs=o2
+        )
+        for (o1, o2) in locations
+        for x in range(1, 16)
+    ]
+
+    galaxy = [coordinates] + planets
+
+    return galaxy
+
+
+def generate_galaxy2(
+        origin: Tuple[int, int],
+        num_systems: int
+):
+    # Example usage
+    _C = 1
+    _L = 0.075
+    _t_range = (0, 1_000)
+    _num_points = 10_000
+    _factor = (10 ** -32) / 5
+
+    coordinates = []
+    for x in range(5):
+        coordinates.append(generate_parametric_values(
+            "log_spiral",
+            _t_range,
+            _num_points,
+            _factor * x,
+            C=_C, L=_L, hs=origin[0], vs=origin[1]
+        ))
+
+    coordinates = np.concatenate(coordinates)
+
+    # unique values
+    vv = []
+    new_cc = []
+    for cc in coordinates:
+        if cc not in vv:
+            new_cc.append(cc)
+
+    coordinates = np.array(new_cc)
+
+    magnitudes = np.array([
+        calculate_magnitude(
+            get_vector_between_positions(origin, x),
+            roundit=False
+        )
+        for x in coordinates
+    ])
+    min_mag, max_mag = min(magnitudes), max(magnitudes)
+    print(f"min={min_mag}, max={max_mag}")
+    even_space = np.linspace(min_mag, max_mag, num_systems)
+    locations = [
+        coordinates[bisect(list(magnitudes), x) - 1]
+        for x in even_space
+    ]
+
+    # rnd_int3 = random_int_generator(0, len(c3) - 1, True)
+    # rnd_int4 = random_int_generator(0, len(c4) - 1, True)
+
+    _R = 0.01
+    _t_range = (0, 100)
+    _num_points = 1000
+    _factor = 1
+    _ofactor = (10 ** -32) / 5
+
+    planets = [
+        generate_parametric_values(
+            "circle",
+            _t_range,
+            _num_points,
+            _factor,
+            r=_R / x,
+            hs=o1,
+            vs=o2
+        )
+        for (o1, o2) in locations
+        for x in range(1, 16)
+    ]
+
+    galaxy = [coordinates] + planets
+
+    return galaxy
+
+
 if __name__ == "__main__":
     # test_elipse()
     # test_log_spiral()
@@ -335,4 +636,38 @@ if __name__ == "__main__":
     # combination
     # test_log_spiral_circle()
     # test_multi_circle()
-    test_multi_circle_elipse()
+    # test_multi_circle_elipse()
+
+    # test_big_log_spirals()
+
+    # test_log_spiral2()
+    # test_log_spiral4()
+    # test_log_spiral5()
+    # test_log_spiral6()
+    # test_log_spiral7()
+
+    # test_multi_big_log_spirals()
+
+    _aq = SubUniverse(
+        5,
+        175,
+        16,
+        50,
+        15,
+        3,
+        5
+    )
+
+    print(_aq.universe_positions)
+
+    plot_parametric_universe(
+        _aq.universe_positions,
+        show_galaxy_motion_path=True,
+        show_planets_motion_path=True,
+        show_stars=True,
+        show_black_holes=True,
+        show_planets=True
+    )
+
+    import pdb
+    pdb.set_trace()

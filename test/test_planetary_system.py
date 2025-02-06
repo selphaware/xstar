@@ -27,17 +27,8 @@ def test_planetary_system_generation():
         16,
         True
     )
-    # print([y.objects for x in ps.matrix.sectors for y in x])
-    wout = [
-        y.objects[0].name
-        if len(y.objects)
-        else ""
-        for x in ps.matrix.sectors for y in x
-    ]
-    with open("test/space.out", "w") as ff:
-        ff.write(str(wout))
 
-    # ps.print_info()
+    ps.print_info()
 
     print(f"\nShape: {ps.shape}, Origin: {ps.origin}")
 
@@ -46,7 +37,7 @@ def test_planetary_system_generation():
     print("Creating a black hole system...")
     bs = PlanetarySystem(
         "PX3", "PX3", None, StarType.BlackHole,
-        num_planets=35, evenly_spaced=True
+        num_planets=35, evenly_spaced=True, faction=Faction.Ferengi
     )
     print("Completed [ps, bs].\n\n")
 
@@ -63,35 +54,39 @@ def test_planetary_system_generation():
         None,
         None,
         3,
-        False
+        False,
+        Faction.Klingon
+    )
+
+    ship_name = "Shuttlecraft-X1"
+
+    ship = StarShip(
+        ship_name,
+        Faction.Federation,
+        "A-001",
+        "Usman Ahmad",
+        Mission.Scientific,
+        100,
+        Shields.Tachyon,
+        True,
+        [
+            PrimaryWeapon.PhaserArray,
+            PrimaryWeapon.DisruptorCannons
+        ],
+        [
+            SecondaryWeapon.QuantumMines,
+            SecondaryWeapon.PolaronBursts
+        ],
+        WarpEngine.StandardWarpDrive,
+        ImpulseEngine.ExperimentalImpulse
     )
 
     cs.add_ship(
-        StarShip(
-            "Shuttlecraft-0",
-            Faction.Federation,
-            "A-001",
-            "Usman Ahmad",
-            Mission.Scientific,
-            100,
-            Shields.Tachyon,
-            True,
-            [
-                PrimaryWeapon.PhaserArray,
-                PrimaryWeapon.DisruptorCannons
-            ],
-            [
-                SecondaryWeapon.QuantumMines,
-                SecondaryWeapon.PolaronBursts
-            ],
-            WarpEngine.StandardWarpDrive,
-            ImpulseEngine.FusionDrive
-        ),
-        cs.object_positions[cs.planet_names[0]],
-        True
+        ship,
+        cs.object_positions[cs.planet_names[0]]
     )
 
-    shuttle = cs.ships["Shuttlecraft-0 (A-001)"]
+    shuttle = cs.ships[ship.name]
 
     cs.print_info()
 
