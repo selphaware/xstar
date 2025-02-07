@@ -191,7 +191,7 @@ class AnimatedScene:
             self.fig,
             self._update_animation,
             frames=None,  # None => infinite loop
-            interval=50,  # ms between updates
+            interval=15,  # ms between updates
             blit=False
         )
         plt.show()
