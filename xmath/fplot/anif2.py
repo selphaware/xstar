@@ -67,7 +67,6 @@ def plot_static_values(
 
 
 def animate(
-        curve_type: str,
         t_min: float = 0.0,
         t_max: float = 10.0,
         num_points: int = 1000,
@@ -112,7 +111,6 @@ def animate(
 
     ax.set_xlim(*xlim)
     ax.set_ylim(*ylim)
-    ax.set_title(curve_type)
 
     # Optional: add a grid
     ax.grid(True)
@@ -139,7 +137,7 @@ def animate(
             }
 
             _, x_vals, y_vals = compute_values(
-                curve_type,
+                master_params["curve_type"],
                 velocity_vector['x'] * frame,
                 velocity_vector['y'] * frame,
                 t_min,
@@ -188,7 +186,15 @@ def animate(
         # print(x_vals[-2:], y_vals[-2:])
         ret = []
         for masterk, masterv in master_object_params.items():
-            masterv["plot"].set_data(x_vals, y_vals)
+            if masterv["last"]:
+                masterv["plot"].set_data(
+                    [masterv["x_vals"][-1]], [masterv["y_vals"][-1]]
+                )
+            else:
+                masterv["plot"].set_data(
+                    masterv["x_vals"], masterv["y_vals"]
+                )
+            masterv["plot"].set_color(masterv["color"])
             ret.append(masterv["plot"])
 
         return tuple(ret)
@@ -216,42 +222,27 @@ if __name__ == "__main__":
         10000,  # num frames
         25,  # intervals
         (-2000, 2000), (-1000, 1000),  # xlim, ylim
-        True
+        False
     ]
 
-    init_test = False
-    if init_test:
-        animate(
-            "rectangle",
-            *base_inputs,
-            curve_params={"a": 5, "b": 2, "rot": 0},
-            curve_shift_params={"a": 0, "b": 0, "rot": 0.0},
-            shift_params={"x": 5.9, "y": 2.1}
-        )
-
-        animate(
-            "log_spiral_elipse",
-            *base_inputs,
-            curve_params={"a": 1, "b": 1, "L": 0.055, "rot": 0},
-            curve_shift_params={"a": 0, "b": 0, "L": 0, "rot": 0.1},
-            shift_params={"x": 0.9, "y": -2.1}
-        )
-
-        animate(
-            "circle_elipse",
-            *base_inputs,
-            curve_params={"a": 5, "b": 2, "rot": 0},
-            curve_shift_params={"a": 0.1, "b": 0.1, "rot": 0.1},
-            shift_params={"x": -10.9, "y": 0.1}
-        )
-
     animate(
-        "rectangle",
         *base_inputs,
         main = {
+            "curve_type": "rectangle",
             "symbol": "r-",
             "curve_params": {"a": 100, "b": 50, "rot": 0},
-            "curve_shift_params": {"a": 0, "b": 0, "rot": 0.0},
-            "velocity_vector": {"x": 5.9, "y": 2.1}
+            "curve_shift_params": {"a": 0, "b": 0, "rot": 0.1},
+            "velocity_vector": {"x": 0.9, "y": 0.1},
+            "color": "cyan",
+            "last": False
+        },
+        gun = {
+            "curve_type": "circle_elipse",
+            "symbol": "r-",
+            "curve_params": {"a": 5, "b": 5, "rot": 0},
+            "curve_shift_params": {"a": 1, "b": 5, "rot": 10},
+            "velocity_vector": {"x": -1, "y": 1},
+            "color": "yellow",
+            "last": False,
         }
     )
