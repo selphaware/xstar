@@ -223,7 +223,7 @@ def test_moving_gun():
         100,  # t_max
         10000,  # num points
         10000,  # num frames
-        200,  # intervals
+        25,  # intervals
         (-2000, 2000), (-1000, 1000),  # xlim, ylim
         True
     ]
@@ -243,7 +243,7 @@ def test_moving_gun():
             "curve_type": "circle_elipse",
             "origin": (-100, -50),
             "symbol": "r-",
-            "curve_params": {"a": 2, "b": 2, "rot": 0},
+            "curve_params": {"a": 10, "b": 10, "rot": 0},
             "curve_shift_params": {"a": 0, "b": 0, "rot": 0},
             "velocity_vector": {"x": -7, "y": -7},
             "color": "yellow",
