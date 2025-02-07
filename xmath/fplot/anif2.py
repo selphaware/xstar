@@ -1,3 +1,4 @@
+from pprint import pp
 from typing import Tuple, Dict
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -130,6 +131,7 @@ def animate(
             curve_params = master_params["curve_params"]
             curve_shift_params = master_params["curve_shift_params"]
             velocity_vector = master_params["velocity_vector"]
+            origin = master_params["origin"]
 
             master_params["updated_params"] = {
                 k: v * frame + curve_params[k]
@@ -138,8 +140,8 @@ def animate(
 
             _, x_vals, y_vals = compute_values(
                 master_params["curve_type"],
-                velocity_vector['x'] * frame,
-                velocity_vector['y'] * frame,
+                velocity_vector['x'] * frame + origin[0],
+                velocity_vector['y'] * frame + origin[1],
                 t_min,
                 t_max,
                 num_points,
@@ -209,40 +211,50 @@ def animate(
         interval=interval  # delay between frames in ms
     )
 
+    mng = plt.get_current_fig_manager()
+    mng.full_screen_toggle()
     plt.show()
     return anim
 
 
-# Example usage
-if __name__ == "__main__":
+def test_moving_gun():
     base_inputs = [
         0,  # t_min
         100,  # t_max
         10000,  # num points
         10000,  # num frames
-        25,  # intervals
+        200,  # intervals
         (-2000, 2000), (-1000, 1000),  # xlim, ylim
-        False
+        True
     ]
-
-    animate(
-        *base_inputs,
-        main = {
+    objects = {
+        "main": {
             "curve_type": "rectangle",
+            "origin": (0, 0),
             "symbol": "r-",
             "curve_params": {"a": 100, "b": 50, "rot": 0},
-            "curve_shift_params": {"a": 0, "b": 0, "rot": 0.1},
-            "velocity_vector": {"x": 0.9, "y": 0.1},
+            "curve_shift_params": {"a": 0, "b": 0, "rot": 0},
+            "velocity_vector": {"x": 3, "y": 1},
             "color": "cyan",
             "last": False
         },
-        gun = {
+
+        "gun": {
             "curve_type": "circle_elipse",
+            "origin": (-100, -50),
             "symbol": "r-",
-            "curve_params": {"a": 5, "b": 5, "rot": 0},
-            "curve_shift_params": {"a": 1, "b": 5, "rot": 10},
-            "velocity_vector": {"x": -1, "y": 1},
+            "curve_params": {"a": 2, "b": 2, "rot": 0},
+            "curve_shift_params": {"a": 0, "b": 0, "rot": 0},
+            "velocity_vector": {"x": -7, "y": -7},
             "color": "yellow",
             "last": False,
         }
-    )
+    }
+    pp(base_inputs)
+    pp(objects)
+    animate(*base_inputs, **objects)
+
+
+# Example usage
+if __name__ == "__main__":
+    test_moving_gun()
