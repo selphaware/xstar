@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
     # Create a square at (-150, 400), side_length=50, initial velocity=(0,-1)
     square_coords = generate_square_points(center=(-150, 400), side_length=50)
-    square_obj = MovingObject(square_coords, velocity=(0, -1), color='green')
+    square_obj = MovingObject(square_coords, velocity=(0, 0), color='green')
     scene.add_object(square_obj, main=False)
 
     # Create a smaller circle somewhere else
