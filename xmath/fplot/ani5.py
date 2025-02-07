@@ -7,7 +7,8 @@ import threading
 
 def generate_circle_points(center=(0, 0), radius=10, num_points=50):
     """
-    Generate (x, y) coordinates approximating a circle via a parametric equation.
+    Generate (x, y) coordinates approximating a circle via a parametric
+    equation.
     Return an Nx2 NumPy array of the circle's outline.
     """
     cx, cy = center
@@ -19,12 +20,14 @@ def generate_circle_points(center=(0, 0), radius=10, num_points=50):
 
 def generate_square_points(center=(0, 0), side_length=20):
     """
-    Generate (x, y) coordinates for a square (axis-aligned) centered at 'center'.
+    Generate (x, y) coordinates for a square (axis-aligned) centered at
+    'center'.
     Returns an Nx2 array. Here N=5 so that the last point closes the polygon.
     """
     cx, cy = center
     half = side_length / 2.0
-    # (x, y) corners in clockwise or counter-clockwise order, with last = first to close polygon
+    # (x, y) corners in clockwise or counter-clockwise order, with last =
+    # first to close polygon
     points = np.array([
         [cx - half, cy - half],
         [cx + half, cy - half],
@@ -38,13 +41,16 @@ def generate_square_points(center=(0, 0), side_length=20):
 class MovingObject:
     """
     Represents a single shape that can move around:
-      - shape_coords: Nx2 NumPy array of the shape's vertices in absolute coords.
+      - shape_coords: Nx2 NumPy array of the shape's vertices in absolute
+      coords.
       - velocity: [vx, vy]
       - patch: Matplotlib patch/artist to draw the shape.
     """
 
-    def __init__(self, shape_coords, velocity=(0.0, 0.0), color='blue'):
-        self.shape_coords = shape_coords  # Nx2 array of absolute (x, y)
+    def __init__(self, shape_coords: np.array, velocity=(0.0, 0.0),
+                 color='blue'):
+        self.shape_coords: np.array = shape_coords  # Nx2 array of absolute (
+        # x, y)
         self.velocity = list(velocity)  # [vx, vy]
 
         # Create a Polygon patch. For dynamic shapes, we might use 'Polygon'.
@@ -178,7 +184,8 @@ class AnimatedScene:
 
     def run(self):
         """
-        Launch the Matplotlib animation. This will block until the figure is closed.
+        Launch the Matplotlib animation. This will block until the figure is
+        closed.
         """
         self.ani = animation.FuncAnimation(
             self.fig,
