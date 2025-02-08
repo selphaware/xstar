@@ -26,22 +26,26 @@ class AnimatedScene:
         while True:
             try:
                 user_input = input(
-                    "Enter new velocity (vx, vy), e.g. '2, -1': "
+                    "Enter new velocity/rotation (vx, vy, spinDeg)> "
                 )
-
-                vx_str, vy_str = user_input.strip().split(',')
-                vx, vy = float(vx_str), float(vy_str)
-
+                vx_str, vy_str, rot_str = user_input.strip().split(',')
+                vx, vy, spin_deg = float(vx_str), float(vy_str), float(rot_str)
                 if self.scene.main_object is not None:
                     self.scene.main_object.velocity[0] = vx
                     self.scene.main_object.velocity[1] = vy
-                    print(f"Main object velocity updated to: {[vx, vy]}")
-
+                    self.scene.main_object.spin_degree = spin_deg
+                    print(
+                        f"Main object updated: velocity=({vx}, {vy}), "
+                        f"spin={spin_deg} deg/unit_time"
+                    )
                 else:
-                    print("No main object set; velocity not updated.")
-
+                    print(
+                        "No main object set; cannot update velocity/rotation."
+                    )
             except Exception as e:
-                print(f"Error reading velocity: {e}. Try again.")
+                print(
+                    f"Error reading velocity/rotation: {e}. Format must be "
+                    f"'vx, vy, rotDeg'.")
 
     def start_input_thread(self):
         thread = threading.Thread(target=self._input_thread, daemon=True)
