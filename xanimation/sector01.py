@@ -39,7 +39,7 @@ def create_sector():
     scene.add_object(another_circle_obj, main=False)
 
     # 3) Create the animator, start the input thread, and run
-    animator = AnimatedScene(scene)
+    animator = AnimatedScene(scene, center_grid=False)
     animator.start_input_thread()
     animator.run()
 
