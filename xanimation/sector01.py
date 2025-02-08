@@ -23,6 +23,12 @@ def create_sector():
                                 rotation_speed_deg=10.0, color='green')
     scene.add_object(square_obj, main=True)
 
+    square_coords2 = generate_square_points(center=(-2550, 400),
+                                            side_length=50)
+    square_obj2 = PhysicalObject(square_coords2, velocity=(0, 0),
+                                rotation_speed_deg=275.0, color='yellow')
+    scene.add_object(square_obj2, main=False)
+
     # Another circle far away, with velocity=(-1.5, 1.0), rotation=0
     another_circle_coords = generate_circle_points(center=(800, -300),
                                                    radius=15)
