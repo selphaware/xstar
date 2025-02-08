@@ -42,6 +42,10 @@ class AnimatedScene:
         for obj in self.scene.objects:
             self.ax.add_patch(obj.patch)
 
+            if obj.attachments is not None:
+                for attachement in obj.attachments:
+                    self.ax.add_patch(attachement.patch)
+
         self.set_grid_to_center()
 
     def _input_thread(self):
@@ -79,15 +83,13 @@ class AnimatedScene:
                 )
 
                 if self.scene.main_object is not None:
-                    self.scene.main_object.velocity[0] = vx
-                    self.scene.main_object.velocity[1] = vy
+                    self.scene.main_object.velocity = [vx, vy]
                     self.scene.main_object.rotation_speed_deg = (
                         cont_rot_spd_deg
                     )
                     self.scene.main_object.one_time_remaining_deg = rot_deg
-                    self.scene.main_object.one_time_rotation_speed_deg = (
+                    self.scene.main_object.one_time_rotation_speed_deg = \
                         rot_spd_deg
-                    )
                     print(
                         Fore.GREEN +
                         f"\nMain object updated: velocity=({vx}, {vy})\n"

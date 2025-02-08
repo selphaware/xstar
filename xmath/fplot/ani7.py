@@ -59,9 +59,9 @@ class MovingObject:
       - velocity: [vx, vy]
       - rotation_velocity_deg: continuous rotation speed in degrees per unit
       time
-      - one_time_remaining_deg: how many degrees remain in the one-time
+      - _one_time_remaining_deg: how many degrees remain in the one-time
       rotation
-      - one_time_rotation_speed_deg: speed at which we apply the one-time
+      - _one_time_rotation_speed_deg: speed at which we apply the one-time
       rotation
       - patch: Matplotlib Polygon patch to draw the shape.
     """
@@ -95,7 +95,7 @@ class MovingObject:
         Update the shape's position and orientation based on:
           1) velocity => translation
           2) rotation_velocity_deg => continuous rotation
-          3) one_time_remaining_deg => one-time rotation that is applied
+          3) _one_time_remaining_deg => one-time rotation that is applied
           over time
         """
 
@@ -109,7 +109,7 @@ class MovingObject:
         total_rotation_deg = self.rotation_velocity_deg * dt
 
         # 3) Also apply a portion of the one-time rotation if any remains
-        #    We rotate by min(one_time_rotation_speed_deg*dt, the remaining
+        #    We rotate by min(_one_time_rotation_speed_deg*dt, the remaining
         #    degrees).
         if abs(self.one_time_remaining_deg) > 1e-8:  # if there's some
             # rotation left
@@ -248,8 +248,8 @@ class AnimatedScene:
                     mo.velocity[0] = vx
                     mo.velocity[1] = vy
                     mo.rotation_velocity_deg = cont_rot_deg
-                    mo.one_time_remaining_deg = single_deg
-                    mo.one_time_rotation_speed_deg = single_speed
+                    mo._one_time_remaining_deg = single_deg
+                    mo._one_time_rotation_speed_deg = single_speed
                     print(f"Updated main object:\n"
                           f"  v=({vx},{vy}), continuousRot={cont_rot_deg} "
                           f"deg/unit\n"
