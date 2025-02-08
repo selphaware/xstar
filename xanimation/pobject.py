@@ -8,19 +8,23 @@ class PhysicalObject:
             self,
             shape_coords: np.array,
             velocity: Tuple[float, float] = (0., 0.),
-            spin_degree: float = 0.,
-            face_color: str = "blue",
+            rotation_speed_deg: float = 0.,
+            one_time_remaining_deg: float = 0.,
+            one_time_rotation_speed_deg: float = 0.,
+            color: str = "blue",
             edge_color: str = "black",
             plot_symbol: str = "r-"
     ) -> None:
         self.shape_coords: np.array = shape_coords
         self.velocity: List[float] = list(velocity)
-        self.spin_degree: float = spin_degree
+        self.rotation_speed_deg: float = rotation_speed_deg
+        self.one_time_remaining_deg: float = one_time_remaining_deg
+        self.one_time_rotation_speed_deg: float = one_time_rotation_speed_deg
 
         self.patch: Polygon = Polygon(
             self.shape_coords,
             closed=True,
-            facecolor=face_color,
+            facecolor=color,
             edgecolor=edge_color,
             alpha=0.6
         )
@@ -32,11 +36,32 @@ class PhysicalObject:
         self.shape_coords[:, 0] += dx
         self.shape_coords[:, 1] += dy
 
-        # update spin
-        if self.spin_degree != 0.0:
-            theta_deg = self.spin_degree * dt
-            theta = np.radians(theta_deg)
-            center = np.mean(self.shape_coords, axis=0)
+        total_rotation_deg = self.rotation_speed_deg * dt
+
+        # one time rotation
+        if abs(self.one_time_remaining_deg) > 1e-8:
+            one_time_rotation_this_step = self.one_time_rotation_speed_deg * dt
+
+            if abs(one_time_rotation_this_step) > abs(
+                    self.one_time_remaining_deg
+            ):
+                one_time_rotation_this_step = abs(
+                    self.one_time_remaining_deg
+                )
+
+            one_time_rotation_this_step = one_time_rotation_this_step * \
+                np.sign(self.one_time_remaining_deg)
+
+            total_rotation_deg += one_time_rotation_this_step
+
+            self.one_time_remaining_deg -= one_time_rotation_this_step
+
+        # update rotation
+        if abs(total_rotation_deg) > 1e-8:
+            # theta_deg = total_rotation_deg * dt
+            theta = np.radians(total_rotation_deg)
+            # center = np.mean(self.shape_coords, axis=0)
+            center = self.center
 
             # Shift so centroid is at origin
             shifted = self.shape_coords - center
