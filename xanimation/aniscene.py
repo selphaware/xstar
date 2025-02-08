@@ -118,31 +118,30 @@ class AnimatedScene:
             self.set_grid_to_center()
 
         else:
-            xlim, ylim = list(self.xlim), list(self.ylim)
             x_vals = self.scene.main_object.shape_coords[:, 0]
             y_vals = self.scene.main_object.shape_coords[:, 1]
 
-            veri_len = (ylim[1] - ylim[0])
-            hori_len = (xlim[1] - xlim[0])
+            veri_len = (self.ylim[1] - self.ylim[0])
+            hori_len = (self.xlim[1] - self.xlim[0])
 
-            if min(y_vals) <= ylim[0]:
-                ylim[1] -= veri_len
-                ylim[0] -= veri_len
+            if min(y_vals) <= self.ylim[0]:
+                self.ylim[1] -= veri_len
+                self.ylim[0] -= veri_len
 
-            if max(y_vals) >= ylim[1]:
-                ylim[1] += veri_len
-                ylim[0] += veri_len
+            if max(y_vals) >= self.ylim[1]:
+                self.ylim[1] += veri_len
+                self.ylim[0] += veri_len
 
-            if min(x_vals) <= xlim[0]:
-                xlim[1] -= hori_len
-                xlim[0] -= hori_len
+            if min(x_vals) <= self.xlim[0]:
+                self.xlim[1] -= hori_len
+                self.xlim[0] -= hori_len
 
-            if max(x_vals) >= xlim[1]:
-                xlim[1] += hori_len
-                xlim[0] += hori_len
+            if max(x_vals) >= self.xlim[1]:
+                self.xlim[1] += hori_len
+                self.xlim[0] += hori_len
 
-            self.ax.set_xlim(*xlim)
-            self.ax.set_ylim(*ylim)
+            self.ax.set_xlim(*self.xlim)
+            self.ax.set_ylim(*self.ylim)
 
         return patches
 
