@@ -22,14 +22,14 @@ def create_sector():
 
     # A square at (-150, 400), side_length=50, velocity=(0,-1), rotation=10
     # deg/unit
-    square_coords = generate_square_points(center=(-150, 400), side_length=50)
-    square_obj = PhysicalObject(square_coords, velocity=(0, -1),
-                                _rotation_speed_deg=10.0, color='green')
+    square_coords = generate_square_points(center=(100, 100), side_length=50)
+    square_obj = PhysicalObject(square_coords, velocity=(0, 0),
+                                _rotation_speed_deg=75.0, color='green')
     scene.add_object(square_obj, main=False)
 
     square_coords2 = generate_square_points(center=(-2550, 400),
                                             side_length=50)
-    square_obj2 = PhysicalObject(square_coords2, velocity=(0, 0),
+    square_obj2 = PhysicalObject(square_coords2, velocity=(100, 10),
                                  _rotation_speed_deg=275.0, color='yellow')
     scene.add_object(square_obj2, main=False)
 

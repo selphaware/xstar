@@ -90,11 +90,6 @@ class PhysicalObject:
                 attachment._one_time_rotation_speed_deg = \
                     self._one_time_rotation_speed_deg
 
-    def update_attachment_positions(self, dt: float = 0.1) -> None:
-        if self.attachments is not None:
-            for attachment in self.attachments:
-                attachment.update_position(dt)
-
     def update_position(self, dt: float = 0.1) -> None:
         # update velocity
         dx = self._velocity[0] * dt
@@ -145,8 +140,10 @@ class PhysicalObject:
             self.shape_coords = rotated + center
 
         self.patch.set_xy(self.shape_coords)
-        # self.update_attachment_positions(dt)
 
     @property
     def center(self) -> Tuple[float, float]:
-        return np.mean(self.shape_coords, axis=0)
+        return np.mean(
+            np.unique(self.shape_coords, axis=0),
+            axis=0
+        )
