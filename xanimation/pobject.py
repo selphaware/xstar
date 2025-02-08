@@ -145,8 +145,7 @@ class PhysicalObject:
             self.shape_coords = rotated + center
 
         self.patch.set_xy(self.shape_coords)
-
-        self.update_attachment_positions(dt)
+        # self.update_attachment_positions(dt)
 
     @property
     def center(self) -> Tuple[float, float]:

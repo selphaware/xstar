@@ -16,8 +16,18 @@ class PhysicalScene:
     def update(self, dt: float = 0.1):
         for obj in self.objects:
             obj.update_position(dt=dt)
+            if obj.attachments is not None:
+                for attachment in obj.attachments:
+                    attachment.update_position(dt=dt)
 
-        return tuple(obj.patch for obj in self.objects)
+        patches = []
+        for obj in self.objects:
+            patches.append(obj.patch)
+            if obj.attachments is not None:
+                for attachment in obj.attachments:
+                    patches.append(attachment.patch)
+
+        return tuple(patches)
 
     @property
     def main_center(self) -> Tuple[float, float]:
