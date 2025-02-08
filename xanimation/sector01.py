@@ -1,9 +1,11 @@
+import random
 from xanimation.aniscene import AnimatedScene
 from xanimation.pobject import PhysicalObject
 from xanimation.pscene import PhysicalScene
 from xmath.gobj import generate_square_points, generate_circle_points, \
     generate_isosceles_triangle_points, \
-    generate_spiked_circle_points
+    generate_spiked_circle_points, generate_trapezium_points
+from xmath.xrandom import random_int_generator
 
 
 def create_sector():
@@ -40,7 +42,7 @@ def create_sector():
                                         color='blue')
     scene.add_object(another_circle_obj, main=False)
 
-    # ship 1
+    # main
     ship_coords = generate_isosceles_triangle_points(
         center=(50,50),
         base=8,
@@ -54,20 +56,50 @@ def create_sector():
     )
     scene.add_object(ship_obj, main=True)
 
-    # star
-    star_coords = generate_spiked_circle_points(
-        center=(-1000,-1000),
-        radius=100,
-        num_spikes=36,
-        spike_height=10
-    )
-    star_obj = PhysicalObject(
-        star_coords,
-        velocity=(0,0),
-        rotation_speed_deg=35.,
-        color='yellow'
-    )
-    scene.add_object(star_obj, main=False)
+    # other random ships
+    rnd_x = random_int_generator(-3,3, "RX")
+    rnd_y = random_int_generator(-3, 3, "RY")
+    rnd_xp = random_int_generator(-1000,1000, "RXp")
+    rnd_yp = random_int_generator(-1000, 1000, "RYp")
+    for _ in range(1000):
+        ship_coords = generate_trapezium_points(
+            (next(rnd_xp), next(rnd_yp)),
+            8,
+            10,
+            14
+        )
+        ship_obj = PhysicalObject(
+            ship_coords,
+            velocity=(next(rnd_x) / 5, next(rnd_y) / 5),
+            rotation_speed_deg=0.0,
+            color=random.choice([
+                "blue", "purple", "white", "yellow", "red", "orange"
+            ])
+        )
+        scene.add_object(ship_obj, main=False)
+
+    # stars
+    rnd_x = random_int_generator(-3000,3000, "RX")
+    rnd_y = random_int_generator(-3000, 3000, "RY")
+    rnd_r = random_int_generator(30, 300, "RR")
+    rnd_s = random_int_generator(7, 30, "RS")
+    rnd_d = random_int_generator(0, 35, "RD")
+    for _ in range(100):
+        star_coords = generate_spiked_circle_points(
+            center=(next(rnd_x), next(rnd_y)),
+            radius=next(rnd_r),
+            num_spikes=next(rnd_s),
+            spike_height=10
+        )
+        star_obj = PhysicalObject(
+            star_coords,
+            velocity=(0,0),
+            rotation_speed_deg=next(rnd_d),
+            color=random.choice([
+                "yellow", "red", "orange"
+            ])
+        )
+        scene.add_object(star_obj, main=False)
 
     # 3) Create the animator, start the input thread, and run
     animator = AnimatedScene(scene, center_grid=True)
