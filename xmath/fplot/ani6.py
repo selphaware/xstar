@@ -44,7 +44,7 @@ class MovingObject:
       - shape_coords: Nx2 NumPy array of the shape's vertices in absolute
       coords.
       - velocity: [vx, vy]
-      - spin_degree: rotation speed in degrees per unit time
+      - rotation_velocity_deg: rotation speed in degrees per unit time
       - patch: Matplotlib Polygon patch to draw the shape.
     """
 
@@ -66,9 +66,9 @@ class MovingObject:
     def update_position(self, dt=0.1):
         """
         Update the shape's position and orientation based on velocity and
-        spin_degree.
+        rotation_velocity_deg.
         1) Translate by vx*dt, vy*dt
-        2) Rotate around centroid by spin_degree * dt (degrees)
+        2) Rotate around centroid by rotation_velocity_deg * dt (degrees)
         """
         # 1) Translate
         dx = self.velocity[0] * dt
@@ -84,7 +84,6 @@ class MovingObject:
 
             # Shift so centroid is at origin
             shifted = self.shape_coords - center
-
             # Rotation matrix in 2D
             c, s = np.cos(theta), np.sin(theta)
             R = np.array([[c, -s],
@@ -174,7 +173,7 @@ class AnimatedScene:
                 if self.scene.main_object is not None:
                     self.scene.main_object.velocity[0] = vx
                     self.scene.main_object.velocity[1] = vy
-                    self.scene.main_object.spin_degree = rot_deg
+                    self.scene.main_object.rotation_velocity_deg = rot_deg
                     print(
                         f"Main object updated: velocity=({vx}, {vy}), "
                         f"rotation={rot_deg} deg/unit_time")

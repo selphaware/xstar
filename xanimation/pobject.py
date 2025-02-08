@@ -32,7 +32,7 @@ class PhysicalObject:
         self.shape_coords[:, 0] += dx
         self.shape_coords[:, 1] += dy
 
-        # update rotation
+        # update spin
         if self.spin_degree != 0.0:
             theta_deg = self.spin_degree * dt
             theta = np.radians(theta_deg)
