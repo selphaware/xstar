@@ -34,9 +34,6 @@ def generate_square_points(center=(0, 0), side_length=20):
     return points
 
 
-import numpy as np
-
-
 def generate_isosceles_triangle_points(center=(0, 0), base=30, height=40):
     """
     Generate (x, y) coordinates for an isosceles triangle centered at 'center'.

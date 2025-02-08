@@ -11,14 +11,21 @@ class PhysicalObject:
             _rotation_speed_deg: float = 0.,
             _one_time_remaining_deg: float = 0.,
             _one_time_rotation_speed_deg: float = 0.,
+            is_main: bool = True,
+            main_center: Optional[Tuple[float, float]] = None,
             attachments=None,
             color: str = "blue",
             edge_color: str = "black",
             plot_symbol: str = "r-"
     ) -> None:
         self.attachments: Optional[List[PhysicalObject]] = attachments
+        self.is_main: bool = is_main
+        self.main_center: Optional[Tuple[float, float]] = main_center
 
         self.shape_coords: np.array = shape_coords
+
+        self.update_attachment_centers()
+
         self._velocity: List[float] = list(velocity)
         self._rotation_speed_deg: float = _rotation_speed_deg
         self._one_time_remaining_deg: float = _one_time_remaining_deg
@@ -31,6 +38,12 @@ class PhysicalObject:
             edgecolor=edge_color,
             alpha=0.6
         )
+
+    def update_attachment_centers(self):
+        if self.is_main:
+            if self.attachments is not None:
+                for attachment in self.attachments:
+                    attachment.main_center = self.center
 
     @property
     def velocity(self) -> List[float]:
@@ -120,10 +133,13 @@ class PhysicalObject:
 
         # update rotation
         if abs(total_rotation_deg) > 1e-8:
-            # theta_deg = total_rotation_deg * dt
             theta = np.radians(total_rotation_deg)
-            # center = np.mean(self.shape_coords, axis=0)
-            center = self.center
+
+            if self.is_main:
+                center = self.center
+
+            else:
+                center = self.main_center
 
             # Shift so centroid is at origin
             shifted = self.shape_coords - center
@@ -140,6 +156,8 @@ class PhysicalObject:
             self.shape_coords = rotated + center
 
         self.patch.set_xy(self.shape_coords)
+
+        self.update_attachment_centers()
 
     @property
     def center(self) -> Tuple[float, float]:

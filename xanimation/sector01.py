@@ -54,14 +54,17 @@ def create_sector():
         _rotation_speed_deg=0.0,
         attachments=[  # gun
             PhysicalObject(
-                generate_square_points(center=ship_coords[0],
-                                       side_length=3),
+                generate_square_points(
+                    center=ship_coords[0],
+                    side_length=3
+                ),
                 (0, 0),
                 0.0,
-                color="red"
-
+                is_main=False,
+                color="red",
             )
         ],
+        is_main=True,
         color='cyan'
     )
     scene.add_object(ship_obj, main=True)
