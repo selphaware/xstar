@@ -3,6 +3,7 @@ from typing import Tuple, List
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import threading
+from colorama import Fore, Style
 
 from xanimation.pscene import PhysicalScene
 
@@ -33,8 +34,8 @@ class AnimatedScene:
 
         self.ax.set_xlim(*xlim)
         self.ax.set_ylim(*ylim)
-        self.xlim: List[int] = xlim
-        self.ylim: List[int] = ylim
+        self.xlim: List[int] = list(xlim)
+        self.ylim: List[int] = list(ylim)
 
         self.ax.grid(show_grid)
 
@@ -47,15 +48,17 @@ class AnimatedScene:
         while True:
             try:
                 user_input = input(
+                    Fore.LIGHTYELLOW_EX +
                     "Enter new velocity/rotation ("
                     "velocity-x, "
                     "velocity-y, "
                     "contRotSpeedDeg, "
                     "rotDeg, "
-                    "rotSpeedDeg)> "
+                    "rotSpeedDeg)\n> " +
+                    Fore.LIGHTCYAN_EX
                 )
                 if user_input.lower() == "exit":
-                    print("Disembarking...")
+                    print(Style.RESET_ALL + "Disembarking...")
                     plt.close()
                     sys.exit(1)
 
@@ -86,7 +89,8 @@ class AnimatedScene:
                         rot_spd_deg
                     )
                     print(
-                        f"Main object updated: velocity=({vx}, {vy})\n"
+                        Fore.GREEN +
+                        f"\nMain object updated: velocity=({vx}, {vy})\n"
                         f"rotation={cont_rot_spd_deg} deg/unit_time\n"
                         f"one-time rotation={rot_deg} deg\n"
                         f"one-time rotation speed={rot_spd_deg} "
@@ -94,12 +98,17 @@ class AnimatedScene:
                     )
                 else:
                     print(
-                        "No main object set; cannot update velocity/spin."
+                        Fore.RED +
+                        "No main object set; cannot update velocity/spin." +
+                        Fore.GREEN
                     )
             except Exception as e:
                 print(
+                    Fore.RED +
                     f"Error reading velocity/spin: {e}. Format must be "
-                    f"'vx, vy, rotDeg'.")
+                    f"'vx, vy, rotDeg'." +
+                    Fore.GREEN
+                )
 
     def start_input_thread(self):
         thread = threading.Thread(target=self._input_thread, daemon=True)

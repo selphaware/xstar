@@ -1,7 +1,9 @@
 from xanimation.aniscene import AnimatedScene
 from xanimation.pobject import PhysicalObject
 from xanimation.pscene import PhysicalScene
-from xmath.gobj import generate_square_points, generate_circle_points
+from xmath.gobj import generate_square_points, generate_circle_points, \
+    generate_isosceles_triangle_points, \
+    generate_spiked_circle_points
 
 
 def create_sector():
@@ -21,7 +23,7 @@ def create_sector():
     square_coords = generate_square_points(center=(-150, 400), side_length=50)
     square_obj = PhysicalObject(square_coords, velocity=(0, -1),
                                 rotation_speed_deg=10.0, color='green')
-    scene.add_object(square_obj, main=True)
+    scene.add_object(square_obj, main=False)
 
     square_coords2 = generate_square_points(center=(-2550, 400),
                                             side_length=50)
@@ -38,8 +40,37 @@ def create_sector():
                                         color='blue')
     scene.add_object(another_circle_obj, main=False)
 
+    # ship 1
+    ship_coords = generate_isosceles_triangle_points(
+        center=(50,50),
+        base=8,
+        height=10
+    )
+    ship_obj = PhysicalObject(
+        ship_coords,
+        velocity=(0,0),
+        rotation_speed_deg=0.0,
+        color='cyan'
+    )
+    scene.add_object(ship_obj, main=True)
+
+    # star
+    star_coords = generate_spiked_circle_points(
+        center=(-1000,-1000),
+        radius=100,
+        num_spikes=36,
+        spike_height=10
+    )
+    star_obj = PhysicalObject(
+        star_coords,
+        velocity=(0,0),
+        rotation_speed_deg=35.,
+        color='yellow'
+    )
+    scene.add_object(star_obj, main=False)
+
     # 3) Create the animator, start the input thread, and run
-    animator = AnimatedScene(scene, center_grid=False)
+    animator = AnimatedScene(scene, center_grid=True)
     animator.start_input_thread()
     animator.run()
 
