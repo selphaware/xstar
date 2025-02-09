@@ -1,6 +1,8 @@
 from typing import List, Tuple, Optional
 
 from xanimation.pobject import PhysicalObject
+from xanimation.xauxi import get_attachment_patches, \
+    update_attachment_positions
 
 
 class PhysicalScene:
@@ -16,16 +18,12 @@ class PhysicalScene:
     def update(self, dt: float = 0.1):
         for obj in self.objects:
             obj.update_position(dt=dt)
-            if obj.attachments is not None:
-                for attachment in obj.attachments:
-                    attachment.update_position(dt=dt)
+            update_attachment_positions(obj, dt)
 
         patches = []
         for obj in self.objects:
             patches.append(obj.patch)
-            if obj.attachments is not None:
-                for attachment in obj.attachments:
-                    patches.append(attachment.patch)
+            patches.extend(get_attachment_patches(obj))
 
         return tuple(patches)
 

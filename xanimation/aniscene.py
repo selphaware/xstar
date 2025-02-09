@@ -6,6 +6,7 @@ import threading
 from colorama import Fore, Style
 
 from xanimation.pscene import PhysicalScene
+from xanimation.xauxi import add_attachment_patches, calc_next_frame_coords
 
 plt.rcParams.update({
     'axes.facecolor': 'black',  # Black background for all axes
@@ -41,10 +42,7 @@ class AnimatedScene:
 
         for obj in self.scene.objects:
             self.ax.add_patch(obj.patch)
-
-            if obj.attachments is not None:
-                for attachement in obj.attachments:
-                    self.ax.add_patch(attachement.patch)
+            add_attachment_patches(obj, self.ax)
 
         self.set_grid_to_center()
 
@@ -137,20 +135,7 @@ class AnimatedScene:
         xlim, ylim = list(self.xlim), list(self.ylim)
         x_vals = self.scene.main_object.shape_coords[:, 0]
         y_vals = self.scene.main_object.shape_coords[:, 1]
-        veri_len = (ylim[1] - ylim[0])
-        hori_len = (xlim[1] - xlim[0])
-        if min(y_vals) <= ylim[0]:
-            ylim[1] -= veri_len
-            ylim[0] -= veri_len
-        if max(y_vals) >= ylim[1]:
-            ylim[1] += veri_len
-            ylim[0] += veri_len
-        if min(x_vals) <= xlim[0]:
-            xlim[1] -= hori_len
-            xlim[0] -= hori_len
-        if max(x_vals) >= xlim[1]:
-            xlim[1] += hori_len
-            xlim[0] += hori_len
+        calc_next_frame_coords(x_vals, xlim, y_vals, ylim)
         self.xlim = list(xlim)
         self.ylim = list(ylim)
         self.ax.set_xlim(*self.xlim)
