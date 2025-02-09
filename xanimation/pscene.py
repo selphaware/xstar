@@ -1,6 +1,8 @@
 from typing import List, Tuple, Optional
 
 from xanimation.pobject import PhysicalObject
+from xanimation.xauxi import get_all_patches, \
+    update_all_positions
 
 
 class PhysicalScene:
@@ -15,9 +17,13 @@ class PhysicalScene:
 
     def update(self, dt: float = 0.1):
         for obj in self.objects:
-            obj.update_position(dt=dt)
+            update_all_positions(obj, dt)
 
-        return tuple(obj.patch for obj in self.objects)
+        patches = []
+        for obj in self.objects:
+            patches.extend(get_all_patches(obj))
+
+        return tuple(patches)
 
     @property
     def main_center(self) -> Tuple[float, float]:
