@@ -61,8 +61,7 @@ class PhysicalObject:
 
     @velocity.setter
     def velocity(self, in_v: List[float]) -> None:
-        self._velocity = list(in_v)
-        self.update_attachment_velocities()
+        self.update_all_velocities(list(in_v))  # fresh list
 
     @property
     def rotation_speed_deg(self) -> float:
@@ -70,8 +69,7 @@ class PhysicalObject:
 
     @rotation_speed_deg.setter
     def rotation_speed_deg(self, in_rot: float) -> None:
-        self._rotation_speed_deg = in_rot
-        self.update_attachment_rotation_speed_degs()
+        self.update_all_rotation_speed_degs(in_rot)
 
     @property
     def one_time_remaining_deg(self) -> float:
@@ -79,8 +77,7 @@ class PhysicalObject:
 
     @one_time_remaining_deg.setter
     def one_time_remaining_deg(self, in_rot: float) -> None:
-        self._one_time_remaining_deg = in_rot
-        self.update_attachment_one_time_rem_degs()
+        self.update_all_one_time_rem_degs(in_rot)
 
     @property
     def one_time_rotation_speed_deg(self) -> float:
@@ -88,47 +85,53 @@ class PhysicalObject:
 
     @one_time_rotation_speed_deg.setter
     def one_time_rotation_speed_deg(self, in_rot: float) -> None:
-        self._one_time_rotation_speed_deg = in_rot
-        self.update_attachment_one_time_rot_spd_degs()
+        self.update_all_one_time_rot_spd_degs(in_rot)
 
-    def update_attachment_velocities(self) -> None:
+    def update_all_velocities(
+            self,
+            nvelocity: List[float]
+    ) -> None:
+        self._velocity = nvelocity
+
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.velocity = self._velocity
+                attachment.update_all_velocities(nvelocity)
 
-                if attachment.attachments is not None:
-                    for subatt in attachment.attachments:
-                        subatt.update_attachment_velocities()
+    def update_all_rotation_speed_degs(
+            self,
+            nrotation_speed_deg: float
+    ) -> None:
+        self._rotation_speed_deg = nrotation_speed_deg
 
-    def update_attachment_rotation_speed_degs(self) -> None:
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.rotation_speed_deg = self._rotation_speed_deg
-
-                if attachment.attachments is not None:
-                    for subatt in attachment.attachments:
-                        subatt.update_attachment_rotation_speed_degs()
-
-    def update_attachment_one_time_rem_degs(self) -> None:
-        if self.attachments is not None:
-            for attachment in self.attachments:
-                attachment.one_time_remaining_deg = (
-                    self._one_time_remaining_deg
+                attachment.update_all_rotation_speed_degs(
+                    nrotation_speed_deg
                 )
 
-                if attachment.attachments is not None:
-                    for subatt in attachment.attachments:
-                        subatt.update_attachment_one_time_rem_degs()
+    def update_all_one_time_rem_degs(
+            self,
+            n_one_time_remaining_deg: float
+    ) -> None:
+        self._one_time_remaining_deg = n_one_time_remaining_deg
 
-    def update_attachment_one_time_rot_spd_degs(self) -> None:
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.one_time_rotation_speed_deg = \
-                    self._one_time_rotation_speed_deg
+                attachment.update_all_one_time_rem_degs(
+                    n_one_time_remaining_deg
+                )
 
-                if attachment.attachments is not None:
-                    for subatt in attachment.attachments:
-                        subatt.update_attachment_one_time_rot_spd_degs()
+    def update_all_one_time_rot_spd_degs(
+            self,
+            n_one_time_rot_spd_deg: float
+    ) -> None:
+        self._one_time_rotation_speed_deg = n_one_time_rot_spd_deg
+
+        if self.attachments is not None:
+            for attachment in self.attachments:
+                attachment.update_all_one_time_rot_spd_degs(
+                    n_one_time_rot_spd_deg
+                )
 
     def update_position(self, dt: float = 0.1) -> None:
         self.update_velocity(dt)
