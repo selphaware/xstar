@@ -12,7 +12,6 @@ class PhysicalObject:
             _one_time_remaining_deg: float = 0.,
             _one_time_rotation_speed_deg: float = 0.,
             is_main: bool = True,
-            main_center: Optional[Tuple[float, float]] = None,
             attachments=None,
             color: str = "blue",
             edge_color: str = "black",
@@ -20,11 +19,11 @@ class PhysicalObject:
     ) -> None:
         self.attachments: Optional[List[PhysicalObject]] = attachments
         self.is_main: bool = is_main
-        self.main_center: Optional[Tuple[float, float]] = main_center
 
         self.shape_coords: np.array = shape_coords
+        self.main_center: Optional[Tuple[float, float]] = None
 
-        self.update_attachment_centers()
+        self.update_all_main_centers()
 
         self._velocity: List[float] = list(velocity)
         self._rotation_speed_deg: float = _rotation_speed_deg
@@ -39,11 +38,22 @@ class PhysicalObject:
             alpha=0.6
         )
 
-    def update_attachment_centers(self):
-        if self.is_main:
-            if self.attachments is not None:
-                for attachment in self.attachments:
-                    attachment.main_center = self.center
+    def update_all_main_centers(
+            self,
+            ncenter: Optional[Tuple[float, float]] = None
+    ) -> None:
+        if ncenter is None:
+            if self.is_main:
+                ncenter = self.center
+
+            else:
+                ncenter = self.main_center
+
+        self.main_center = ncenter
+
+        if self.attachments is not None:
+            for attachment in self.attachments:
+                attachment.update_all_main_centers(ncenter)
 
     @property
     def velocity(self) -> List[float]:
@@ -86,28 +96,45 @@ class PhysicalObject:
             for attachment in self.attachments:
                 attachment.velocity = self._velocity
 
+                if attachment.attachments is not None:
+                    for subatt in attachment.attachments:
+                        subatt.update_attachment_velocities()
+
     def update_attachment_rotation_speed_degs(self) -> None:
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment._rotation_speed_deg = self._rotation_speed_deg
+                attachment.rotation_speed_deg = self._rotation_speed_deg
+
+                if attachment.attachments is not None:
+                    for subatt in attachment.attachments:
+                        subatt.update_attachment_rotation_speed_degs()
 
     def update_attachment_one_time_rem_degs(self) -> None:
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment._one_time_remaining_deg = (
-                    self._one_time_remaining_deg)
+                attachment.one_time_remaining_deg = (
+                    self._one_time_remaining_deg
+                )
+
+                if attachment.attachments is not None:
+                    for subatt in attachment.attachments:
+                        subatt.update_attachment_one_time_rem_degs()
 
     def update_attachment_one_time_rot_spd_degs(self) -> None:
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment._one_time_rotation_speed_deg = \
+                attachment.one_time_rotation_speed_deg = \
                     self._one_time_rotation_speed_deg
+
+                if attachment.attachments is not None:
+                    for subatt in attachment.attachments:
+                        subatt.update_attachment_one_time_rot_spd_degs()
 
     def update_position(self, dt: float = 0.1) -> None:
         self.update_velocity(dt)
         self.update_rotation(dt)
         self.patch.set_xy(self.shape_coords)
-        self.update_attachment_centers()
+        self.update_all_main_centers()
 
     def update_rotation(self, dt):
         total_rotation_deg = self._rotation_speed_deg * dt

@@ -1,49 +1,41 @@
 from matplotlib.patches import Polygon
-from typing import List, Any
+from typing import List, Tuple, Any, Optional
 
 from xanimation.pobject import PhysicalObject
 
 
-def update_attachment_positions(
+def update_all_positions(
         pobj: PhysicalObject,
         dt: float = 0.1
 ) -> None:
+    pobj.update_position(dt=dt)
+
     if pobj.attachments is not None:
         for attachment in pobj.attachments:
-            attachment.update_position(dt=dt)
-
-            if attachment.attachments is not None:
-                for subatt in attachment.attachments:
-                    update_attachment_positions(subatt, dt)
+            update_all_positions(attachment, dt)
 
 
-def get_attachment_patches(
+def get_all_patches(
         pobj: PhysicalObject
 ) -> List[Polygon]:
-    patches: List[Polygon] = []
+    patches: List[Polygon] = [pobj.patch]
 
     if pobj.attachments is not None:
         for attachment in pobj.attachments:
-            patches.append(attachment.patch)
-
-            if attachment.attachments is not None:
-                for subatt in attachment.attachments:
-                    patches.extend(get_attachment_patches(subatt))
+            patches.extend(get_all_patches(attachment))
 
     return patches
 
 
-def add_attachment_patches(
+def add_all_patches(
         pobj: PhysicalObject,
         ax: Any
 ) -> None:
+    ax.add_patch(pobj.patch)
+
     if pobj.attachments is not None:
         for attachment in pobj.attachments:
-            ax.add_patch(attachment.patch)
-
-            if attachment.attachments is not None:
-                for subatt in attachment.attachments:
-                    add_attachment_patches(subatt, ax)
+            add_all_patches(attachment, ax)
 
 
 def calc_next_frame_coords(x_vals, xlim, y_vals, ylim):

@@ -60,6 +60,18 @@ def create_sector():
                 ),
                 (0, 0),
                 0.0,
+                attachments=[
+                    PhysicalObject(
+                        generate_circle_points(
+                            center=ship_coords[0],
+                            radius=1
+                        ),
+                        (0,0),
+                        0.0,
+                        is_main=False,
+                        color="yellow"
+                    )
+                ],
                 is_main=False,
                 color="red",
             )

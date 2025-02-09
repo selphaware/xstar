@@ -6,7 +6,7 @@ import threading
 from colorama import Fore, Style
 
 from xanimation.pscene import PhysicalScene
-from xanimation.xauxi import add_attachment_patches, calc_next_frame_coords
+from xanimation.xauxi import add_all_patches, calc_next_frame_coords
 
 plt.rcParams.update({
     'axes.facecolor': 'black',  # Black background for all axes
@@ -41,8 +41,7 @@ class AnimatedScene:
         self.ax.grid(show_grid)
 
         for obj in self.scene.objects:
-            self.ax.add_patch(obj.patch)
-            add_attachment_patches(obj, self.ax)
+            add_all_patches(obj, self.ax)
 
         self.set_grid_to_center()
 
@@ -102,6 +101,7 @@ class AnimatedScene:
                         "No main object set; cannot update velocity/spin." +
                         Fore.GREEN
                     )
+
             except Exception as e:
                 print(
                     Fore.RED +
@@ -109,6 +109,9 @@ class AnimatedScene:
                     f"'vx, vy, rotDeg'." +
                     Fore.GREEN
                 )
+
+            import pdb
+            pdb.set_trace()
 
     def start_input_thread(self):
         thread = threading.Thread(target=self._input_thread, daemon=True)
