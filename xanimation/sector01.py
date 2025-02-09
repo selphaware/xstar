@@ -42,7 +42,7 @@ def create_sector():
                                         color='blue')
     scene.add_object(another_circle_obj, main=False)
 
-    # main
+    # main SHIP
     ship_coords = generate_isosceles_triangle_points(
         center=(50, 50),
         base=8,
@@ -53,6 +53,7 @@ def create_sector():
         velocity=(0, 0),
         _rotation_speed_deg=0.0,
         attachments=[  # gun
+            # GUN 1
             PhysicalObject(
                 generate_square_points(
                     center=ship_coords[0],
@@ -67,6 +68,30 @@ def create_sector():
                             radius=1
                         ),
                         (0,0),
+                        0.0,
+                        is_main=False,
+                        color="yellow"
+                    )
+                ],
+                is_main=False,
+                color="red",
+            ),
+
+            # GUN 2
+            PhysicalObject(
+                generate_square_points(
+                    center=ship_coords[1],
+                    side_length=3
+                ),
+                (0, 0),
+                0.0,
+                attachments=[
+                    PhysicalObject(
+                        generate_circle_points(
+                            center=ship_coords[1],
+                            radius=1
+                        ),
+                        (0, 0),
                         0.0,
                         is_main=False,
                         color="yellow"
