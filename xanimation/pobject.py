@@ -104,14 +104,13 @@ class PhysicalObject:
                     self._one_time_rotation_speed_deg
 
     def update_position(self, dt: float = 0.1) -> None:
-        # update velocity
-        dx = self._velocity[0] * dt
-        dy = self._velocity[1] * dt
-        self.shape_coords[:, 0] += dx
-        self.shape_coords[:, 1] += dy
+        self.update_velocity(dt)
+        self.update_rotation(dt)
+        self.patch.set_xy(self.shape_coords)
+        self.update_attachment_centers()
 
+    def update_rotation(self, dt):
         total_rotation_deg = self._rotation_speed_deg * dt
-
         # one time rotation
         if abs(self._one_time_remaining_deg) > 1e-8:
             one_time_rotation_this_step = (self._one_time_rotation_speed_deg
@@ -155,9 +154,11 @@ class PhysicalObject:
             # Shift back
             self.shape_coords = rotated + center
 
-        self.patch.set_xy(self.shape_coords)
-
-        self.update_attachment_centers()
+    def update_velocity(self, dt):
+        dx = self._velocity[0] * dt
+        dy = self._velocity[1] * dt
+        self.shape_coords[:, 0] += dx
+        self.shape_coords[:, 1] += dy
 
     @property
     def center(self) -> Tuple[float, float]:

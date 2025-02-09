@@ -129,36 +129,32 @@ class AnimatedScene:
             self.set_grid_to_center()
 
         else:
-            xlim, ylim = list(self.xlim), list(self.ylim)
-            x_vals = self.scene.main_object.shape_coords[:, 0]
-            y_vals = self.scene.main_object.shape_coords[:, 1]
-
-            veri_len = (ylim[1] - ylim[0])
-            hori_len = (xlim[1] - xlim[0])
-
-            if min(y_vals) <= ylim[0]:
-                ylim[1] -= veri_len
-                ylim[0] -= veri_len
-
-            if max(y_vals) >= ylim[1]:
-                ylim[1] += veri_len
-                ylim[0] += veri_len
-
-            if min(x_vals) <= xlim[0]:
-                xlim[1] -= hori_len
-                xlim[0] -= hori_len
-
-            if max(x_vals) >= xlim[1]:
-                xlim[1] += hori_len
-                xlim[0] += hori_len
-
-            self.xlim = list(xlim)
-            self.ylim = list(ylim)
-
-            self.ax.set_xlim(*self.xlim)
-            self.ax.set_ylim(*self.ylim)
+            self.set_grid_next_frame()
 
         return patches
+
+    def set_grid_next_frame(self):
+        xlim, ylim = list(self.xlim), list(self.ylim)
+        x_vals = self.scene.main_object.shape_coords[:, 0]
+        y_vals = self.scene.main_object.shape_coords[:, 1]
+        veri_len = (ylim[1] - ylim[0])
+        hori_len = (xlim[1] - xlim[0])
+        if min(y_vals) <= ylim[0]:
+            ylim[1] -= veri_len
+            ylim[0] -= veri_len
+        if max(y_vals) >= ylim[1]:
+            ylim[1] += veri_len
+            ylim[0] += veri_len
+        if min(x_vals) <= xlim[0]:
+            xlim[1] -= hori_len
+            xlim[0] -= hori_len
+        if max(x_vals) >= xlim[1]:
+            xlim[1] += hori_len
+            xlim[0] += hori_len
+        self.xlim = list(xlim)
+        self.ylim = list(ylim)
+        self.ax.set_xlim(*self.xlim)
+        self.ax.set_ylim(*self.ylim)
 
     def set_grid_to_center(self):
         cx, cy = self.scene.main_center
