@@ -6,29 +6,6 @@ from typing import List, Tuple, Any, Optional
 from xanimation.pobject import PhysicalObject
 
 
-def unit_vector(vector):
-    return vector / np.linalg.norm(vector)
-
-
-def angle_between_vectors(
-        v1: List[float],
-        v2: List[float],
-        degree: bool = False
-) -> float:
-    v1 = np.array(v1)
-    v2 = np.array(v2)
-    dotv = np.dot(v1, v2)
-    denom_v1 = np.sqrt(np.dot(v1, v1))
-    denom_v2 = np.sqrt(np.dot(v2, v2))
-    angle = np.arccos(dotv / (denom_v1 * denom_v2))
-
-    if degree:
-        return math.degrees(angle)
-
-    else:
-        return angle
-
-
 def update_all_positions(
         pobj: PhysicalObject,
         dt: float = 0.1

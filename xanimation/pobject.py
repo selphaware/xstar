@@ -1,6 +1,9 @@
+import time
 from typing import Tuple, List, Optional
 import numpy as np
 from matplotlib.patches import Polygon
+
+from xmath.xmauxi import angle_between_vectors, perpendicular
 
 
 class PhysicalObject:
@@ -8,6 +11,7 @@ class PhysicalObject:
             self,
             shape_coords: np.array,
             velocity: Tuple[float, float] = (0., 0.),
+            base_indexes: Tuple[int, int] = (0, 1),
             _rotation_speed_deg: float = 0.,
             _one_time_remaining_deg: float = 0.,
             _one_time_rotation_speed_deg: float = 0.,
@@ -21,6 +25,7 @@ class PhysicalObject:
         self.is_main: bool = is_main
 
         self.shape_coords: np.array = shape_coords
+        self.base_indexes: Tuple[int, int] = base_indexes
         self.main_center: Optional[Tuple[float, float]] = None
 
         self.update_all_main_centers()
@@ -37,6 +42,35 @@ class PhysicalObject:
             edgecolor=edge_color,
             alpha=0.6
         )
+
+    @property
+    def orientation_angle(self) -> float:
+        angle = angle_between_vectors(
+            self.orientation_direction, [0, 1]
+        )
+
+        return angle
+
+    @property
+    def orientation_direction(self) -> List[float]:
+        object_north = perpendicular(
+            self.shape_coords[self.base_indexes[1]] - \
+            self.shape_coords[self.base_indexes[0]]
+        )
+        return object_north
+
+    def rotate_then_velocity(
+            self,
+            tvec: List[float],
+            speed: int = 100
+    ) -> None:
+        angle = angle_between_vectors(
+            self.orientation_direction, tvec, degree=True
+        )
+        self.one_time_remaining_deg = angle
+        self.one_time_rotation_speed_deg = speed
+        time.sleep(2)
+        self.velocity = tvec
 
     def update_all_main_centers(
             self,

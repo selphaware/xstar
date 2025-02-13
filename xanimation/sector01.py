@@ -59,16 +59,14 @@ def create_sector():
                     center=ship_coords[0],
                     side_length=3
                 ),
-                (0, 0),
-                0.0,
+                velocity=(0, 0),
                 attachments=[
                     PhysicalObject(
                         generate_circle_points(
                             center=ship_coords[0],
                             radius=1
                         ),
-                        (0,0),
-                        0.0,
+                        velocity=(0, 0),
                         is_main=False,
                         color="yellow"
                     )
@@ -83,16 +81,14 @@ def create_sector():
                     center=ship_coords[1],
                     side_length=3
                 ),
-                (0, 0),
-                0.0,
+                velocity=(0, 0),
                 attachments=[
                     PhysicalObject(
                         generate_circle_points(
                             center=ship_coords[1],
                             radius=1
                         ),
-                        (0, 0),
-                        0.0,
+                        velocity=(0, 0),
                         is_main=False,
                         color="yellow"
                     )

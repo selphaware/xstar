@@ -26,9 +26,11 @@ class AnimatedScene:
             xlim: Tuple[int, int] = (-200, 200),
             ylim: Tuple[int, int] = (-100, 100),
             show_grid: bool = True,
-            center_grid: bool = True
+            center_grid: bool = True,
+            full_screen: bool = False
     ) -> None:
         self.scene: PhysicalScene = scene
+        self.full_screen: bool = full_screen
         self.fig, self.ax = plt.subplots()
 
         self.center_grid: bool = center_grid
@@ -163,7 +165,8 @@ class AnimatedScene:
 
         plt.gca().set_aspect('equal')
 
-        mng = plt.get_current_fig_manager()
-        mng.full_screen_toggle()
+        if self.full_screen:
+            mng = plt.get_current_fig_manager()
+            mng.full_screen_toggle()
 
         plt.show()
