@@ -68,6 +68,11 @@ class PhysicalObject:
         angle = angle_between_vectors(
             self.orientation_direction, tvec, degree=True, use_atan2=True
         )
+        if angle > 180:
+            angle = -1 * (360 - angle)
+        elif angle < -180:
+            angle = -1 * (-360 + angle)
+
         print(angle)
         self.one_time_remaining_deg = angle
         self.one_time_rotation_speed_deg = speed
