@@ -2,6 +2,7 @@ import time
 from typing import Tuple, List, Optional
 import numpy as np
 from matplotlib.patches import Polygon
+from math import fmod
 
 from xmath.xmauxi import angle_between_vectors, perpendicular
 
@@ -65,8 +66,8 @@ class PhysicalObject:
             speed: int = 100
     ) -> None:
         angle = angle_between_vectors(
-            self.orientation_direction, tvec, degree=True
-        ) % 360.
+            self.orientation_direction, tvec, degree=True, use_atan2=True
+        )
         print(angle)
         self.one_time_remaining_deg = angle
         self.one_time_rotation_speed_deg = speed
