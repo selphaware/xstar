@@ -148,7 +148,7 @@ def create_sector():
         scene.add_object(star_obj, main=False)
 
     # 3) Create the animator, start the input thread, and run
-    animator = AnimatedScene(scene, center_grid=True)
+    animator = AnimatedScene(scene, center_grid=True, full_screen=True)
     animator.start_input_thread()
     animator.run()
 

@@ -66,10 +66,11 @@ class PhysicalObject:
     ) -> None:
         angle = angle_between_vectors(
             self.orientation_direction, tvec, degree=True
-        )
+        ) % 360.
+        print(angle)
         self.one_time_remaining_deg = angle
         self.one_time_rotation_speed_deg = speed
-        time.sleep(2)
+
         self.velocity = tvec
 
     def update_all_main_centers(
