@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import atan2
 from typing import List, Tuple
-import math
+from math import degrees, pi
 
 
 def perpendicular(a):
@@ -14,7 +14,7 @@ def perpendicular(a):
 
 def normalize(a):
     a = np.array(a)
-    return a/np.linalg.norm(a)
+    return a / np.linalg.norm(a)
 
 
 def unit_vector(vector):
@@ -38,8 +38,13 @@ def angle_between_vectors(
         denom_v2 = np.sqrt(np.dot(v2, v2))
         angle = np.arccos(dotv / (denom_v1 * denom_v2))
 
+    if angle > pi:
+        angle = -1 * (2 * pi - angle)
+    elif angle < -pi:
+        angle = -1 * (-2 * pi + angle)
+
     if degree:
-        return math.degrees(angle)
+        return degrees(angle)
 
     else:
         return angle
