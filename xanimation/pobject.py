@@ -45,6 +45,13 @@ class PhysicalObject:
         )
 
     @property
+    def center(self) -> Tuple[float, float]:
+        return np.mean(
+            np.unique(self.shape_coords, axis=0),
+            axis=0
+        )
+
+    @property
     def orientation_angle(self) -> float:
         angle = angle_between_vectors(
             self.orientation_direction, [0, 1],
@@ -224,10 +231,3 @@ class PhysicalObject:
         dy = self._velocity[1] * dt
         self.shape_coords[:, 0] += dx
         self.shape_coords[:, 1] += dy
-
-    @property
-    def center(self) -> Tuple[float, float]:
-        return np.mean(
-            np.unique(self.shape_coords, axis=0),
-            axis=0
-        )
