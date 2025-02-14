@@ -1,14 +1,17 @@
+import pdb
 import random
+
 from xanimation.aniscene import AnimatedScene
 from xanimation.pobject import PhysicalObject
 from xanimation.pscene import PhysicalScene
 from xmath.gobj import generate_square_points, generate_circle_points, \
     generate_isosceles_triangle_points, \
-    generate_spiked_circle_points, generate_trapezium_points
+    generate_spiked_circle_points, generate_trapezium_points, \
+    generate_polygon_points
 from xmath.xrandom import random_int_generator
 
 
-def create_sector():
+def create_sector() -> PhysicalScene:
     # 1) Create our Scene
     scene = PhysicalScene()
 
@@ -103,23 +106,25 @@ def create_sector():
     scene.add_object(ship_obj, main=True)
 
     # other random ships
-    rnd_x = random_int_generator(-50, 50, "RX")
-    rnd_y = random_int_generator(-50, 50, "RY")
-    rnd_xp = random_int_generator(-1000, 1000, "RXp")
-    rnd_yp = random_int_generator(-1000, 1000, "RYp")
+    rnd_x = random_int_generator(-5_000_000, 5_000_000, "RX")
+    rnd_y = random_int_generator(-5_000_000, 5_000_000, "RY")
+    rnd_xp = random_int_generator(-3000, 3000, "RXp")
+    rnd_yp = random_int_generator(-3000, 3000, "RYp")
+    rnd_r = random_int_generator(1, 30, "RR")
+    rnd_s = random_int_generator(3, 7, "RS")
+
     for _ in range(1000):
-        ship_coords = generate_trapezium_points(
+        ship_coords = generate_polygon_points(
             (next(rnd_xp), next(rnd_yp)),
-            8,
-            10,
-            14
+            next(rnd_r),
+            next(rnd_s)
         )
         ship_obj = PhysicalObject(
             ship_coords,
-            velocity=(next(rnd_x) / 10, next(rnd_y) / 10),
+            velocity=(next(rnd_x) / 10_000, next(rnd_y) / 10_000),
             _rotation_speed_deg=15.0,
             color=random.choice([
-                "blue", "purple", "white", "yellow", "red", "orange"
+                "blue", "purple", "white", "grey", "green", "pink"
             ])
         )
         scene.add_object(ship_obj, main=False)
@@ -127,9 +132,9 @@ def create_sector():
     # stars
     rnd_x = random_int_generator(-3000, 3000, "RX")
     rnd_y = random_int_generator(-3000, 3000, "RY")
-    rnd_r = random_int_generator(5, 35, "RR")
-    rnd_s = random_int_generator(30, 50, "RS")
-    rnd_d = random_int_generator(0, 35, "RD")
+    rnd_r = random_int_generator(5, 75, "RR")
+    rnd_s = random_int_generator(75, 400, "RS")
+    rnd_d = random_int_generator(0, 200, "RD")
     for _ in range(100):
         star_coords = generate_spiked_circle_points(
             center=(next(rnd_x), next(rnd_y)),
@@ -147,11 +152,22 @@ def create_sector():
         )
         scene.add_object(star_obj, main=False)
 
+    return scene
+
+
+def animate_scene(scene: PhysicalScene) -> None:
+
     # 3) Create the animator, start the input thread, and run
-    animator = AnimatedScene(scene, center_grid=True, full_screen=True)
+    animator = AnimatedScene(scene, center_grid=True,
+                             full_screen=True, debug=True)
     animator.start_input_thread()
     animator.run()
 
 
+def run_game():
+    scene = create_sector()
+    animate_scene(scene)
+
+
 if __name__ == "__main__":
-    create_sector()
+    run_game()

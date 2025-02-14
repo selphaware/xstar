@@ -27,10 +27,12 @@ class AnimatedScene:
             ylim: Tuple[int, int] = (-100, 100),
             show_grid: bool = True,
             center_grid: bool = True,
-            full_screen: bool = False
+            full_screen: bool = False,
+            debug: bool = False
     ) -> None:
         self.scene: PhysicalScene = scene
         self.full_screen: bool = full_screen
+        self.debug: bool = debug
         self.fig, self.ax = plt.subplots()
 
         self.center_grid: bool = center_grid
@@ -112,8 +114,10 @@ class AnimatedScene:
                     Fore.GREEN
                 )
 
-            import pdb
-            pdb.set_trace()
+            if self.debug:
+                s1 = self.scene.main_object
+                import pdb
+                pdb.set_trace()
 
     def start_input_thread(self):
         thread = threading.Thread(target=self._input_thread, daemon=True)
