@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.patches import Polygon
 from math import fmod
 
-from xmath.xmauxi import angle_between_vectors, perpendicular
+from xmath.xmauxi import angle_between_vectors, perpendicular, rotation_matrix
 
 
 class PhysicalObject:
@@ -213,13 +213,8 @@ class PhysicalObject:
             # Shift so centroid is at origin
             shifted = self.shape_coords - center
 
-            # Rotation matrix in 2D
-            c, s = np.cos(theta), np.sin(theta)
-            R = np.array([[c, -s],
-                          [s, c]])
-
             # Apply rotation (multiply matrix R with vector shifted)
-            rotated = (R @ shifted.T).T
+            rotated = rotation_matrix(shifted, theta)
 
             # Shift back
             self.shape_coords = rotated + center

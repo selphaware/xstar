@@ -4,6 +4,18 @@ from typing import List, Tuple
 from math import degrees, pi
 
 
+def rotation_matrix(in_vector: np.array, theta: float) -> np.array:
+    # Rotation matrix in 2D
+    c, s = np.cos(theta), np.sin(theta)
+    R = np.array([[c, -s],
+                  [s, c]])
+
+    # Apply rotation (multiply matrix R with vector shifted)
+    rotated = (R @ in_vector.T).T
+
+    return rotated
+
+
 def perpendicular(a):
     a = normalize(a)
     b = np.empty_like(a)
