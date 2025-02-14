@@ -47,7 +47,8 @@ class PhysicalObject:
     @property
     def orientation_angle(self) -> float:
         angle = angle_between_vectors(
-            self.orientation_direction, [0, 1]
+            self.orientation_direction, [0, 1],
+            degree=True, use_atan2=True
         )
 
         return angle
@@ -62,16 +63,20 @@ class PhysicalObject:
 
     def rotate_then_velocity(
             self,
-            tvec: List[float],
-            speed: int = 100
+            target_vector: List[float],
+            rot_speed: int = 100
     ) -> None:
-        angle = angle_between_vectors(
-            self.orientation_direction, tvec, degree=True, use_atan2=True
-        )
-        self.one_time_remaining_deg = angle
-        self.one_time_rotation_speed_deg = speed
+        if any([abs(_x) > 0 for _x in target_vector]):
+            angle = angle_between_vectors(
+                self.orientation_direction, target_vector,
+                degree=True, use_atan2=True,
+                normalize=True
+            )
 
-        self.velocity = tvec
+            self.one_time_remaining_deg = angle
+            self.one_time_rotation_speed_deg = rot_speed
+
+        self.velocity = target_vector
 
     def update_all_main_centers(
             self,

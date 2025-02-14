@@ -57,11 +57,11 @@ class MovingObject:
       - shape_coords: Nx2 NumPy array of the shape's vertices in absolute
       coords.
       - velocity: [vx, vy]
-      - rotation_velocity_deg: continuous rotation speed in degrees per unit
+      - rotation_velocity_deg: continuous rotation rot_speed in degrees per unit
       time
       - _one_time_remaining_deg: how many degrees remain in the one-time
       rotation
-      - _one_time_rotation_speed_deg: speed at which we apply the one-time
+      - _one_time_rotation_speed_deg: rot_speed at which we apply the one-time
       rotation
       - patch: Matplotlib Polygon patch to draw the shape.
     """
@@ -253,7 +253,7 @@ class AnimatedScene:
                     print(f"Updated main object:\n"
                           f"  v=({vx},{vy}), continuousRot={cont_rot_deg} "
                           f"deg/unit\n"
-                          f"  One-time rotate={single_deg} deg at speed="
+                          f"  One-time rotate={single_deg} deg at rot_speed="
                           f"{single_speed} deg/unit")
                 else:
                     print(

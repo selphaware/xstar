@@ -44,7 +44,7 @@ class MovingObject:
       - shape_coords: Nx2 NumPy array of the shape's vertices in absolute
       coords.
       - velocity: [vx, vy]
-      - rotation_velocity_deg: rotation speed in degrees per unit time
+      - rotation_velocity_deg: rotation rot_speed in degrees per unit time
       - patch: Matplotlib Polygon patch to draw the shape.
     """
 

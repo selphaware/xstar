@@ -22,11 +22,15 @@ def unit_vector(vector):
 
 
 def angle_between_vectors(
-        v1: List[float],
-        v2: List[float],
+        _v1: List[float],
+        _v2: List[float],
         degree: bool = False,
-        use_atan2: bool = True
+        use_atan2: bool = True,
+        normalize: bool = False
 ) -> float:
+    v1 = unit_vector(np.array(_v1))
+    v2 = unit_vector(np.array(_v2))
+
     if use_atan2:
         angle = atan2(v2[1], v2[0]) - atan2(v1[1], v1[0])
 
@@ -38,10 +42,13 @@ def angle_between_vectors(
         denom_v2 = np.sqrt(np.dot(v2, v2))
         angle = np.arccos(dotv / (denom_v1 * denom_v2))
 
-    if angle > pi:
-        angle = -1 * (2 * pi - angle)
-    elif angle < -pi:
-        angle = -1 * (-2 * pi + angle)
+    angle = angle % (np.sign(angle) * 2 * pi)
+
+    if normalize:
+        if angle < -pi:
+            angle = angle % pi
+        elif angle > pi:
+            angle = angle % -pi
 
     if degree:
         return degrees(angle)
