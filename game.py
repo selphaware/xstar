@@ -15,36 +15,6 @@ def create_sector() -> PhysicalScene:
     # 1) Create our Scene
     scene = PhysicalScene()
 
-    # 2) Create various objects spread around the coordinate range.
-    # Example: a circle at (200, 100) with radius=30, velocity=(2,0)
-    circle_coords = generate_circle_points(center=(200, 100), radius=30,
-                                           num_points=60)
-    circle_obj = PhysicalObject(circle_coords, velocity=(2, 0),
-                                _rotation_speed_deg=0.0, color='red')
-    scene.add_object(circle_obj, main=False)  # Make the circle the main object
-
-    # A square at (-150, 400), side_length=50, velocity=(0,-1), rotation=10
-    # deg/unit
-    square_coords = generate_square_points(center=(100, 100), side_length=50)
-    square_obj = PhysicalObject(square_coords, velocity=(0, 0),
-                                _rotation_speed_deg=75.0, color='green')
-    scene.add_object(square_obj, main=False)
-
-    square_coords2 = generate_square_points(center=(-2550, 400),
-                                            side_length=50)
-    square_obj2 = PhysicalObject(square_coords2, velocity=(100, 10),
-                                 _rotation_speed_deg=275.0, color='yellow')
-    scene.add_object(square_obj2, main=False)
-
-    # Another circle far away, with velocity=(-1.5, 1.0), rotation=0
-    another_circle_coords = generate_circle_points(center=(800, -300),
-                                                   radius=15)
-    another_circle_obj = PhysicalObject(another_circle_coords,
-                                        velocity=(-1.5, 1.0),
-                                        _rotation_speed_deg=0.0,
-                                        color='blue')
-    scene.add_object(another_circle_obj, main=False)
-
     # main SHIP
     ship_coords = generate_isosceles_triangle_points(
         center=(50, 50),
@@ -112,6 +82,7 @@ def create_sector() -> PhysicalScene:
     rnd_yp = random_int_generator(-3000, 3000, "RYp")
     rnd_r = random_int_generator(1, 30, "RR")
     rnd_s = random_int_generator(3, 7, "RS")
+    rnd_d = random_int_generator(0, 200, "RD")
 
     for _ in range(1000):
         ship_coords = generate_polygon_points(
@@ -122,7 +93,7 @@ def create_sector() -> PhysicalScene:
         ship_obj = PhysicalObject(
             ship_coords,
             velocity=(next(rnd_x) / 10_000, next(rnd_y) / 10_000),
-            _rotation_speed_deg=15.0,
+            _rotation_speed_deg=next(rnd_d),
             color=random.choice([
                 "blue", "purple", "white", "grey", "green", "pink"
             ])

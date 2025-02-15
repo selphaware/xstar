@@ -1,8 +1,6 @@
-import time
 from typing import Tuple, List, Optional
 import numpy as np
 from matplotlib.patches import Polygon
-from math import fmod
 
 from xmath.xmauxi import angle_between_vectors, perpendicular, rotation_matrix
 

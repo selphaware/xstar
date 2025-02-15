@@ -3,6 +3,7 @@ from typing import Tuple, List
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import threading
+import numpy as np
 from colorama import Fore, Style
 
 from xanimation.pscene import PhysicalScene
