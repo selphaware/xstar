@@ -1,7 +1,23 @@
 import numpy as np
 from numpy import atan2
 from typing import List, Tuple
-from math import degrees, pi
+from math import degrees, pi, sqrt
+
+
+def vector_magnitude(vec):
+    arr = np.array(vec)
+    return np.linalg.norm(arr)
+
+
+def vector_difference(vec1, vec2):
+    arr1 = np.array(vec1)
+    arr2 = np.array(vec2)
+    return arr1 - arr2
+
+
+def vector_distance(vec1, vec2):
+    diff = vector_difference(vec1, vec2)
+    return np.linalg.norm(diff)
 
 
 def rotation_matrix(in_vector: np.array, theta: float) -> np.array:

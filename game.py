@@ -78,8 +78,8 @@ def create_sector() -> PhysicalScene:
     # other random ships
     rnd_x = random_int_generator(-5_000_000, 5_000_000, "RX")
     rnd_y = random_int_generator(-5_000_000, 5_000_000, "RY")
-    rnd_xp = random_int_generator(-3000, 3000, "RXp")
-    rnd_yp = random_int_generator(-3000, 3000, "RYp")
+    rnd_xp = random_int_generator(-300, 300, "RXp")
+    rnd_yp = random_int_generator(-300, 300, "RYp")
     rnd_r = random_int_generator(1, 30, "RR")
     rnd_s = random_int_generator(3, 7, "RS")
     rnd_d = random_int_generator(0, 200, "RD")
@@ -101,12 +101,12 @@ def create_sector() -> PhysicalScene:
         scene.add_object(ship_obj, main=False)
 
     # stars
-    rnd_x = random_int_generator(-3000, 3000, "RX")
-    rnd_y = random_int_generator(-3000, 3000, "RY")
-    rnd_r = random_int_generator(5, 75, "RR")
-    rnd_s = random_int_generator(75, 400, "RS")
-    rnd_d = random_int_generator(0, 200, "RD")
-    for _ in range(100):
+    rnd_x = random_int_generator(-300, 300, "RX")
+    rnd_y = random_int_generator(-300, 300, "RY")
+    rnd_r = random_int_generator(5, 50, "RR")
+    rnd_s = random_int_generator(75, 750, "RS")
+    rnd_d = random_int_generator(0, 350, "RD")
+    for _ in range(10):
         star_coords = generate_spiked_circle_points(
             center=(next(rnd_x), next(rnd_y)),
             radius=next(rnd_r),

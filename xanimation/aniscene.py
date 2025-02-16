@@ -1,10 +1,12 @@
 import sys
 from typing import Tuple, List
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.image as mpimg
 import threading
-import numpy as np
 from colorama import Fore, Style
+import pdb
 
 from xanimation.pscene import PhysicalScene
 from xanimation.xauxi import add_all_patches, calc_next_frame_coords
@@ -29,6 +31,7 @@ class AnimatedScene:
             show_grid: bool = True,
             center_grid: bool = True,
             full_screen: bool = False,
+            enable_img_bg: bool = False,
             debug: bool = False
     ) -> None:
         self.scene: PhysicalScene = scene
@@ -36,12 +39,35 @@ class AnimatedScene:
         self.debug: bool = debug
         self.fig, self.ax = plt.subplots()
 
+        # background p1
+        self.star_data_x: List[float] = []
+        self.star_data_y: List[float] = []
+        self.scatter_stars = self.ax.scatter([], [], s=0.25,
+                                             color='white')
+
+        self.enable_img_bg: bool = enable_img_bg
+        if enable_img_bg:
+            self.bg_img = mpimg.imread("xanimation/background/stars.jpg")
+
+        # END background p1
+
         self.center_grid: bool = center_grid
 
         self.ax.set_xlim(*xlim)
         self.ax.set_ylim(*ylim)
         self.xlim: List[int] = list(xlim)
         self.ylim: List[int] = list(ylim)
+
+        # background p2
+        if enable_img_bg:
+            self.bg_handle = self.ax.imshow(
+                self.bg_img,
+                extent=(
+                self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]),
+                zorder=0
+            )
+
+        # END background p2
 
         self.ax.grid(show_grid)
 
@@ -117,7 +143,6 @@ class AnimatedScene:
 
             if self.debug:
                 s1 = self.scene.main_object
-                import pdb
                 pdb.set_trace()
 
     def start_input_thread(self):
@@ -139,7 +164,40 @@ class AnimatedScene:
         else:
             self.set_grid_next_frame()
 
-        return patches
+        self.update_background_stars()
+
+        return (self.scatter_stars, ) + patches
+
+    def update_background_stars(self):
+        fresh = False
+        if len(self.star_data_x) == 0:
+            fresh = True
+
+        x_cond, y_cond = False, False
+        if not fresh:
+            x_cond = (self.xlim[0] < min(self.star_data_x)) or \
+                     (self.xlim[1] > max(self.star_data_x))
+            y_cond = (self.ylim[0] < min(self.star_data_y)) or \
+                     (self.ylim[1] > max(self.star_data_y))
+
+        if fresh or x_cond or y_cond:
+            back_star_points_x = [self.xlim[0], self.xlim[1]]
+            back_star_points_x.extend(np.random.uniform(
+                self.xlim[0],
+                self.xlim[1],
+                50
+            ))
+            back_star_points_y = [self.ylim[0], self.ylim[1]]
+            back_star_points_y.extend(np.random.uniform(
+                self.ylim[0],
+                self.ylim[1],
+                50
+            ))
+            self.star_data_x.extend(back_star_points_x)
+            self.star_data_y.extend(back_star_points_y)
+            self.scatter_stars.set_offsets(
+                np.c_[self.star_data_x, self.star_data_y]
+            )
 
     def set_grid_next_frame(self):
         xlim, ylim = list(self.xlim), list(self.ylim)
@@ -151,6 +209,12 @@ class AnimatedScene:
         self.ax.set_xlim(*self.xlim)
         self.ax.set_ylim(*self.ylim)
 
+        if self.enable_img_bg:
+            self.bg_handle.set_extent((
+                self.xlim[0], self.xlim[1],
+                self.ylim[0], self.ylim[1]
+            ))
+
     def set_grid_to_center(self):
         cx, cy = self.scene.main_center
         half_range = 100  # from -100..100
@@ -159,13 +223,20 @@ class AnimatedScene:
         self.ax.set_xlim(*self.xlim)
         self.ax.set_ylim(*self.ylim)
 
+        if self.enable_img_bg:
+            self.bg_handle.set_extent((
+                self.xlim[0], self.xlim[1],
+                self.ylim[0], self.ylim[1]
+            ))
+
     def run(self):
         self.ani = animation.FuncAnimation(
             self.fig,
             self._update_animation,
             frames=None,  # None => infinite loop
-            interval=15,  # ms between updates
-            blit=False
+            interval=1,  # ms between updates
+            blit=False,
+            cache_frame_data=True
         )
 
         plt.gca().set_aspect('equal')
