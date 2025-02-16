@@ -84,7 +84,7 @@ def create_sector() -> PhysicalScene:
     rnd_s = random_int_generator(3, 7, "RS")
     rnd_d = random_int_generator(0, 200, "RD")
 
-    for _ in range(1000):
+    for _ in range(25):
         ship_coords = generate_polygon_points(
             (next(rnd_xp), next(rnd_yp)),
             next(rnd_r),
@@ -101,24 +101,25 @@ def create_sector() -> PhysicalScene:
         scene.add_object(ship_obj, main=False)
 
     # stars
-    rnd_x = random_int_generator(-300, 300, "RX")
-    rnd_y = random_int_generator(-300, 300, "RY")
-    rnd_r = random_int_generator(5, 50, "RR")
-    rnd_s = random_int_generator(75, 750, "RS")
-    rnd_d = random_int_generator(0, 350, "RD")
-    for _ in range(10):
+    rnd_x = random_int_generator(-300_000, 300_000, "RX")
+    rnd_y = random_int_generator(-300_000, 300_000, "RY")
+    rnd_r = random_int_generator(5, 1000, "RR")
+    rnd_s = random_int_generator(4, 10, "RS")
+    rnd_d = random_int_generator(0, 250, "RD")
+    for _ in range(3000):
+        _radius = next(rnd_r)
         star_coords = generate_spiked_circle_points(
             center=(next(rnd_x), next(rnd_y)),
-            radius=next(rnd_r),
+            radius=_radius,
             num_spikes=next(rnd_s),
-            spike_height=10
+            spike_height=int(10 * _radius / 100)
         )
         star_obj = PhysicalObject(
             star_coords,
             velocity=(0, 0),
             _rotation_speed_deg=next(rnd_d),
             color=random.choice([
-                "yellow", "red", "orange"
+                "yellow", "red", "orange", "purple", "pink", "cyan"
             ])
         )
         scene.add_object(star_obj, main=False)
