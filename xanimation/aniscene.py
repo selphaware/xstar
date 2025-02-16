@@ -52,6 +52,7 @@ class AnimatedScene:
         # END background p1
 
         self.center_grid: bool = center_grid
+        self.factor: float = 1.0
 
         self.ax.set_xlim(*xlim)
         self.ax.set_ylim(*ylim)
@@ -145,11 +146,17 @@ class AnimatedScene:
 
             if self.debug:
                 s1 = self.scene.main_object
+                anix = self
                 pdb.set_trace()
 
     def start_input_thread(self):
         thread = threading.Thread(target=self._input_thread, daemon=True)
         thread.start()
+
+    def zoom(self, zfactor: float = 1.0):
+        self.factor = zfactor / 100.
+        self.star_data_x = []
+        self.star_data_y = []
 
     def _update_animation(self, frame):
         """
@@ -220,7 +227,7 @@ class AnimatedScene:
 
     def set_grid_to_center(self):
         cx, cy = self.scene.main_center
-        half_range = 100  # from -100..100
+        half_range = 100 * self.factor  # from -100..100
         self.xlim = [cx - half_range * 2.25, cx + half_range * 2.25]
         self.ylim = [cy - half_range * 1.25, cy + half_range * 1.25]
         self.ax.set_xlim(*self.xlim)
