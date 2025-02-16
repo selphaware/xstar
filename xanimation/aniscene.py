@@ -57,6 +57,8 @@ class AnimatedScene:
         self.ax.set_ylim(*ylim)
         self.xlim: List[int] = list(xlim)
         self.ylim: List[int] = list(ylim)
+        self.prev_xlim = list(xlim)
+        self.prev_ylim = list(ylim)
 
         # background p2
         if enable_img_bg:
@@ -154,6 +156,9 @@ class AnimatedScene:
         Called by FuncAnimation each frame. Updates scene objects,
         then re-centers the axis on the main object.
         """
+        self.prev_xlim = list(self.xlim)
+        self.prev_ylim = list(self.ylim)
+
         # Update positions
         patches = self.scene.update(dt=0.1)
 
@@ -175,24 +180,22 @@ class AnimatedScene:
 
         x_cond, y_cond = False, False
         if not fresh:
-            x_cond = (self.xlim[0] < min(self.star_data_x)) or \
-                     (self.xlim[1] > max(self.star_data_x))
-            y_cond = (self.ylim[0] < min(self.star_data_y)) or \
-                     (self.ylim[1] > max(self.star_data_y))
+            x_cond = (self.xlim[0] < self.prev_xlim[0]) or \
+                     (self.xlim[1] > self.prev_xlim[1])
+            y_cond = (self.ylim[0] < self.prev_ylim[0]) or \
+                     (self.ylim[1] > self.prev_ylim[1])
 
         if fresh or x_cond or y_cond:
-            back_star_points_x = [self.xlim[0], self.xlim[1]]
-            back_star_points_x.extend(np.random.uniform(
+            back_star_points_x = np.random.uniform(
                 self.xlim[0],
                 self.xlim[1],
                 50
-            ))
-            back_star_points_y = [self.ylim[0], self.ylim[1]]
-            back_star_points_y.extend(np.random.uniform(
+            )
+            back_star_points_y = np.random.uniform(
                 self.ylim[0],
                 self.ylim[1],
                 50
-            ))
+            )
             self.star_data_x.extend(back_star_points_x)
             self.star_data_y.extend(back_star_points_y)
             self.scatter_stars.set_offsets(
