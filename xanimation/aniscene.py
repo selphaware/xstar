@@ -32,6 +32,7 @@ class AnimatedScene:
             center_grid: bool = True,
             full_screen: bool = False,
             enable_img_bg: bool = False,
+            enable_starry_bg: bool = False,
             debug: bool = False
     ) -> None:
         self.scene: PhysicalScene = scene
@@ -40,10 +41,12 @@ class AnimatedScene:
         self.fig, self.ax = plt.subplots()
 
         # background p1
-        self.star_data_x: List[float] = []
-        self.star_data_y: List[float] = []
-        self.scatter_stars = self.ax.scatter([], [], s=0.25,
-                                             color='white')
+        self.enable_starry_bg: bool = enable_starry_bg
+        if enable_starry_bg:
+            self.star_data_x: List[float] = []
+            self.star_data_y: List[float] = []
+            self.scatter_stars = self.ax.scatter([], [], s=0.25,
+                                                 color='white')
 
         self.enable_img_bg: bool = enable_img_bg
         if enable_img_bg:
@@ -66,7 +69,7 @@ class AnimatedScene:
             self.bg_handle = self.ax.imshow(
                 self.bg_img,
                 extent=(
-                self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]),
+                    self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]),
                 zorder=0
             )
 
@@ -176,9 +179,12 @@ class AnimatedScene:
         else:
             self.set_grid_next_frame()
 
-        self.update_background_stars()
+        if self.enable_starry_bg:
+            self.update_background_stars()
 
-        return (self.scatter_stars, ) + patches
+            return (self.scatter_stars,) + patches
+        else:
+            return patches
 
     def update_background_stars(self):
         fresh = False
