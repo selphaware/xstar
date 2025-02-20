@@ -1,9 +1,12 @@
 import pdb
 import random
 
+import numpy as np
+
 from xanimation.aniscene import AnimatedScene
 from xanimation.pobject import PhysicalObject
 from xanimation.pscene import PhysicalScene
+from xmath.fplot.ani3 import velocity
 from xmath.gobj import generate_square_points, generate_circle_points, \
     generate_isosceles_triangle_points, \
     generate_spiked_circle_points, generate_trapezium_points, \
@@ -100,27 +103,66 @@ def create_sector() -> PhysicalScene:
         )
         scene.add_object(ship_obj, main=False)
 
-    # stars
-    rnd_x = random_int_generator(-300_000, 300_000, "RX")
-    rnd_y = random_int_generator(-300_000, 300_000, "RY")
-    rnd_r = random_int_generator(5, 1000, "RR")
-    rnd_s = random_int_generator(4, 10, "RS")
-    rnd_d = random_int_generator(0, 250, "RD")
-    for _ in range(3000):
+    # big stars
+    rnum = 700_000
+    rnd_x = random_int_generator(-rnum, rnum, "RX")
+    rnd_y = random_int_generator(-rnum, rnum, "RY")
+    rnd_r = random_int_generator(100, 1000, "RR")
+    rnd_s = random_int_generator(400, 600, "RS")
+    rnd_d = random_int_generator(5, 450, "RD")
+    for _ in range(1000):
         _radius = next(rnd_r)
-        star_coords = generate_spiked_circle_points(
+        star_coords = generate_circle_points(
             center=(next(rnd_x), next(rnd_y)),
-            radius=_radius,
-            num_spikes=next(rnd_s),
-            spike_height=int(10 * _radius / 100)
+            radius=_radius
         )
         star_obj = PhysicalObject(
             star_coords,
             velocity=(0, 0),
-            _rotation_speed_deg=next(rnd_d),
+            _rotation_speed_deg=0,  # next(rnd_d),
             color=random.choice([
                 "yellow", "red", "orange", "purple", "pink", "cyan"
             ])
+        )
+        scene.add_object(star_obj, main=False)
+
+    pcts = [5, 10, 15, 25]
+    colors = ["yellow", "red", "orange", "purple", "pink", "cyan"]
+    for _ in range(5):
+        _radius = next(rnd_r)
+        star_coords = generate_circle_points(
+            center=(next(rnd_x), next(rnd_y)),
+            radius=_radius
+        )
+        star_obj = PhysicalObject(
+            star_coords,
+            velocity=(0, 0),
+            _rotation_speed_deg=(deg_turn := next(rnd_d)),
+            attachments=[
+                PhysicalObject(
+                    generate_circle_points(
+                        center=(
+                            np.random.uniform(
+                                min(star_coords[:, 0]),
+                                max(star_coords[:, 0]),
+                                1
+                            ),
+                            np.random.uniform(
+                                min(star_coords[:, 1]),
+                                max(star_coords[:, 1]),
+                                1
+                            )
+                        ),
+                        radius=10
+                    ),
+                    velocity=(0., 0.),
+                    is_main=False,
+                    color=random.choice(colors)
+                )
+                for _ipct in pcts
+            ],
+            is_main=True,
+            color=random.choice(colors)
         )
         scene.add_object(star_obj, main=False)
 
@@ -128,7 +170,6 @@ def create_sector() -> PhysicalScene:
 
 
 def animate_scene(scene: PhysicalScene) -> None:
-
     # 3) Create the animator, start the input thread, and run
     animator = AnimatedScene(scene, center_grid=True,
                              full_screen=True, debug=True)

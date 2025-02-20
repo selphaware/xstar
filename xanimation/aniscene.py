@@ -82,6 +82,26 @@ class AnimatedScene:
 
         self.set_grid_to_center()
 
+        self.annotation = self.ax.annotate(
+            'Shuttlecraft A-1',
+            xy=self.scene.main_object.shape_coords[0],
+            xycoords="data",
+            xytext=(-15, 50),
+            textcoords="offset points",
+            arrowprops=dict(
+                arrowstyle='->',
+                color="white",
+                lw=1
+            ),
+            bbox=dict(
+                boxstyle='round',
+                facecolor='white',
+                alpha=0.5
+            ),
+            horizontalalignment='center',
+            verticalalignment='bottom'
+        )
+
     def _input_thread(self):
         while True:
             try:
@@ -179,6 +199,8 @@ class AnimatedScene:
         else:
             self.set_grid_next_frame()
 
+        self.annotation.xy = self.scene.main_object.shape_coords[0]
+
         if self.enable_starry_bg:
             self.update_background_stars()
 
@@ -250,7 +272,7 @@ class AnimatedScene:
             self.fig,
             self._update_animation,
             frames=None,  # None => infinite loop
-            interval=1,  # ms between updates
+            interval=15,  # ms between updates
             blit=False,
             cache_frame_data=True
         )

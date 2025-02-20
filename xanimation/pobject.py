@@ -34,6 +34,8 @@ class PhysicalObject:
         self._one_time_remaining_deg: float = _one_time_remaining_deg
         self._one_time_rotation_speed_deg: float = _one_time_rotation_speed_deg
 
+        self.rotation_speed_deg = self._rotation_speed_deg
+
         self.patch: Polygon = Polygon(
             self.shape_coords,
             closed=True,
