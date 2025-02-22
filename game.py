@@ -36,7 +36,7 @@ def create_sector() -> PhysicalScene:
                     side_length=3
                 ),
                 velocity=(0, 0),
-                attachments=[
+                attachments=[  # torpedoes
                     PhysicalObject(
                         generate_circle_points(
                             center=ship_coords[0],
@@ -46,6 +46,7 @@ def create_sector() -> PhysicalScene:
                         is_main=False,
                         color="yellow"
                     )
+                    for _ in range(100)
                 ],
                 is_main=False,
                 color="red",
@@ -58,7 +59,7 @@ def create_sector() -> PhysicalScene:
                     side_length=3
                 ),
                 velocity=(0, 0),
-                attachments=[
+                attachments=[  # torpedoes
                     PhysicalObject(
                         generate_circle_points(
                             center=ship_coords[1],
@@ -68,6 +69,7 @@ def create_sector() -> PhysicalScene:
                         is_main=False,
                         color="yellow"
                     )
+                    for _ in range(100)
                 ],
                 is_main=False,
                 color="red",
