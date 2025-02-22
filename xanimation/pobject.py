@@ -21,6 +21,7 @@ class PhysicalObject:
             plot_symbol: str = "r-"
     ) -> None:
         self.attachments: Optional[List[PhysicalObject]] = attachments
+        self.dettached: bool = False
         self.is_main: bool = is_main
 
         self.shape_coords: np.array = shape_coords
@@ -85,6 +86,19 @@ class PhysicalObject:
 
         self.velocity = target_vector
 
+    def projectile(
+            self,
+            velocity: List[float],
+            rot_speed: int = 100
+    ):
+        self.is_main = True
+        self.dettached = True
+        self.velocity = [
+            self.velocity[0] + velocity[0],
+            self.velocity[1] + velocity[1]
+        ]
+        self.rotation_speed_deg = rot_speed
+
     def update_all_main_centers(
             self,
             ncenter: Optional[Tuple[float, float]] = None
@@ -100,7 +114,8 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.update_all_main_centers(ncenter)
+                if not attachment.dettached:
+                    attachment.update_all_main_centers(ncenter)
 
     @property
     def velocity(self) -> List[float]:
@@ -142,7 +157,8 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.update_all_velocities(nvelocity)
+                if not attachment.dettached:
+                    attachment.update_all_velocities(nvelocity)
 
     def update_all_rotation_speed_degs(
             self,
@@ -152,9 +168,10 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.update_all_rotation_speed_degs(
-                    nrotation_speed_deg
-                )
+                if not attachment.dettached:
+                    attachment.update_all_rotation_speed_degs(
+                        nrotation_speed_deg
+                    )
 
     def update_all_one_time_rem_degs(
             self,
@@ -164,9 +181,10 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.update_all_one_time_rem_degs(
-                    n_one_time_remaining_deg
-                )
+                if not attachment.dettached:
+                    attachment.update_all_one_time_rem_degs(
+                        n_one_time_remaining_deg
+                    )
 
     def update_all_one_time_rot_spd_degs(
             self,
@@ -176,9 +194,10 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                attachment.update_all_one_time_rot_spd_degs(
-                    n_one_time_rot_spd_deg
-                )
+                if not attachment.dettached:
+                    attachment.update_all_one_time_rot_spd_degs(
+                        n_one_time_rot_spd_deg
+                    )
 
     def update_position(self, dt: float = 0.1) -> None:
         self.update_velocity(dt)
