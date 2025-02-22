@@ -650,7 +650,7 @@ if __name__ == "__main__":
 
     _aq = SubUniverse(
         5,
-        175,
+        50,
         16,
         50,
         15,

@@ -73,7 +73,9 @@ class SubUniverse(object):
         for gname, galaxy in self.universe_positions.items():
             for sname, system in galaxy['star_systems'].items():
                 for planet_name, planet_data in system['planets'].items():
-                    _planets[planet_name] = planet_data
+                    _planets[
+                        f"{planet_name}:{sname}:{gname}"
+                    ] = planet_data
         return _planets
 
     @property
@@ -81,7 +83,7 @@ class SubUniverse(object):
         _star_systems: Dict[str, Any] = {}
         for gname, galaxy in self.universe_positions.items():
             for sname, system in galaxy['star_systems'].items():
-                _star_systems[sname] = system
+                _star_systems[f"{sname}:{gname}"] = system
         return _star_systems
 
     @property
