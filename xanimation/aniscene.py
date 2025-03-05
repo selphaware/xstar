@@ -283,4 +283,5 @@ class AnimatedScene:
             mng = plt.get_current_fig_manager()
             mng.full_screen_toggle()
 
+        plt.tight_layout()
         plt.show()

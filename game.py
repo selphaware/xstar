@@ -173,8 +173,8 @@ def create_sector() -> PhysicalScene:
 
 def animate_scene(scene: PhysicalScene) -> None:
     # 3) Create the animator, start the input thread, and run
-    animator = AnimatedScene(scene, center_grid=True,
-                             full_screen=True, debug=True)
+    animator = AnimatedScene(scene, center_grid=True, enable_img_bg=False,
+                             full_screen=False, debug=True)
     animator.start_input_thread()
     animator.run()
 
