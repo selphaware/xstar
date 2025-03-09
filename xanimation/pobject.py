@@ -21,7 +21,7 @@ class PhysicalObject:
             plot_symbol: str = "r-"
     ) -> None:
         self.attachments: Optional[List[PhysicalObject]] = attachments
-        self.dettached: bool = False
+        self.detached: bool = False
         self.is_main: bool = is_main
 
         self.shape_coords: np.array = shape_coords
@@ -92,7 +92,7 @@ class PhysicalObject:
             rot_speed: int = 100
     ):
         self.is_main = True
-        self.dettached = True
+        self.detached = True
         self.velocity = [
             self.velocity[0] + velocity[0],
             self.velocity[1] + velocity[1]
@@ -114,7 +114,7 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                if not attachment.dettached:
+                if not attachment.detached:
                     attachment.update_all_main_centers(ncenter)
 
     @property
@@ -157,7 +157,7 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                if not attachment.dettached:
+                if not attachment.detached:
                     attachment.update_all_velocities(nvelocity)
 
     def update_all_rotation_speed_degs(
@@ -168,7 +168,7 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                if not attachment.dettached:
+                if not attachment.detached:
                     attachment.update_all_rotation_speed_degs(
                         nrotation_speed_deg
                     )
@@ -181,7 +181,7 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                if not attachment.dettached:
+                if not attachment.detached:
                     attachment.update_all_one_time_rem_degs(
                         n_one_time_remaining_deg
                     )
@@ -194,7 +194,7 @@ class PhysicalObject:
 
         if self.attachments is not None:
             for attachment in self.attachments:
-                if not attachment.dettached:
+                if not attachment.detached:
                     attachment.update_all_one_time_rot_spd_degs(
                         n_one_time_rot_spd_deg
                     )

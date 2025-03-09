@@ -105,6 +105,7 @@ def create_sector() -> PhysicalScene:
         )
         scene.add_object(ship_obj, main=False)
 
+    # TODO: Loop through SubUniverse objects and add
     # big stars
     rnum = 700_000
     rnd_x = random_int_generator(-rnum, rnum, "RX")
@@ -115,6 +116,11 @@ def create_sector() -> PhysicalScene:
     for _ in range(1000):
         _radius = next(rnd_r)
         star_coords = generate_circle_points(
+            # TODO: get values from SubUniverse
+
+            # TODO: Also provide motion vector function/path from
+            #  the path list values from SubUniverse (dont need function)
+            #  i.e. on next frame move onto next value on path list
             center=(next(rnd_x), next(rnd_y)),
             radius=_radius
         )
