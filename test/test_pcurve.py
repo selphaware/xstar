@@ -410,8 +410,8 @@ def test_log_spiral3():
     c3 = coordinates[0: 9500]
     c4 = coordinates[9500:]
 
-    rnd_int3 = random_int_generator(0, len(c3) - 1, True)
-    rnd_int4 = random_int_generator(0, len(c4) - 1, True)
+    rnd_int3 = random_int_generator(0, len(c3) - 1, "3INTRND")
+    rnd_int4 = random_int_generator(0, len(c4) - 1, "4INTRND")
 
     _R = 0.01
     _t_range = (0, 100)
